@@ -28,10 +28,11 @@ unresolved questions that connect to Oblique's advisory services.
 
 ```bash
 pip install fastapi "uvicorn[standard]" jinja2 pydantic pytest httpx
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload     # development
+python -m app                     # production-style start; reads PORT from the environment
 # open http://127.0.0.1:8000  (Swagger at /docs)
 python -m pytest -q          # 64 tests; every tax figure checked by hand first
-SITE_INDEXABLE=true uvicorn app.main:app   # only after expert sign-off: removes noindex
+SITE_INDEXABLE=true python -m app   # only after expert sign-off: removes noindex
 ```
 
 ## Deploy
