@@ -13,6 +13,7 @@
       <div class="field"><label for="profile">{{ t("I am answering as") }}</label><select name="profile" id="profile"><option value="business" {% if profile == "business" %}selected{% endif %}>{{ t("A business") }}</option><option value="gcc" {% if profile == "gcc" %}selected{% endif %}>{{ t("A business trading across the GCC") }}</option><option value="personal" {% if profile == "personal" %}selected{% endif %}>{{ t("An individual") }}</option></select></div>
       <p class="small muted">{{ t("Yes, no or not sure. Not sure is a fine answer.") }}</p>
     </div>
+    <div class="diag-progress" aria-live="polite"><span id="diag-count"></span><span class="track"><span class="fill" id="diag-fill"></span></span></div>
     <div id="questions" class="q-grid"></div>
     <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Show my action list") }}</button></div>
     <div class="error" id="form-error"></div>
@@ -47,7 +48,11 @@ function renderQuestions() {
       <select id="q_${q.key}" name="${q.key}"><option value="unknown">{{ t("Not sure") }}</option><option value="yes">{{ t("Yes") }}</option><option value="no">{{ t("No") }}</option></select></div>`;
   }).join('');
 }
-document.getElementById('profile').addEventListener('change', renderQuestions); renderQuestions();
+function progress() { const sel = [...qbox.querySelectorAll('select')]; const done = sel.filter(s => s.value !== 'unknown').length;
+  document.getElementById('diag-count').textContent = tr('{} of {} answered').replace('{}', done).replace('{}', sel.length);
+  document.getElementById('diag-fill').style.width = sel.length ? (done / sel.length * 100) + '%' : '0'; }
+qbox.addEventListener('change', progress);
+document.getElementById('profile').addEventListener('change', () => { renderQuestions(); progress(); }); renderQuestions(); progress();
 initCalc({
   form: 'f', endpoint: '/api/v1/diagnostic', contactUrl: '{{ site.contact_url }}', downloadName: 'oblique-diagnostic', autorun: false,
   body: (data) => { const answers = {}; for (const k in data) if (k !== 'profile') answers[k] = data[k]; return { profile: data.profile, answers }; },

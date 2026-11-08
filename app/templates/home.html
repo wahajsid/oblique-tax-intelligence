@@ -22,7 +22,8 @@
     </div>
     <div class="hero-card">
       <h3>{{ t("USD 1m profit, foreign-owned. Direct tax by country.") }}</h3>
-      <table>{% for r in quick.rows %}<tr><td>{{ r.flag }} {{ t(r.name) }}</td><td>{{ '{:,.0f}'.format(r.total_direct_tax) }} <span class="muted small">({{ '%.1f' % (r.effective_rate_on_profit*100) }}%)</span></td></tr>{% endfor %}</table>
+      {% set top = quick.rows | map(attribute='effective_rate_on_profit') | max %}
+      <div class="bars" role="img" aria-label="{{ t('USD 1m profit, foreign-owned. Direct tax by country.') }}">{% for r in quick.rows %}<div class="bar-row{% if r.code == 'AE' %} hl{% endif %}"><span class="lbl">{{ r.flag }} {{ t(r.name) }}</span><span class="bar-track"><span class="bar-fill" style="--w:{{ (r.effective_rate_on_profit / top * 100) | round(1) if top else 0 }}%"></span></span><span class="val">{{ '{:,.0f}'.format(r.total_direct_tax) }}<span class="pct">{{ '%.1f' % (r.effective_rate_on_profit*100) }}%</span></span></div>{% endfor %}</div>
       <p class="small muted" style="margin-top:10px">{{ t("A screen, not a verdict. UAE band converted at the 3.6725 peg.") }} <a href="/gcc/compare">{{ t("Full comparison →") }}</a></p>
     </div>
   </div>
@@ -32,9 +33,9 @@
   <div class="wrap">
     <div class="section-head"><div><span class="eyebrow">{{ t("Start here") }}</span><h2>{{ t("What are you deciding?") }}</h2></div></div>
     <div class="path-grid">
-      <a class="path-card" href="/start/business"><span class="path-n">01</span><h3>{{ t("Check my business tax") }}</h3><p>{{ t("UAE Corporate Tax, VAT, Saudi zakat. The number, then what is still open.") }}</p><span class="go">{{ t("Start →") }}</span></a>
-      <a class="path-card" href="/start/gcc"><span class="path-n">02</span><h3>{{ t("Expand or trade across the GCC") }}</h3><p>{{ t("Compare six countries. Price a UAE–Saudi deal. Find the exposure.") }}</p><span class="go">{{ t("Start →") }}</span></a>
-      <a class="path-card" href="/move"><span class="path-n">03</span><h3>{{ t("Plan my move to the UAE") }}</h3><p>{{ t("Your tax at home against 0% here, and the residence questions to settle.") }}</p><span class="go">{{ t("Start →") }}</span></a>
+      <a class="path-card reveal" href="/start/business"><div class="path-top"><span class="path-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16"/><path d="M14 9h4a1 1 0 0 1 1 1v11"/><path d="M7 8h3M7 12h3M7 16h3M4 21h16"/></svg></span><span class="path-n">01</span></div><h3>{{ t("Check my business tax") }}</h3><p>{{ t("UAE Corporate Tax, VAT, Saudi zakat. The number, then what is still open.") }}</p><span class="go">{{ t("Start →") }}</span></a>
+      <a class="path-card reveal" href="/start/gcc"><div class="path-top"><span class="path-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><span class="path-n">02</span></div><h3>{{ t("Expand or trade across the GCC") }}</h3><p>{{ t("Compare six countries. Price a UAE–Saudi deal. Find the exposure.") }}</p><span class="go">{{ t("Start →") }}</span></a>
+      <a class="path-card reveal" href="/move"><div class="path-top"><span class="path-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M4 14l5 1 4-4 5 1.2a1.6 1.6 0 0 0 .8-3.1L13 7l-5 3-4-1z"/></svg></span><span class="path-n">03</span></div><h3>{{ t("Plan my move to the UAE") }}</h3><p>{{ t("Your tax at home against 0% here, and the residence questions to settle.") }}</p><span class="go">{{ t("Start →") }}</span></a>
     </div>
   </div>
 </section>
@@ -44,7 +45,7 @@
     <div class="section-head"><div><span class="eyebrow">{{ t("Calculators") }}</span><h2>{{ t("Every tool shows its working.") }}</h2></div><a href="/journeys">{{ t("Worked journeys →") }}</a></div>
     <div class="grid">
       {% for m in modules %}
-      <div class="card">
+      <div class="card reveal">
         <div><span class="pill">{{ t(m.jur) }}</span></div>
         <h3><a href="/{{ m.slug }}">{{ t(m.title) }}</a></h3>
         <p class="muted" style="margin:0">{{ t(m.blurb) }}</p>
@@ -60,10 +61,10 @@
   <div class="wrap">
     <div class="section-head"><div><span class="eyebrow">{{ t("How it works") }}</span><h2>{{ t("Deterministic maths. Sources on every line.") }}</h2></div></div>
     <div class="steps">
-      <div class="step"><h3>{{ t("Enter your facts") }}</h3><p class="muted">{{ t("Results update as you type. No sign-up to see a number.") }}</p></div>
-      <div class="step"><h3>{{ t("Dated rules apply") }}</h3><p class="muted">{{ t("Every rate, threshold and relief has an effective date, a source and a review status.") }}</p></div>
-      <div class="step"><h3>{{ t("Read the working paper") }}</h3><p class="muted">{{ t("Each step shows its formula and the rule behind it. Take it as JSON or PDF.") }}</p></div>
-      <div class="step"><h3>{{ t("See what is still open") }}</h3><p class="muted">{{ t("What the calculator could not decide from your inputs, and who can.") }}</p></div>
+      <div class="step reveal"><h3>{{ t("Enter your facts") }}</h3><p class="muted">{{ t("Results update as you type. No sign-up to see a number.") }}</p></div>
+      <div class="step reveal"><h3>{{ t("Dated rules apply") }}</h3><p class="muted">{{ t("Every rate, threshold and relief has an effective date, a source and a review status.") }}</p></div>
+      <div class="step reveal"><h3>{{ t("Read the working paper") }}</h3><p class="muted">{{ t("Each step shows its formula and the rule behind it. Take it as JSON or PDF.") }}</p></div>
+      <div class="step reveal"><h3>{{ t("See what is still open") }}</h3><p class="muted">{{ t("What the calculator could not decide from your inputs, and who can.") }}</p></div>
     </div>
   </div>
 </section>

@@ -348,3 +348,88 @@ html[lang=ar] .trace-table .rid,html[lang=ar] .trace-table .formula,html[lang=ar
 [dir=rtl] .modal-close{right:auto;left:12px}
 [dir=rtl] .lang-switch,[dir=rtl] .theme-toggle{margin-left:0;margin-right:4px}
 [dir=rtl] .next-steps .svc-row,[dir=rtl] .versus .row{direction:rtl}
+
+
+/* ---- Design pass (2026-11-08): hierarchy, icons, chart, motion, mobile ---- */
+.section-head h2,.page-head h1{letter-spacing:-.035em}
+.section-head h2{font-size:clamp(1.6rem,2.4vw,2.15rem);max-width:28ch}
+.section-head .eyebrow{display:block;margin-bottom:8px}
+.page-head{padding:52px 20px 20px}
+.page-head p{font-size:1.1rem;color:var(--ink-2);max-width:60ch}
+
+/* Hero chart replaces the table */
+.hero-card{border-radius:var(--radius);padding:24px 24px 18px}
+.bars{display:grid;gap:10px;margin:4px 0 2px}
+.bar-row{display:grid;grid-template-columns:150px 1fr auto;gap:12px;align-items:center;font-size:.9rem}
+.bar-row .lbl{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{display:block;height:10px;border-radius:999px;background:var(--soft-2);overflow:hidden}
+.bar-fill{display:block;height:100%;border-radius:999px;background:var(--grad-primary);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.bar-row.hl .bar-fill{background:var(--grad-green)}
+.bar-row .val{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);font-weight:600}
+.bar-row .val .pct{color:var(--muted);font-weight:400;font-size:.8rem;margin-left:6px}
+html[lang=ar] .bar-row .val .pct{margin-left:0;margin-right:6px}
+.ready .bar-fill{width:var(--w)}
+@media(max-width:480px){.bar-row{grid-template-columns:110px 1fr auto}}
+
+/* Path cards: icon, hover light */
+.path-card{overflow:hidden;background:var(--surface)}
+.path-card::after{content:"";position:absolute;inset:auto -40% -60% auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(closest-side,var(--accent-soft),transparent);opacity:0;transition:opacity .25s}
+.path-card:hover::after{opacity:1}
+.path-top{display:flex;justify-content:space-between;align-items:center}
+.path-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-line)}
+.path-ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.path-card .go::after{content:"";display:inline-block;width:0;transition:width .2s}
+.path-card:hover .go{text-decoration:underline;text-underline-offset:4px}
+
+/* Cards: calmer border, lift on hover, arrow nudges */
+.card{border-radius:16px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.card>a:last-child{font-weight:600;margin-top:auto}
+.pill{display:inline-block;font-family:var(--font-label);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+
+/* Result tiles: one number leads */
+.tiles{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.tile{border-radius:14px}
+.tile .v{font-size:1.25rem}
+.tile.hero-tile{grid-column:1/-1;padding:18px 20px;border:0}
+.tile.hero-tile .v{font-size:clamp(2rem,4vw,2.6rem);letter-spacing:-.03em;font-weight:600;line-height:1.1}
+.tile.hero-tile .k{font-size:.8rem}
+@media(min-width:1100px){.tile.hero-tile{grid-column:span 2}}
+.results.review-required .tile.hero-tile{border:1px dashed var(--line-strong)}
+
+/* Diagnostic progress */
+.diag-progress{display:flex;align-items:center;gap:12px;margin:4px 0 14px;font-size:.85rem;color:var(--muted)}
+.diag-progress .track{flex:1;height:6px;border-radius:999px;background:var(--soft-2);overflow:hidden}
+.diag-progress .fill{height:100%;width:0;border-radius:999px;background:var(--grad-green);transition:width .3s}
+
+/* Motion: reveal on scroll, honoured only when motion is allowed */
+@media(prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+  .reveal.in{opacity:1;transform:none}
+  .reveal:nth-child(2){transition-delay:.06s}.reveal:nth-child(3){transition-delay:.12s}.reveal:nth-child(4){transition-delay:.18s}
+}
+@media(prefers-reduced-motion:reduce){.bar-fill{transition:none}.card:hover,.path-card:hover,.btn:hover{transform:none}}
+
+/* Mobile: compact nav, sticky calculate, readable working paper */
+@media(max-width:900px){
+  .topbar .btn{white-space:nowrap;padding:8px 12px;font-size:.85rem}
+  .topbar .wrap{gap:8px}
+}
+@media(max-width:960px){
+  .form-actions{position:sticky;bottom:0;background:var(--surface);padding:12px 0;margin:8px -22px -22px;padding-left:22px;padding-right:22px;border-top:1px solid var(--line);border-radius:0 0 var(--radius) var(--radius);z-index:2}
+}
+@media(max-width:640px){
+  .trace-table tr{display:grid;grid-template-columns:1fr auto;column-gap:10px}
+  .trace-table td{border-bottom:0;padding:6px 0}
+  .trace-table tr{border-bottom:1px solid var(--line);padding:4px 0}
+  .trace-table td.rid{grid-column:1/-1;order:3;padding-top:0}
+  .trace-table td.rid:empty{display:none}
+  .trace-table td.amt{width:auto}
+  .page-head{padding-top:32px}
+  .eyebrow{letter-spacing:.1em;font-size:.68rem}
+  .cta-row .btn{flex:1 1 45%;justify-content:center}
+  .hero{padding:52px 0 40px}
+  .stats{gap:18px}
+  .stat b{font-size:1.8rem}
+}
+@media print{.reveal{opacity:1;transform:none}}

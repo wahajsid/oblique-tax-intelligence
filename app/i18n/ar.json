@@ -529,7 +529,8 @@
     "Keep a dated travel log with proof (boarding passes, entry stamps), tenancy or ownership documents, employment contracts and payslips, statements for interest and dividends, and records of asset disposals around the move date.": "احتفظ بسجل سفر مؤرّخ مع الإثباتات (بطاقات الصعود، أختام الدخول)، ووثائق الإيجار أو الملكية، وعقود العمل وقسائم الراتب، وكشوف الفوائد والتوزيعات، وسجلات بيع الأصول حول تاريخ الانتقال.",
     "No open items. Keep supporting records current and confirm obligations independently.": "لا بنود مفتوحة. حافظ على السجلات الداعمة محدّثة وتحقق من الالتزامات بشكل مستقل.",
     "Download": "تنزيل",
-    "Print": "طباعة"
+    "Print": "طباعة",
+    "{} of {} answered": "أجبت عن {} من {}"
   },
   "services": {
     "Review my Free Zone eligibility": "راجع أهليتي للمنطقة الحرة",

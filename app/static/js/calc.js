@@ -356,3 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try { window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => { if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark', false); }); } catch (e) {}
   });
 })();
+
+/* ---- Reveal on scroll and hero bars (no-ops when reduced motion is preferred) ---- */
+(function () {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); document.documentElement.classList.add('ready'); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(e => io.observe(e));
+  requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('ready')));
+})();
