@@ -92,6 +92,7 @@
       const r = await fetch(cfg.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'omit', cache: 'no-store' });
       const json = await r.json();
       if (!r.ok) { err.textContent = typeof json.detail === 'string' ? json.detail : (json.detail || []).map(d => `${d.field || d.loc?.slice(-1)[0] || ''}: ${d.message || d.msg}`).join('; '); return; }
+      window._lastCalc = { calculator: json.calculator, inputs: body, downloadName: cfg.downloadName };
       (cfg.render || render)(json, cfg);
     } catch (e) { err.textContent = 'Could not reach the calculation service. Nothing was saved.'; }
     finally { form.removeAttribute('aria-busy'); }
@@ -115,4 +116,81 @@
     if (cfg.autorun !== false) run(cfg);
   };
   window.fmtMoney = fmt; window.fmtPct = pct; window.escHtml = esc; window.renderResult = render;
+})();
+
+/* ---- Working paper (PDF) + consent-led enquiry ------------------------------ */
+(function () {
+  const esc = window.escHtml;
+  let config = null, pending = null, lastFocus = null;
+  const $ = (id) => document.getElementById(id);
+
+  async function loadConfig() {
+    if (config) return config;
+    try { config = await (await fetch('/api/v1/leads/config', { cache: 'no-store' })).json(); }
+    catch (e) { config = { enabled: false }; }
+    return config;
+  }
+  function download(blob, name) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name + '.pdf'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+  async function fetchPdf(ctx, token) {
+    const r = await fetch('/api/v1/pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit',
+      body: JSON.stringify({ calculator: ctx.calculator, inputs: ctx.inputs, page_url: location.href, token: token || null }) });
+    if (!r.ok) { let d = ''; try { d = (await r.json()).detail; } catch (e) {} throw new Error(typeof d === 'string' ? d : 'The working paper could not be generated.'); }
+    download(await r.blob(), (ctx.downloadName || ('oblique-working-paper-' + ctx.calculator)).replace(/_/g, '-'));
+  }
+  function openModal() {
+    const m = $('lead-modal'); if (!m) return;
+    lastFocus = document.activeElement; m.hidden = false; document.body.style.overflow = 'hidden';
+    $('consent-contact-text').textContent = config.consent_text.contact;
+    $('consent-marketing-text').textContent = config.consent_text.marketing;
+    $('lead-privacy').textContent = `Controller: ${config.controller}. ${config.retention} Your calculation inputs travel with the enquiry so the adviser can see the context. Full details on the privacy page.`;
+    $('lead-error').textContent = ''; $('lead-success').hidden = true; $('lead-form').hidden = false;
+    setTimeout(() => $('lead-name').focus(), 50);
+  }
+  function closeModal() {
+    const m = $('lead-modal'); if (!m || m.hidden) return;
+    m.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus();
+  }
+  window.requestWorkingPaper = async function (ctx) {
+    pending = ctx;
+    const c = await loadConfig();
+    if (!c.enabled) {  // no destination configured: the PDF is simply free
+      try { await fetchPdf(ctx, null); } catch (e) { alert(e.message); }
+      return;
+    }
+    openModal();
+  };
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = $('lead-form'); if (!form) return;
+    $('lead-close').addEventListener('click', closeModal); $('lead-cancel').addEventListener('click', closeModal);
+    $('lead-modal').addEventListener('click', (e) => { if (e.target === $('lead-modal')) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const err = $('lead-error'); err.textContent = '';
+      const btn = $('lead-submit'); const label = btn.textContent; btn.disabled = true; btn.textContent = 'Preparing your working paper…'; form.setAttribute('aria-busy', 'true');
+      const f = new FormData(form);
+      const body = { name: f.get('name'), email: f.get('email'), phone: f.get('phone') || '', company: f.get('company') || '', message: f.get('message') || '',
+        interest: { move_to_uae: 'relocation', tax_exposure_diagnostic: 'diagnostic' }[pending.calculator] || 'working_paper',
+        consent_contact: !!f.get('consent_contact'), consent_marketing: !!f.get('consent_marketing'), consent_version: config.consent_version,
+        context: { calculator: pending.calculator, inputs: pending.inputs, page_url: location.href }, website: f.get('website') || '' };
+      try {
+        const r = await fetch('/api/v1/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', body: JSON.stringify(body) });
+        const j = await r.json();
+        if (!r.ok) { err.textContent = typeof j.detail === 'string' ? j.detail : (j.detail || []).map(d => `${d.field}: ${d.message}`).join('; '); return; }
+        await fetchPdf(pending, j.pdf_token);
+        form.hidden = true; const ok = $('lead-success'); ok.hidden = false; ok.textContent = (j.message || 'Thank you.') + ' Your working paper is downloading.';
+        setTimeout(closeModal, 4000);
+      } catch (ex) { err.textContent = ex.message || 'Something went wrong. Nothing was saved.'; }
+      finally { btn.disabled = false; btn.textContent = label; form.removeAttribute('aria-busy'); }
+    });
+  });
+  // Wire every #btn-pdf to the last calculation on the page (set by initCalc) if present.
+  document.addEventListener('DOMContentLoaded', () => {
+    const b = $('btn-pdf'); if (!b || b.dataset.wired) return;
+    b.dataset.wired = '1';
+    b.addEventListener('click', () => { if (window._lastCalc) window.requestWorkingPaper(window._lastCalc); });
+  });
 })();

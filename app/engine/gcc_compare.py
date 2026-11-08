@@ -140,7 +140,7 @@ def compare(s: GCCScenario) -> dict:
         })
     rows.sort(key=lambda r: r["total_direct_tax"])
     return {
-        "scenario": s.model_dump(mode="json"), "currency": cur, "ruleset_version": data["ruleset_version"], "rows": rows,
+        "calculator": "gcc_compare", "scenario": s.model_dump(mode="json"), "currency": cur, "ruleset_version": data["ruleset_version"], "rows": rows,
         "matrix": {code: data["jurisdictions"][code] for code in s.jurisdictions},
         "caveat": ("Desktop screening comparison only. Statutory liability, cash tax, compliance cost and effective rate are "
                    "shown separately on purpose; scope, exemptions, substance, treaty access and foreign tax credits "

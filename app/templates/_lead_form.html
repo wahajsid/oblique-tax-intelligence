@@ -1,0 +1,28 @@
+{# Consent-led enquiry + PDF working paper dialog. Included once from base.html; opened by calc.js. #}
+<div class="modal-backdrop" id="lead-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lead-title" aria-describedby="lead-desc">
+    <button class="modal-close" type="button" id="lead-close" aria-label="Close">×</button>
+    <span class="eyebrow">Working paper</span>
+    <h2 id="lead-title">Get the PDF working paper</h2>
+    <p id="lead-desc" class="muted small">Your on-screen result stays free. The branded PDF (reconciliation, rules, sources and caveats) is prepared by Oblique Consult and sent to you here; the figures are recomputed on our server from your inputs, so the document is tamper-proof. An Oblique adviser may follow up on the questions it raises.</p>
+    <form id="lead-form" autocomplete="on" novalidate>
+      <div class="two">
+        <div class="field"><label for="lead-name">Name *</label><input id="lead-name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name"></div>
+        <div class="field"><label for="lead-email">Work email *</label><input id="lead-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+        <div class="field"><label for="lead-company">Company</label><input id="lead-company" name="company" type="text" maxlength="120" autocomplete="organization"></div>
+        <div class="field"><label for="lead-phone">Phone</label><input id="lead-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
+      </div>
+      <div class="field"><label for="lead-message">Anything we should know? (optional)</label><textarea id="lead-message" name="message" rows="2" maxlength="1000"></textarea></div>
+      <div class="hp" aria-hidden="true"><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <label class="check consent"><input type="checkbox" name="consent_contact" required> <span id="consent-contact-text"></span> <b>(required)</b></label>
+      <label class="check consent"><input type="checkbox" name="consent_marketing"> <span id="consent-marketing-text"></span></label>
+      <p class="small muted" id="lead-privacy"></p>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="lead-submit">Send me the working paper</button>
+        <button class="btn btn-ghost" type="button" id="lead-cancel">Cancel</button>
+      </div>
+      <p class="error" id="lead-error" role="alert"></p>
+    </form>
+    <p class="lead-success" id="lead-success" role="status" aria-live="polite" hidden></p>
+  </div>
+</div>

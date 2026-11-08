@@ -220,3 +220,18 @@ form[aria-busy=true]{opacity:.7;pointer-events:none}
 .actions-list li::before{counter-increment:a;content:counter(a) ". ";color:var(--accent);font-weight:700}
 .actions-list .urg{float:right;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .actions-list p{margin:6px 0 4px;color:var(--ink-2);font-size:.92rem}
+
+/* Lead / working-paper dialog */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:100;padding:16px}
+.modal{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;max-width:640px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow)}
+.modal h2{margin-top:4px}
+.modal-close{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:1.6rem;cursor:pointer;line-height:1}
+.modal textarea{padding:9px 11px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);font:inherit;font-size:.95rem;background:#0b0d12;color:#f0f0fa;width:100%;resize:vertical}
+.modal input[type=text],.modal input[type=email],.modal input[type=tel]{padding:9px 11px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);font:inherit;font-size:.95rem;background:#0b0d12;color:#f0f0fa;width:100%}
+.hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+.check.consent{align-items:flex-start;font-size:.86rem;color:var(--ink-2);margin:8px 0}
+.check.consent input{margin-top:3px;flex:0 0 16px}
+.lead-success{background:rgba(151,242,100,.1);border:1px solid rgba(151,242,100,.4);color:#c9f7b0;padding:12px 14px;border-radius:10px}
+
+/* The hidden attribute must always win over component display rules */
+[hidden]{display:none!important}

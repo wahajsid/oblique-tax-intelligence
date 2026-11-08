@@ -205,4 +205,4 @@ def test_diagnostic_requires_all_questions():
     with pytest.raises(ValueError):
         diagnostic.run(diagnostic.DiagnosticInput(profile="business", answers={"deadline": "yes"}))
     assert client.post("/api/v1/diagnostic", json={"profile": "business", "answers": {"deadline": "yes"}}).status_code == 422
-    assert client.post("/api/v1/enquiries", json={}).status_code == 503
+    assert client.post("/api/v1/enquiries", json={}).status_code == 410

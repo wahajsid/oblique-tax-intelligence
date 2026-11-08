@@ -47,7 +47,7 @@
       <tr><td>Personal income tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ p.personal_income_tax.note }}</td>{% endfor %}</tr>
       <tr><td>CIT filing deadline</td>{% for c, p in profiles.jurisdictions.items() %}<td>{{ p.cit_filing_deadline }}</td>{% endfor %}</tr>
     </tbody></table></div>
-    <div class="cta-row"><a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
+    <div class="cta-row"><button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button><a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
   </section>
 </div>
 {% endblock %}
@@ -64,7 +64,9 @@
       <td class="num"><span class="status-dot ${x.dmtt_review_status}"></span>${x.dmtt_in_scope? fmtMoney(x.dmtt_top_up):'n/a'}</td><td class="num"><b>${fmtMoney(x.total_direct_tax)}</b></td><td class="num">${fmtPct(x.effective_rate_on_profit)}</td>
       <td>${x.vat_implemented? (x.vat_rate*100).toFixed(0)+'%':'None'}</td><td class="small muted">${x.cit_scope}${x.flags.length? '<br><em>'+x.flags.map(f=>f.title).join('; ')+'</em>':''}</td></tr>`).join('');
     document.getElementById('caveat').textContent = j.caveat;
+    window._gccLast = { calculator: 'gcc_compare', inputs: ser() };
   }
+  document.getElementById('btn-pdf').addEventListener('click', () => window.requestWorkingPaper({ calculator: 'gcc_compare', inputs: ser(), downloadName: 'oblique-gcc-comparison' }));
   let t; form.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(run,300)}); form.addEventListener('submit',e=>{e.preventDefault();run()}); run();
 })();
 </script>

@@ -1,6 +1,6 @@
 # QA report
 
-Date: 8 November 2026. Environment: Python 3.13, FastAPI 0.162, Pydantic 2.13, headless Chromium via Playwright. Development verification, not certification of law, accessibility or production security.
+Updated 8 November 2026 (lead capture, PDF, two live-site corrections). First pass 8 November 2026. Environment: Python 3.13, FastAPI 0.162, Pydantic 2.13, headless Chromium via Playwright. Development verification, not certification of law, accessibility or production security.
 
 ## Automated
 
@@ -45,3 +45,19 @@ Screenshots in `docs/screenshots/prototype-v2/`.
 - FX table is indicative as of 2026-11-06 and not sourced from a central bank feed.
 - No load, penetration, hosting or proxy tests. `'unsafe-inline'` remains in the CSP for per-page scripts and Swagger.
 - Download and copy-link buttons were code-reviewed and exercised in the first build; the downloaded JSON bytes were not inspected in this pass.
+
+
+## Update: live-site corrections and lead capture / PDF (8 November 2026, later)
+
+Corrections reported by the owner from the live site, both fixed and pushed:
+
+| Issue | Before | After | Commit |
+|---|---|---|---|
+| GCC comparison treated the AED 375,000 band as USD 375,000 | USD 1m profit → USD 56,250 | band = 375,000 / 3.6725 = USD 102,110.28 → USD 80,810.07; currency selector (USD, AED, SAR, EUR, GBP); rate shown in the trace | `eff299c` |
+| Small Business Relief refused for periods ending after 31 Dec 2026 | 2027 period → standard 9% | cut-off 31 Dec 2029 per Ministerial Decision No. 131 of 2026 (MoF); tests for 2027/2028/2029 allowed, 2030 refused | `5ebd3a3` |
+
+New automated coverage: `tests/test_leads_and_pdf.py` (PDF renders for all eight calculators; server recomputes and rejects client-supplied outputs; PDF free when no sink is configured and 403 without a token when one is; lead 503 without sink; SQLite sink end-to-end with consent text/version/timestamp and hashed IP; contact consent required; invalid email and unknown fields rejected; honeypot silently dropped; rate limit 429; delivery failure 502; token expiry; old endpoint 410). Suite total: **84 passed**.
+
+Browser run (headless Chromium, SQLite sink enabled): PDF button opens the dialog with consent texts loaded and focus on the name field; submitting without the required consent keeps the dialog open; with consent, the lead is stored and a PDF download starts (`oblique-working-paper-uae-corporate-tax.pdf`, `%PDF-` header); success message shown; Escape closes and returns focus; a direct PDF request without a token returns 403; the Move page button opens the same dialog. Two defects found and fixed during the run: the hidden dialog overlay intercepted clicks (CSS `display` overriding `hidden`), and the success message was inside the hidden form.
+
+PDF content checked by eye for the UAE Corporate Tax working paper: logo header, generated-at and ruleset line, headline tiles, working-paper table with formulas and rule ids, inputs, rules with status and source, assumptions, desktop-calculator disclaimer and Oblique contact details, page footer. Not yet checked by eye: the other seven layouts beyond byte-level rendering.

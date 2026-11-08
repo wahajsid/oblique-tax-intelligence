@@ -20,7 +20,9 @@ unresolved questions that connect to Oblique's advisory services.
 | Move to the UAE comparison (GB, HK, SG, IN, US, AU, DE, ZA origin engines; PK disabled pending verification) | `/move`, `/move/{origin}-to-uae` | `POST /api/v1/move-to-uae` |
 | Personal income tax calculators per origin country | `/personal-tax`, `/personal-tax/{code}` | `POST /api/v1/personal-tax` |
 | Tax exposure diagnostic (10 questions, deadline precedence, no score) | `/diagnose` | `POST /api/v1/diagnostic` |
-| Privacy page | `/privacy` | `POST /api/v1/enquiries` returns 503 (no collection) |
+| PDF working papers (server recomputes the figures; branded; every calculator) | button on every result | `POST /api/v1/pdf` |
+| Consent-led lead capture (gates only the PDF; contact + separate marketing consent; honeypot; rate limit) | dialog on every result | `POST /api/v1/leads`, `GET /api/v1/leads/config` |
+| Privacy page | `/privacy` | — |
 | Jurisdiction guides and 15 head-to-head comparison pages | `/guides`, `/guides/{code}`, `/compare/{A}-vs-{B}` | `GET /api/v1/rules` |
 | Methodology, API docs, disclaimer, sitemap | `/methodology`, `/api`, `/docs` | `GET /api/v1/health` |
 
@@ -34,6 +36,22 @@ python -m app                     # production-style start; reads PORT from the 
 python -m pytest -q          # 64 tests; every tax figure checked by hand first
 SITE_INDEXABLE=true python -m app   # only after expert sign-off: removes noindex
 ```
+
+## Lead capture configuration
+
+Nothing is collected until at least one destination is set. Set the variables on the host (Railway → Variables):
+
+| Variable | Effect |
+| --- | --- |
+| `RESEND_API_KEY`, `LEAD_EMAIL_TO` (comma-separated), optional `LEAD_EMAIL_FROM` | Email each enquiry to Oblique with the PDF attached (resend.com; verify the sending domain first) |
+| `LEAD_WEBHOOK_URL`, optional `LEAD_WEBHOOK_SECRET`, `LEAD_WEBHOOK_INCLUDE_PDF=true` | JSON POST per enquiry (Zapier, Make, n8n, Slack); HMAC-SHA256 signature in `X-Signature-256` |
+| `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORM_GUID`, optional `HUBSPOT_SUBSCRIPTION_TYPE_ID` | Submit to a HubSpot form with legal-consent fields |
+| `LEADS_SQLITE_PATH` | Append to a SQLite file (mount a persistent volume, e.g. `/data/leads.sqlite`) |
+| `APP_SECRET` | Stable key for PDF tokens and IP hashing (set one; otherwise a random key per restart) |
+| `LEAD_RATE_LIMIT_PER_HOUR` | Default 5 enquiries per IP per hour |
+
+What is recorded and why is on `/privacy`; consent texts and version live in `app/leads.py` (bump `CONSENT_VERSION` when the wording changes).
+When no destination is configured the dialog is hidden and the PDF downloads directly.
 
 ## Deploy
 
