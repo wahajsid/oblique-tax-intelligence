@@ -84,12 +84,13 @@ def worked_example(slug: str) -> dict[str, Any]:
         w = ksa_wht.calculate(ksa_wht.KSAWHTInput(payments=[{"category": "technical_consulting", "amount": 1_000_000}], scope_confirmed=True, special_regime="no"))
         w_treaty = ksa_wht.calculate(ksa_wht.KSAWHTInput(payments=[{"category": "technical_consulting", "amount": 1_000_000, "treaty_rate": 0}], scope_confirmed=True, special_regime="no"))
         v = vat.calculate(vat.VATInput(jurisdiction="SA", mode="add_vat", amount=1_000_000, scope_confirmed=True, special_regime="no"))
+        ct_gross = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=400_000 * Decimal("0.97933"), revenue=1_000_000 * Decimal("0.97933"), scope_confirmed=True, special_regime="no"))
         ct = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=400_000 * Decimal("0.97933"), revenue=1_000_000 * Decimal("0.97933"), foreign_tax_credit=50_000 * Decimal("0.97933"), scope_confirmed=True, special_regime="no"))
         return {"intro": "A UAE consultancy bills a Saudi company SAR 1,000,000 for advisory work performed from Dubai, with a 40% margin.",
                 "rows": [("Saudi withholding at the statutory 5% if no treaty relief is in place", f"SAR {w.outputs['total_wht']:,.0f} deducted by the customer"),
                          ("With treaty relief applied at source (residency certificate and forms in place)", f"SAR {w_treaty.outputs['total_wht']:,.0f}"),
                          ("KSA VAT, self-accounted by the customer under the reverse charge", f"SAR {v.outputs['vat']:,.0f} (not your cash)"),
-                         ("UAE Corporate Tax on the AED-equivalent profit of about AED 391,700", f"AED {ct.outputs['corporate_tax_payable']:,.0f} after the foreign tax credit for Saudi withholding suffered"),
+                         ("UAE Corporate Tax on the AED-equivalent profit of about AED 391,700 (first year, so most sits in the AED 375,000 band)", f"AED {ct_gross.outputs['corporate_tax_payable']:,.0f} before credit; AED {ct.outputs['corporate_tax_payable']:,.0f} after the foreign tax credit for Saudi withholding suffered, which is capped at the UAE tax on that income"),
                          ("Effect on margin if withholding is absorbed and not recovered", "5 points of the 40% margin")],
                 "links": [("Open this withholding example", "/ksa/withholding-tax#payments=%5B%7B%22category%22%3A%22technical_consulting%22%2C%22amount%22%3A1000000%2C%22treaty_rate%22%3Anull%2C%22grossed_up%22%3Afalse%7D%5D")]}
     if slug == "uk-founder-moving-to-dubai":
