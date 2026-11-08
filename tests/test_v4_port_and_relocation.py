@@ -242,3 +242,45 @@ def test_footer_shows_app_and_rule_versions_separately():
     html = client.get("/").text
     assert "App v" in html and "Tax rules: AE 2026.2" in html
     assert "P0</span>" not in html
+
+
+# --------------------------------------------- journeys, services, confidence ----
+def test_services_recommended_from_flags_and_calculator():
+    from app import services
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=2_000_000, revenue=20_000_000, is_free_zone_person=True, elect_qfzp=True,
+                                                     qualifying_income=1_500_000, non_qualifying_revenue=1_200_000, scope_confirmed=True, special_regime="no")).as_dict()
+    assert [s["slug"] for s in r["next_steps"]][:2] == ["free_zone_review", "uae_ct_review"]
+    for s in services.SERVICES.values():
+        assert s["includes"] and s["receive"] and s["excludes"] and s["audience"] in ("business", "personal")
+    assert services.recommend("move_to_uae", [], extra=["uk_company_review"])[0]["slug"] == "uk_company_review"
+
+
+def test_confidence_block_separates_rules_calculation_and_fit():
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=1_000_000, revenue=10_000_000)).as_dict()
+    c = r["confidence"]
+    assert c["rules"]["status"] == "verified" and "reviewer" in c["rules"]["reviewed_by"].lower()
+    assert c["calculation"]["checks"] > 5 and c["calculation"]["suite_total"] > c["calculation"]["checks"]
+    assert c["fit"]["confirmed"] is False and c["fit"]["reasons"]
+
+
+def test_diagnostic_gcc_profile_and_next_steps():
+    qs = diagnostic.questions("gcc")
+    assert {"pe_risk", "wht_payments", "vat_cross_border", "deadline"} <= set(qs) and "einvoicing" not in qs
+    d = diagnostic.run(diagnostic.DiagnosticInput(profile="gcc", answers={k: ("yes" if k == "pe_risk" else "no") for k in qs}))
+    assert d["next_steps"][0]["slug"] == "uae_ksa_transaction"
+
+
+def test_journeys_and_paths_render_with_live_examples():
+    from app import journeys
+    for slug in journeys.JOURNEYS:
+        j = journeys.get(slug)
+        assert j["example"]["rows"] and j["checklist"] and j["service"]
+        assert client.get(f"/journeys/{slug}").status_code == 200
+    fz = journeys.get("free-zone-selling-to-mainland")["example"]["rows"]
+    assert "AED 13,500" in fz[0][1] and "AED 236,250" in fz[1][1]  # (3m-375k) x 9% once status is lost
+    for path in ["/start/business", "/start/gcc", "/start/move", "/journeys", "/services", "/diagnose?profile=gcc"]:
+        assert client.get(path).status_code == 200, path
+    assert client.get("/start/nope").status_code == 404
+    html = client.get("/").text
+    assert "Check my business tax" in html and "Expand or trade across the GCC" in html and "Plan my move to the UAE" in html
+    assert "/journeys/uae-saudi-transactions" in client.get("/sitemap.xml").text

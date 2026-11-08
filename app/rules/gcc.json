@@ -4,70 +4,305 @@
   "description": "Jurisdiction profiles for the GCC comparison engine. Each figure carries a review status. 'verified' = confirmed against a primary or Big-4 source during review; 'verified_secondary' = consistent across advisory sources; 'pending_verification' = reported but not confirmed; 'draft_law' = not yet enacted.",
   "jurisdictions": {
     "AE": {
-      "name": "United Arab Emirates", "currency": "AED", "flag": "🇦🇪",
-      "corporate_tax": {"headline_rate": 0.09, "zero_band": 375000, "applies_to": "All taxable persons; 0% on qualifying income of Qualifying Free Zone Persons", "review_status": "verified", "source": "Federal Decree-Law No. 47 of 2022"},
-      "zakat": {"applies": false, "note": "Not levied", "review_status": "verified"},
-      "vat": {"rate": 0.05, "implemented": true, "since": "2018-01-01", "review_status": "verified", "source": "Federal Decree-Law No. 8 of 2017"},
-      "withholding_tax": {"rate": 0.0, "note": "0% WHT on domestic and cross-border payments", "review_status": "verified", "source": "Cabinet Decision No. 116 of 2022"},
-      "dmtt": {"applies": true, "rate": 0.15, "since": "2025-01-01", "threshold_eur": 750000000, "review_status": "verified", "source": "Cabinet Decision No. 142 of 2024"},
-      "transfer_pricing": {"regime": "Full OECD-aligned regime: arm's length, master/local file, disclosure form", "review_status": "verified", "source": "Federal Decree-Law No. 47 of 2022, Ch. 10"},
-      "personal_income_tax": {"rate": 0.0, "note": "None", "review_status": "verified"},
+      "name": "United Arab Emirates",
+      "currency": "AED",
+      "flag": "🇦🇪",
+      "corporate_tax": {
+        "headline_rate": 0.09,
+        "zero_band": 375000,
+        "applies_to": "All taxable persons; 0% on qualifying income of Qualifying Free Zone Persons",
+        "review_status": "verified",
+        "source": "Federal Decree-Law No. 47 of 2022"
+      },
+      "zakat": {
+        "applies": false,
+        "note": "Not levied",
+        "review_status": "verified"
+      },
+      "vat": {
+        "rate": 0.05,
+        "implemented": true,
+        "since": "2018-01-01",
+        "review_status": "verified",
+        "source": "Federal Decree-Law No. 8 of 2017"
+      },
+      "withholding_tax": {
+        "rate": 0.0,
+        "note": "0% WHT on domestic and cross-border payments",
+        "review_status": "verified",
+        "source": "Cabinet Decision No. 116 of 2022"
+      },
+      "dmtt": {
+        "applies": true,
+        "rate": 0.15,
+        "since": "2025-01-01",
+        "threshold_eur": 750000000,
+        "review_status": "verified",
+        "source": "Cabinet Decision No. 142 of 2024"
+      },
+      "transfer_pricing": {
+        "regime": "Full OECD-aligned regime: arm's length, master/local file, disclosure form",
+        "review_status": "verified",
+        "source": "Federal Decree-Law No. 47 of 2022, Ch. 10"
+      },
+      "personal_income_tax": {
+        "rate": 0.0,
+        "note": "None",
+        "review_status": "verified"
+      },
       "cit_filing_deadline": "9 months after period end"
     },
     "SA": {
-      "name": "Saudi Arabia", "currency": "SAR", "flag": "🇸🇦",
-      "corporate_tax": {"headline_rate": 0.20, "zero_band": 0, "applies_to": "Non-Saudi/non-GCC share of profits; Saudi/GCC share subject to zakat", "review_status": "verified", "source": "Income Tax Law (RD M/1 of 1425H)"},
-      "zakat": {"applies": true, "rate": 0.025, "note": "2.5% of zakat base (Hijri year); 2.577683% for Gregorian year; applies to Saudi/GCC-owned share", "review_status": "verified", "source": "Ministerial Resolution No. 1007 of 2024"},
-      "vat": {"rate": 0.15, "implemented": true, "since": "2018-01-01", "review_status": "verified", "source": "VAT Law; rate increase 1 July 2020"},
-      "withholding_tax": {"rate_min": 0.05, "rate_max": 0.20, "note": "5% to 20% by payment type (dividends 5%, royalties 15%, management fees 20%)", "review_status": "verified_secondary", "source": "Income Tax Law, Art. 68"},
-      "dmtt": {"applies": false, "note": "No DMTT enacted as of last review", "review_status": "pending_verification", "source": "PwC Middle East Economy Watch Feb 2025"},
-      "transfer_pricing": {"regime": "Full regime incl. zakat payers (from 2024); master/local file, CbCR", "review_status": "verified", "source": "ZATCA Transfer Pricing Bylaws"},
-      "personal_income_tax": {"rate": 0.0, "note": "None", "review_status": "verified"},
+      "name": "Saudi Arabia",
+      "currency": "SAR",
+      "flag": "🇸🇦",
+      "corporate_tax": {
+        "headline_rate": 0.2,
+        "zero_band": 0,
+        "applies_to": "Non-Saudi/non-GCC share of profits; Saudi/GCC share subject to zakat",
+        "review_status": "verified",
+        "source": "Income Tax Law (RD M/1 of 1425H)"
+      },
+      "zakat": {
+        "applies": true,
+        "rate": 0.025,
+        "note": "2.5% of zakat base (Hijri year); 2.577683% for Gregorian year; applies to Saudi/GCC-owned share",
+        "review_status": "verified",
+        "source": "Ministerial Resolution No. 1007 of 2024"
+      },
+      "vat": {
+        "rate": 0.15,
+        "implemented": true,
+        "since": "2018-01-01",
+        "review_status": "verified",
+        "source": "VAT Law; rate increase 1 July 2020"
+      },
+      "withholding_tax": {
+        "rate_min": 0.05,
+        "rate_max": 0.2,
+        "note": "5% to 20% by payment type (dividends 5%, royalties 15%, management fees 20%)",
+        "review_status": "verified_secondary",
+        "source": "Income Tax Law, Art. 68"
+      },
+      "dmtt": {
+        "applies": false,
+        "note": "No DMTT enacted as of last review",
+        "review_status": "pending_verification",
+        "source": "PwC Middle East Economy Watch Feb 2025"
+      },
+      "transfer_pricing": {
+        "regime": "Full regime incl. zakat payers (from 2024); master/local file, CbCR",
+        "review_status": "verified",
+        "source": "ZATCA Transfer Pricing Bylaws"
+      },
+      "personal_income_tax": {
+        "rate": 0.0,
+        "note": "None",
+        "review_status": "verified"
+      },
       "cit_filing_deadline": "120 days after year end"
     },
     "BH": {
-      "name": "Bahrain", "currency": "BHD", "flag": "🇧🇭",
-      "corporate_tax": {"headline_rate": 0.0, "zero_band": 0, "applies_to": "No general CIT; 46% on oil and gas. Draft law for 10% CIT on resident companies expected from FY 2027 (not enacted as of Oct 2026).", "review_status": "draft_law", "source": "NBR announcement 30 Dec 2025; KPMG Bahrain Tax News Oct 2026"},
-      "zakat": {"applies": false, "note": "Not levied", "review_status": "verified"},
-      "vat": {"rate": 0.10, "implemented": true, "since": "2019-01-01", "review_status": "verified", "source": "VAT rate increased 5% to 10% on 1 Jan 2022"},
-      "withholding_tax": {"rate": 0.0, "note": "None currently; draft CIT law contemplates WHT on Bahrain-source income of non-residents (dividends expected 0%)", "review_status": "draft_law", "source": "KPMG draft CIT law analysis 2026"},
-      "dmtt": {"applies": true, "rate": 0.15, "since": "2025-01-01", "threshold_eur": 750000000, "review_status": "verified", "source": "Decree-Law No. 11 of 2024"},
-      "transfer_pricing": {"regime": "Limited; TP documentation expected with DMTT/CIT", "review_status": "pending_verification", "source": "KPMG"},
-      "personal_income_tax": {"rate": 0.0, "note": "None", "review_status": "verified"},
+      "name": "Bahrain",
+      "currency": "BHD",
+      "flag": "🇧🇭",
+      "corporate_tax": {
+        "headline_rate": 0.0,
+        "zero_band": 0,
+        "applies_to": "No general CIT; 46% on oil and gas. Draft law for 10% CIT on resident companies expected from FY 2027 (not enacted as of Oct 2026).",
+        "review_status": "draft_law",
+        "source": "NBR announcement 30 Dec 2025; KPMG Bahrain Tax News Oct 2026"
+      },
+      "zakat": {
+        "applies": false,
+        "note": "Not levied",
+        "review_status": "verified"
+      },
+      "vat": {
+        "rate": 0.1,
+        "implemented": true,
+        "since": "2019-01-01",
+        "review_status": "verified",
+        "source": "VAT rate increased 5% to 10% on 1 Jan 2022"
+      },
+      "withholding_tax": {
+        "rate": 0.0,
+        "note": "None currently; draft CIT law contemplates WHT on Bahrain-source income of non-residents (dividends expected 0%)",
+        "review_status": "draft_law",
+        "source": "KPMG draft CIT law analysis 2026"
+      },
+      "dmtt": {
+        "applies": true,
+        "rate": 0.15,
+        "since": "2025-01-01",
+        "threshold_eur": 750000000,
+        "review_status": "verified",
+        "source": "Decree-Law No. 11 of 2024"
+      },
+      "transfer_pricing": {
+        "regime": "Limited; TP documentation expected with DMTT/CIT",
+        "review_status": "pending_verification",
+        "source": "KPMG"
+      },
+      "personal_income_tax": {
+        "rate": 0.0,
+        "note": "None",
+        "review_status": "verified"
+      },
       "cit_filing_deadline": "n/a (no general CIT)"
     },
     "OM": {
-      "name": "Oman", "currency": "OMR", "flag": "🇴🇲",
-      "corporate_tax": {"headline_rate": 0.15, "zero_band": 0, "applies_to": "All companies; 3% for qualifying small enterprises; 55% petroleum", "review_status": "verified", "source": "Income Tax Law (RD 28/2009) as amended; Deloitte Oman Highlights 2026"},
-      "zakat": {"applies": false, "note": "Not levied", "review_status": "verified"},
-      "vat": {"rate": 0.05, "implemented": true, "since": "2021-04-16", "review_status": "verified", "source": "RD 121/2020"},
-      "withholding_tax": {"rate": 0.10, "note": "10% on royalties, management fees, R&D, software, services; WHT on dividends and interest suspended", "review_status": "verified_secondary", "source": "Deloitte Oman Highlights 2026"},
-      "dmtt": {"applies": true, "rate": 0.15, "since": "2025-01-01", "threshold_eur": 750000000, "review_status": "verified_secondary", "source": "Royal Decree 70/2024"},
-      "transfer_pricing": {"regime": "Arm's length principle; CbCR for large groups", "review_status": "verified_secondary", "source": "Deloitte"},
-      "personal_income_tax": {"rate": 0.05, "note": "5% on annual income above OMR 42,000 reported effective 2028 (RD 56/2025). Earlier reports of postponement; confirm status.", "review_status": "pending_verification", "source": "The National, July 2025; PwC Feb 2025"},
+      "name": "Oman",
+      "currency": "OMR",
+      "flag": "🇴🇲",
+      "corporate_tax": {
+        "headline_rate": 0.15,
+        "zero_band": 0,
+        "applies_to": "All companies; 3% for qualifying small enterprises; 55% petroleum",
+        "review_status": "verified",
+        "source": "Income Tax Law (RD 28/2009) as amended; Deloitte Oman Highlights 2026"
+      },
+      "zakat": {
+        "applies": false,
+        "note": "Not levied",
+        "review_status": "verified"
+      },
+      "vat": {
+        "rate": 0.05,
+        "implemented": true,
+        "since": "2021-04-16",
+        "review_status": "verified",
+        "source": "RD 121/2020"
+      },
+      "withholding_tax": {
+        "rate": 0.1,
+        "note": "10% on royalties, management fees, R&D, software, services; WHT on dividends and interest suspended",
+        "review_status": "verified_secondary",
+        "source": "Deloitte Oman Highlights 2026"
+      },
+      "dmtt": {
+        "applies": true,
+        "rate": 0.15,
+        "since": "2025-01-01",
+        "threshold_eur": 750000000,
+        "review_status": "verified_secondary",
+        "source": "Royal Decree 70/2024"
+      },
+      "transfer_pricing": {
+        "regime": "Arm's length principle; CbCR for large groups",
+        "review_status": "verified_secondary",
+        "source": "Deloitte"
+      },
+      "personal_income_tax": {
+        "rate": 0.05,
+        "note": "5% on annual income above OMR 42,000 reported effective 2028 (RD 56/2025). Earlier reports of postponement; confirm status.",
+        "review_status": "pending_verification",
+        "source": "The National, July 2025; PwC Feb 2025"
+      },
       "cit_filing_deadline": "4 months after year end"
     },
     "QA": {
-      "name": "Qatar", "currency": "QAR", "flag": "🇶🇦",
-      "corporate_tax": {"headline_rate": 0.10, "zero_band": 0, "applies_to": "Share of profits attributable to non-Qatari/non-GCC owners; 35% petroleum", "review_status": "verified", "source": "Law No. 24 of 2018; PwC Tax Summaries"},
-      "zakat": {"applies": false, "note": "Not levied", "review_status": "verified"},
-      "vat": {"rate": 0.0, "implemented": false, "since": null, "note": "GCC VAT framework signatory; not implemented", "review_status": "verified", "source": "PwC Feb 2025"},
-      "withholding_tax": {"rate": 0.05, "note": "5% on services, royalties, interest, commissions paid to non-residents without a PE", "review_status": "verified", "source": "Law No. 24 of 2018, Art. 9"},
-      "dmtt": {"applies": true, "rate": 0.15, "since": "2025-01-01", "threshold_eur": 750000000, "review_status": "verified", "source": "Law No. 22 of 2024; ER amendments 12 Feb 2026"},
-      "transfer_pricing": {"regime": "TP declaration, master/local file thresholds", "review_status": "verified_secondary", "source": "GTA"},
-      "personal_income_tax": {"rate": 0.0, "note": "None", "review_status": "verified"},
+      "name": "Qatar",
+      "currency": "QAR",
+      "flag": "🇶🇦",
+      "corporate_tax": {
+        "headline_rate": 0.1,
+        "zero_band": 0,
+        "applies_to": "Share of profits attributable to non-Qatari/non-GCC owners; 35% petroleum",
+        "review_status": "verified",
+        "source": "Law No. 24 of 2018; PwC Tax Summaries"
+      },
+      "zakat": {
+        "applies": false,
+        "note": "Not levied",
+        "review_status": "verified"
+      },
+      "vat": {
+        "rate": 0.0,
+        "implemented": false,
+        "since": null,
+        "note": "GCC VAT framework signatory; not implemented",
+        "review_status": "verified",
+        "source": "PwC Feb 2025"
+      },
+      "withholding_tax": {
+        "rate": 0.05,
+        "note": "5% on services, royalties, interest, commissions paid to non-residents without a PE",
+        "review_status": "verified",
+        "source": "Law No. 24 of 2018, Art. 9"
+      },
+      "dmtt": {
+        "applies": true,
+        "rate": 0.15,
+        "since": "2025-01-01",
+        "threshold_eur": 750000000,
+        "review_status": "verified",
+        "source": "Law No. 22 of 2024; ER amendments 12 Feb 2026"
+      },
+      "transfer_pricing": {
+        "regime": "TP declaration, master/local file thresholds",
+        "review_status": "verified_secondary",
+        "source": "GTA"
+      },
+      "personal_income_tax": {
+        "rate": 0.0,
+        "note": "None",
+        "review_status": "verified"
+      },
       "cit_filing_deadline": "4 months after year end"
     },
     "KW": {
-      "name": "Kuwait", "currency": "KWD", "flag": "🇰🇼",
-      "corporate_tax": {"headline_rate": 0.15, "zero_band": 0, "applies_to": "Foreign corporate bodies carrying on business in Kuwait; Kuwaiti/GCC-owned companies exempt (subject to NLST/Zakat/KFAS levies)", "review_status": "verified", "source": "Decree No. 3 of 1955 as amended by Law No. 2 of 2008"},
-      "zakat": {"applies": true, "rate": 0.01, "note": "1% of net profit for Kuwaiti shareholding companies (Zakat Law No. 46 of 2006); plus 2.5% NLST for listed companies", "review_status": "verified_secondary", "source": "Law No. 46 of 2006"},
-      "vat": {"rate": 0.0, "implemented": false, "since": null, "note": "GCC VAT framework signatory; not implemented", "review_status": "verified", "source": "PwC Feb 2025"},
-      "withholding_tax": {"rate": 0.05, "note": "No formal WHT; 5% tax retention on payments to contractors until tax clearance", "review_status": "verified_secondary", "source": "Deloitte"},
-      "dmtt": {"applies": true, "rate": 0.15, "since": "2025-01-01", "threshold_eur": 750000000, "review_status": "verified_secondary", "source": "Decree-Law issued 31 Dec 2024 (reported as Law No. 157 of 2024; number unconfirmed); ER July 2025"},
-      "transfer_pricing": {"regime": "Limited; arm's length under DMTT rules", "review_status": "pending_verification", "source": "A&M"},
-      "personal_income_tax": {"rate": 0.0, "note": "None", "review_status": "verified"},
+      "name": "Kuwait",
+      "currency": "KWD",
+      "flag": "🇰🇼",
+      "corporate_tax": {
+        "headline_rate": 0.15,
+        "zero_band": 0,
+        "applies_to": "Foreign corporate bodies carrying on business in Kuwait; Kuwaiti/GCC-owned companies exempt (subject to NLST/Zakat/KFAS levies)",
+        "review_status": "verified",
+        "source": "Decree No. 3 of 1955 as amended by Law No. 2 of 2008"
+      },
+      "zakat": {
+        "applies": true,
+        "rate": 0.01,
+        "note": "1% of net profit for Kuwaiti shareholding companies (Zakat Law No. 46 of 2006); plus 2.5% NLST for listed companies",
+        "review_status": "verified_secondary",
+        "source": "Law No. 46 of 2006"
+      },
+      "vat": {
+        "rate": 0.0,
+        "implemented": false,
+        "since": null,
+        "note": "GCC VAT framework signatory; not implemented",
+        "review_status": "verified",
+        "source": "PwC Feb 2025"
+      },
+      "withholding_tax": {
+        "rate": 0.05,
+        "note": "No formal WHT; 5% tax retention on payments to contractors until tax clearance",
+        "review_status": "verified_secondary",
+        "source": "Deloitte"
+      },
+      "dmtt": {
+        "applies": true,
+        "rate": 0.15,
+        "since": "2025-01-01",
+        "threshold_eur": 750000000,
+        "review_status": "verified_secondary",
+        "source": "Decree-Law issued 31 Dec 2024 (reported as Law No. 157 of 2024; number unconfirmed); ER July 2025"
+      },
+      "transfer_pricing": {
+        "regime": "Limited; arm's length under DMTT rules",
+        "review_status": "pending_verification",
+        "source": "A&M"
+      },
+      "personal_income_tax": {
+        "rate": 0.0,
+        "note": "None",
+        "review_status": "verified"
+      },
       "cit_filing_deadline": "3.5 months after year end"
     }
-  }
+  },
+  "reviewed_by": "Oblique Consult tax team (named technical reviewer pending)"
 }

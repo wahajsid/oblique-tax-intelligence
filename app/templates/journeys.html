@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Cross-border journeys{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Journeys</span><h1>Three decisions, worked through.</h1><p>A guide, a live example from the calculators, a checklist, and one focused review.</p></div>
+<section class="wrap section" style="padding-top:8px"><div class="grid">{% for j in items %}<div class="card"><span class="pill">{{ j.eyebrow }}</span><h3><a href="/journeys/{{ j.slug }}">{{ j.title }}</a></h3><p class="muted" style="margin:0">{{ j.lead }}</p><a href="/journeys/{{ j.slug }}">Read →</a></div>{% endfor %}</div></section>
+{% endblock %}

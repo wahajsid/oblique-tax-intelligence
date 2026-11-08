@@ -23,6 +23,7 @@ from fastapi.templating import Jinja2Templates
 
 from app import __version__
 from app.api.routes import router as api_router
+from app import journeys, services
 from app.engine import diagnostic, gcc_compare, ksa_wht, personal_tax
 from app.engine.core import load_rules
 
@@ -80,6 +81,7 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
         "game_url": "https://play.obliqueconsult.com", "game_utm": "?utm_source=tax-tools",
+        "booking_url": "https://calendly.com/alina-obliqueconsult/30min",
         "version": __version__, "indexable": INDEXABLE,
         "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
                            "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}
@@ -176,8 +178,50 @@ def page_personal(request: Request, code: str):
 
 
 @app.get("/diagnose", response_class=HTMLResponse)
-def page_diagnose(request: Request):
-    return page(request, "diagnose.html", questions=diagnostic.question_list())
+def page_diagnose(request: Request, profile: str = "business"):
+    profile = profile if profile in ("business", "gcc", "personal") else "business"
+    return page(request, "diagnose.html", questions=diagnostic.question_list(), profile=profile)
+
+
+PATHS = {
+    "business": {"title": "Check my business tax", "lead": "UAE Corporate Tax, VAT, Saudi zakat. Start with the number, then see what is still open.",
+                 "tools": [("UAE Corporate Tax", "/uae/corporate-tax", "From accounting profit to tax due, with reliefs and Free Zone status."), ("UAE VAT", "/vat?j=AE", "Add it, strip it, or run the return."),
+                           ("KSA Zakat & Income Tax", "/ksa/zakat-income-tax", "The base, the split, the bill."), ("KSA VAT", "/vat?j=SA", "15%, returns and registration.")],
+                 "diagnostic": "business", "journeys": ["free-zone-selling-to-mainland"], "services": ["uae_ct_review", "free_zone_review", "sbr_check", "vat_registration", "zakat_computation", "einvoicing_readiness"]},
+    "gcc": {"title": "Expand or trade across the GCC", "lead": "One operation, several tax systems. Compare them, price a cross-border deal, find the exposure.",
+            "tools": [("GCC comparison", "/gcc/compare", "Six countries side by side, scope and Pillar Two kept apart."), ("KSA Withholding Tax", "/ksa/withholding-tax", "What a Saudi customer will deduct, and when a treaty stops it."),
+                      ("KSA VAT", "/vat?j=SA", "Reverse charge and registration."), ("UAE Corporate Tax", "/uae/corporate-tax", "Including the foreign tax credit.")],
+            "diagnostic": "gcc", "journeys": ["uae-saudi-transactions"], "services": ["uae_ksa_transaction", "wht_treaty", "tp_documentation", "dmtt_assessment"]},
+}
+
+
+@app.get("/start/{path}", response_class=HTMLResponse)
+def start_path(request: Request, path: str):
+    if path == "move":
+        return page_move(request)
+    if path not in PATHS:
+        return page(request, "404.html", status_code=404)
+    p = PATHS[path]
+    return page(request, "path.html", path=path, p=p, journeys=[journeys.get(s) for s in p["journeys"]], services=[services.get(s) for s in p["services"]])
+
+
+@app.get("/journeys", response_class=HTMLResponse)
+def journeys_index(request: Request):
+    return page(request, "journeys.html", items=[journeys.get(s) for s in journeys.JOURNEYS])
+
+
+@app.get("/journeys/{slug}", response_class=HTMLResponse)
+def journey_page(request: Request, slug: str):
+    if slug not in journeys.JOURNEYS:
+        return page(request, "404.html", status_code=404)
+    j = journeys.get(slug)
+    return page(request, "journey.html", j=j, service=services.get(j["service"]))
+
+
+@app.get("/services", response_class=HTMLResponse)
+def services_index(request: Request):
+    return page(request, "services.html", business=[services.get(s) for s, v in services.SERVICES.items() if v["audience"] == "business"],
+                personal=[services.get(s) for s, v in services.SERVICES.items() if v["audience"] == "personal"])
 
 
 @app.get("/guides", response_class=HTMLResponse)
@@ -238,7 +282,8 @@ def sitemap(request: Request):
     codes = list(gcc_compare.profiles()["jurisdictions"])
     origins = personal_tax.enabled_countries()
     urls = ["/", "/uae/corporate-tax", "/vat", "/ksa/zakat-income-tax", "/ksa/withholding-tax", "/gcc/compare", "/move", "/diagnose",
-            "/personal-tax", "/guides", "/methodology", "/api", "/privacy", "/disclaimer"]
+            "/personal-tax", "/guides", "/methodology", "/api", "/privacy", "/disclaimer", "/start/business", "/start/gcc", "/journeys", "/services"]
+    urls += [f"/journeys/{s}" for s in journeys.JOURNEYS]
     urls += [f"/guides/{c}" for c in codes]
     urls += [f"/compare/{a}-vs-{b}" for i, a in enumerate(codes) for b in codes[i + 1:]]
     urls += [f"/move/{c.lower()}-to-uae" for c in origins] + [f"/personal-tax/{c}" for c in origins]

@@ -10,7 +10,7 @@
 <div class="wrap diag-layout">
   <form class="panel diag-form" id="f" autocomplete="off">
     <div class="diag-top">
-      <div class="field"><label for="profile">I am answering as</label><select name="profile" id="profile"><option value="business">A business</option><option value="personal">An individual</option></select></div>
+      <div class="field"><label for="profile">I am answering as</label><select name="profile" id="profile"><option value="business" {% if profile == "business" %}selected{% endif %}>A business</option><option value="gcc" {% if profile == "gcc" %}selected{% endif %}>A business trading across the GCC</option><option value="personal" {% if profile == "personal" %}selected{% endif %}>An individual</option></select></div>
       <p class="small muted">Yes, no or not sure. Not sure is a fine answer.</p>
     </div>
     <div id="questions" class="q-grid"></div>
@@ -21,6 +21,7 @@
     <div class="results-head"><h2>Your action list</h2><span class="badge verified" id="status-badge">Checklist</span></div>
     <div id="priority"></div>
     <ol class="actions-list" id="actions"></ol>
+    <div class="next-steps" id="next-steps" hidden></div>
     <p class="small muted" id="method"></p>
     <div class="cta-row">
       <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
@@ -35,6 +36,7 @@
 {% block scripts %}
 <script>
 const Q = {{ questions | tojson }};
+const body_of = (r) => ({ profile: r.profile, answers: r.answers });
 const qbox = document.getElementById('questions');
 function renderQuestions() {
   const profile = document.getElementById('profile').value;
@@ -57,6 +59,7 @@ initCalc({
     document.getElementById('actions').innerHTML = r.actions.map(a => `<li><span class="urg">${a.urgency === 'now' ? 'Act now' : a.urgency === 'soon' ? 'You said yes' : 'Clarify'}</span><b>${escHtml(a.label)}</b><p>${escHtml(a.action)}</p><span class="small"><em>${escHtml(a.advisory_hook)}</em>${a.link ? ` · <a href="${a.link}">Open the calculator →</a>` : ''}</span></li>`).join('')
       || '<li>No open items. Keep supporting records current and confirm obligations independently.</li>';
     document.getElementById('method').textContent = r.methodology + ' ' + r.warnings.join(' ');
+    window.renderNextSteps(r.next_steps || [], { calculator: 'tax_exposure_diagnostic', inputs: body_of(r) });
     document.getElementById('disclaimer').textContent = r.disclaimer;
     root.dataset.json = JSON.stringify(r, null, 2);
     if (cfg._explicit) root.focus({ preventScroll: window.innerWidth >= 960 });

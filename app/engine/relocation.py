@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .core import Answer, D, DISCLAIMER, ZERO, money, ratio
 from . import personal_tax
+from app import services as svc
 
 
 class RelocationInput(BaseModel):
@@ -103,6 +104,8 @@ def compare(inp: RelocationInput) -> dict[str, Any]:
                         "No tax-residence determination is made."] + origin.assumptions,
         "rules": origin.rule_metadata(),
         "review_status": origin.review_status(),
+        "next_steps": svc.recommend("move_to_uae", [f.get("code", "") for f in flags] + (["uk_company"] if inp.origin == "GB" else []), extra=(["uk_company_review"] if inp.origin == "GB" else [])),
+        "confidence": origin.confidence(),
         "disclaimer": DISCLAIMER,
         "persisted": False,
     }

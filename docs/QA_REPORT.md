@@ -81,3 +81,8 @@ All "fix first" items and all "improve next" items from the owner's review are i
 | Verified vs review required; internal labels; versions | badge reads "Rules: Verified" with a tooltip, outcome label reads "Outcome: review required"; P0/P1 pills removed; footer shows "App v0.1.0 · Tax rules: AE 2026.2, SA 2026.1, GCC 2026.1, Personal 2026.1" |
 
 Not covered: mobile rendering on real devices (desktop and 390 px headless only), screen-reader run, tax-law certification.
+
+
+## Update: decision-led journey (8 November 2026, night)
+
+Added: three entry paths on the home page with tailored path pages; a service catalogue (14 services) with includes / you receive / not included, recommended per result from flags and calculator; a cross-border diagnostic profile with permanent establishment, withholding and cross-border VAT questions; three journeys (UAE→Saudi transactions, UK founder keeping a UK company, Free Zone selling to the mainland) with live worked examples, checklists and one review offer each; a confidence panel on every result; enquiry dialog with question-first fields, optional attachment of inputs, and the free 30-minute booking link; utm_source attribution. Suite: see latest run in CI. Journeys and services are marked draft for technical and partner review.

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Services: what each review includes{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Services</span><h1>The calculation is free. The judgement is the service.</h1><p>Each review says what it covers, what you receive and what it leaves out. Every one starts with a complimentary 30-minute call.</p></div>
+<section class="wrap section" style="padding-top:8px">
+  <h2>For businesses</h2>
+  <div class="grid">{% for s in business %}{% include "_service_card.html" %}{% endfor %}</div>
+  <h2 style="margin-top:40px">For individuals</h2>
+  <div class="grid">{% for s in personal %}{% include "_service_card.html" %}{% endfor %}</div>
+</section>
+{% endblock %}

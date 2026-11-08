@@ -208,7 +208,19 @@ class CalculationResult:
             worst = max(worst, order.index(meta.get("review_status", "pending_verification")))
         return order[worst]
 
+    def confidence(self) -> dict[str, Any]:
+        """Three separate statements: rule status, calculation testing, fit to the visitor's facts."""
+        from app import quality  # local import: quality reads the test suite and rules files
+        jur = self.jurisdiction.lower() if self.jurisdiction in ("AE", "SA") else None
+        meta = load_rules(jur) if jur else None
+        return {
+            "rules": {"status": self.review_status(), "reviewed_by": (meta or {}).get("reviewed_by", "Oblique Consult tax team"), "reviewed_on": (meta or {}).get("last_reviewed")},
+            "calculation": {"tested": True, "checks": quality.test_count(self.calculator), "suite_total": quality.test_count(None)},
+            "fit": {"confirmed": self.outcome == "ILLUSTRATIVE_ESTIMATE", "reasons": self.review_reasons},
+        }
+
     def as_dict(self) -> dict[str, Any]:
+        from app import services
         return {
             "calculator": self.calculator,
             "jurisdiction": self.jurisdiction,
@@ -224,6 +236,8 @@ class CalculationResult:
             "flags": [f.as_dict() for f in self.flags],
             "assumptions": self.assumptions,
             "rules": self.rule_metadata(),
+            "confidence": self.confidence(),
+            "next_steps": services.recommend(self.calculator, [f.code for f in self.flags]),
             "disclaimer": DISCLAIMER,
             "persisted": False,
         }

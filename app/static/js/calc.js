@@ -58,6 +58,8 @@
        ${r.effective_from ? ` · Effective ${esc(r.effective_from)}${r.effective_to ? ' to ' + esc(r.effective_to) : ''}` : ''}${r.verification_note ? `<br><em>${esc(r.verification_note)}</em>` : ''}</span></li>`).join('');
     document.getElementById('assumptions').textContent = 'Assumptions: ' + (res.assumptions || []).join(' ');
     document.getElementById('disclaimer').textContent = res.disclaimer || '';
+    window.renderNextSteps(res.next_steps || [], window._lastCalc);
+    window.renderConfidence(res.confidence);
     root.dataset.json = JSON.stringify(res, null, 2);
     if (cfg._explicit) { root.focus({ preventScroll: window.innerWidth >= 960 }); if (window.innerWidth < 960) root.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     cfg._explicit = false;
@@ -158,6 +160,9 @@
   window.fmtMoney = fmt; window.fmtPct = pct; window.escHtml = esc; window.renderResult = render;
 })();
 
+/* ---- Remember where the visitor came from (utm_source), for enquiry attribution only ---- */
+(function () { try { const u = new URLSearchParams(location.search).get('utm_source'); if (u) sessionStorage.setItem('utm_source', u.slice(0, 80)); } catch (e) {} })();
+
 /* ---- Working paper (PDF) + consent-led enquiry ------------------------------ */
 (function () {
   const esc = window.escHtml;
@@ -188,8 +193,14 @@
     $('lead-error').textContent = ''; $('lead-success').hidden = true; $('lead-form').hidden = false;
     const personalDefault = ['move_to_uae', 'personal_income_tax'].includes(pending.calculator) || (pending.calculator === 'tax_exposure_diagnostic' && (pending.inputs || {}).profile === 'personal');
     const radio = document.querySelector(`#lead-form input[name=profile][value=${personalDefault ? 'personal' : 'business'}]`); if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change', { bubbles: true })); }
-    $('lead-title').textContent = pending.interest === 'expert_review' ? 'Talk to Oblique about this' : 'Your working paper, as a PDF';
+    $('lead-title').textContent = pending.serviceTitle ? pending.serviceTitle : (pending.interest === 'expert_review' ? 'Talk to Oblique about this' : 'Your working paper, as a PDF');
+    const share = $('lead-form').querySelector('input[name=share_inputs]'); const hasInputs = pending.inputs && Object.keys(pending.inputs).length > 0;
+    $('share-inputs-row').hidden = !hasInputs;
+    if (pending.interest === 'expert_review') { share.checked = false; share.disabled = false; $('share-inputs-note').textContent = '(optional)'; }
+    else { share.checked = true; share.disabled = true; $('share-inputs-note').textContent = '(needed to build the PDF)'; }
+    if (pending.audience) { const r2 = document.querySelector(`#lead-form input[name=profile][value=${pending.audience}]`); if (r2) { r2.checked = true; r2.dispatchEvent(new Event('change', { bubbles: true })); } }
     $('lead-submit').textContent = pending.interest === 'expert_review' ? 'Send' : 'Send my working paper';
+    $('lead-desc').hidden = !!pending.serviceTitle;
     setTimeout(() => $('lead-name').focus(), 50);
   }
   function closeModal() {
@@ -199,7 +210,8 @@
   window.requestWorkingPaper = async function (ctx) {
     pending = ctx;
     const c = await loadConfig();
-    if (!c.enabled) {  // no destination configured: the PDF is simply free
+    if (!c.enabled) {  // no destination configured: PDFs are simply free; service enquiries go to the contact page
+      if (ctx.interest === 'expert_review' || !ctx.inputs || !Object.keys(ctx.inputs).length) { location.href = document.body.dataset.contact || '/'; return; }
       try { await fetchPdf(ctx, null); } catch (e) { alert(e.message); }
       return;
     }
@@ -221,14 +233,16 @@
         interest: pending.interest || ({ move_to_uae: 'relocation', tax_exposure_diagnostic: 'diagnostic' }[pending.calculator] || 'working_paper'),
         profile: f.get('profile') || 'business',
         consent_contact: !!f.get('consent_contact'), consent_marketing: !!f.get('consent_marketing'), consent_version: config.consent_version,
-        context: { calculator: pending.calculator, inputs: pending.inputs, page_url: location.href }, website: f.get('website') || '' };
+        service: pending.service || '',
+        context: { calculator: pending.calculator, inputs: (f.get('share_inputs') || pending.interest !== 'expert_review') ? pending.inputs : {}, shared_inputs: !!(f.get('share_inputs') || pending.interest !== 'expert_review'), page_url: location.href.split('#')[0], source: (sessionStorage.getItem('utm_source') || '') }, website: f.get('website') || '' };
       try {
         const r = await fetch('/api/v1/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', body: JSON.stringify(body) });
         const j = await r.json();
         if (!r.ok) { err.textContent = typeof j.detail === 'string' ? j.detail : (j.detail || []).map(d => `${d.field}: ${d.message}`).join('; '); return; }
-        await fetchPdf(pending, j.pdf_token);
-        form.hidden = true; const ok = $('lead-success'); ok.hidden = false; ok.textContent = (j.message || 'Thank you.') + ' Your PDF is downloading.';
-        setTimeout(closeModal, 4000);
+        if (j.pdf_token) await fetchPdf(pending, j.pdf_token);
+        form.hidden = true; const ok = $('lead-success'); ok.hidden = false;
+        ok.innerHTML = `${esc(j.message || 'Thank you.')}${j.pdf_token ? ' Your PDF is downloading.' : ''}<br><a href="${esc(j.booking_url || '#')}" target="_blank" rel="noopener">Prefer to pick a time now? Book a free 30-minute call →</a>`;
+        setTimeout(closeModal, 9000);
       } catch (ex) { err.textContent = ex.message || 'Something went wrong. Nothing was saved.'; }
       finally { btn.disabled = false; btn.textContent = label; form.removeAttribute('aria-busy'); }
     });
@@ -267,3 +281,33 @@ document.addEventListener('DOMContentLoaded', () => {
     slot.innerHTML = `<a class="card" href="${slot.dataset.src.replace('/embed/leaderboard', '/?utm_source=tax-tools')}"><h3 style="margin:0">Monthly leaderboard</h3><p class="muted" style="margin:6px 0 0">Shown here once the tools run on tax.obliqueconsult.com. Open the game →</p></a>`;
   }
 });
+
+/* ---- Next steps (specific services) and the confidence panel ---------------- */
+(function () {
+  const esc = window.escHtml;
+  window.renderNextSteps = function (steps, ctx) {
+    const box = document.getElementById('next-steps'); if (!box) return;
+    if (!steps || !steps.length) { box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = `<h3>Next step</h3>` + steps.map(s =>
+      `<div class="svc-row"><div><b>${esc(s.title)}</b><span>${esc(s.for)}</span></div>
+       <button class="btn btn-ghost btn-sm" type="button" data-service="${esc(s.slug)}" data-title="${esc(s.title)}" data-audience="${esc(s.audience)}">Free call →</button></div>`).join('') +
+      `<p class="small muted" style="margin:8px 0 0">The calculation stays free. The review is the expert's judgement: <a href="/services">what each one includes</a>.</p>`;
+  };
+  window.renderConfidence = function (c) {
+    const box = document.getElementById('confidence'); if (!box || !c) return;
+    const labels = { verified: 'Verified', verified_secondary: 'Verified against practitioner sources', pending_verification: 'Pending verification', draft_law: 'Includes draft law' };
+    const r = c.rules, t = c.calculation, f = c.fit;
+    box.innerHTML = `
+      <div><b>The rules</b><span class="${r.status === 'verified' ? 'ok' : 'warn'}">${esc(labels[r.status] || r.status)}</span><br>${esc(r.reviewed_by || '')}${r.reviewed_on ? ' · ' + esc(r.reviewed_on) : ''}</div>
+      <div><b>The calculation</b><span class="ok">Deterministic, tested</span><br>${t.checks} automated checks for this calculator, ${t.suite_total} in total</div>
+      <div><b>Your facts</b><span class="${f.confirmed ? 'ok' : 'warn'}">${f.confirmed ? 'Confirmed to fit' : 'Not yet confirmed'}</span><br>${f.confirmed ? 'Scope confirmed by you. Still an estimate, not advice.' : 'Answer the scope questions, or ask us.'}</div>`;
+  };
+  // Any button with data-service opens the enquiry dialog for that service.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-service]'); if (!b) return;
+    const last = window._lastCalc || {};
+    window.requestWorkingPaper({ calculator: last.calculator || 'tax_exposure_diagnostic', inputs: last.inputs || {}, interest: 'expert_review',
+      service: b.dataset.service, serviceTitle: b.dataset.title, audience: b.dataset.audience, downloadName: last.downloadName });
+  });
+})();

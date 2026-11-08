@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ j.title }}{% endblock %}
+{% block description %}{{ j.lead }}{% endblock %}
+{% block head %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"{{ j.title }}","author":{"@type":"Organization","name":"{{ site.company }}"},"dateModified":"{{ j.review.date }}"}</script>{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">{{ j.eyebrow }}</span><h1>{{ j.title }}</h1><p>{{ j.lead }}</p>
+  <p class="small muted"><b>For:</b> {{ j.who }}</p>
+  <p class="review-line"><span class="status-dot {{ 'pending_verification' if j.review.status == 'draft_for_review' else 'verified' }}"></span>{{ 'Draft for technical review' if j.review.status == 'draft_for_review' else 'Reviewed' }} · {{ j.review.reviewer }} · {{ j.review.date }}</p>
+</div>
+<div class="wrap journey">
+  <article class="prose">
+    {% for h, body in j.sections %}<h2>{{ h }}</h2><p>{{ body }}</p>{% endfor %}
+    <h2>Worked example</h2>
+    <p class="muted">{{ j.example.intro }} Figures come live from the calculators, so they cannot drift from the tools.</p>
+    <table>{% for k, v in j.example.rows %}<tr><td>{{ k }}</td><td><b>{{ v }}</b></td></tr>{% endfor %}</table>
+    <p>{% for label, href in j.example.links %}<a class="btn btn-ghost btn-sm" href="{{ href }}">{{ label }}</a> {% endfor %}</p>
+    <h2>Common mistakes</h2><ul>{% for m in j.mistakes %}<li>{{ m }}</li>{% endfor %}</ul>
+    <h2>Documents to have ready</h2><ul class="checklist">{% for c in j.checklist %}<li>{{ c }}</li>{% endfor %}</ul>
+  </article>
+  <aside class="journey-side">
+    <div class="svc-card">
+      <span class="eyebrow">The review</span>
+      <h3>{{ service.title }}</h3>
+      <p class="muted small">{{ service.for }}</p>
+      <h4>Includes</h4><ul>{% for i in service.includes %}<li>{{ i }}</li>{% endfor %}</ul>
+      <h4>You receive</h4><p>{{ service.receive }}</p>
+      <h4>Not included</h4><ul>{% for e in service.excludes %}<li>{{ e }}</li>{% endfor %}</ul>
+      <p class="small muted">{{ service.start }}</p>
+      <button class="btn btn-primary" type="button" data-service="{{ service.slug }}" data-title="{{ service.title }}" data-audience="{{ service.audience }}">Start with a free call</button>
+      <a class="btn btn-ghost" href="{{ site.booking_url }}" target="_blank" rel="noopener">Book 30 minutes</a>
+    </div>
+    <div class="svc-card"><span class="eyebrow">Tools</span>{% for t, href in j.tools %}<a href="{{ href }}" class="side-link">{{ t }} →</a>{% endfor %}</div>
+  </aside>
+</div>
+{% endblock %}

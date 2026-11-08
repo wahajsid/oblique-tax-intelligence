@@ -178,3 +178,15 @@ def test_m365_sink_sends_via_graph_with_pdf(m365_sink):
     assert msg["replyTo"][0]["emailAddress"]["address"] == "test@example.com"
     assert msg["attachments"][0]["name"] == "oblique-working-paper-uae-corporate-tax.pdf" and msg["attachments"][0]["contentType"] == "application/pdf"
     assert "SECRET" not in str(send_call[1]) and "secret" not in send_call[1]["headers"]["Authorization"]
+
+
+def test_lead_without_shared_inputs_gets_no_pdf_but_is_recorded(sqlite_sink):
+    body = dict(LEAD, interest="expert_review", service="free_zone_review", message="Is my mainland revenue a problem?",
+                context={"calculator": "uae_corporate_tax", "inputs": {}, "shared_inputs": False, "page_url": "https://x.test/uae/corporate-tax", "source": "website"})
+    r = client.post("/api/v1/leads", json=body)
+    assert r.status_code == 200
+    j = r.json()
+    assert j["pdf_token"] is None and j["booking_url"].startswith("https://calendly.com/")
+    con = sqlite3.connect(sqlite_sink)
+    rec = json.loads(con.execute("SELECT record FROM leads ORDER BY received_at DESC").fetchone()[0]); con.close()
+    assert rec["service"] == "free_zone_review" and rec["context"]["shared_inputs"] is False and rec["context"]["inputs"] == {} and rec["context"]["source"] == "website"

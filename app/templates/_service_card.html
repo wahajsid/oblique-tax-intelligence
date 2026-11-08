@@ -1,0 +1,3 @@
+<div class="card svc"><h3>{{ s.title }}</h3><p class="muted small" style="margin:0">{{ s.for }}</p>
+  <details><summary>What it includes</summary><ul>{% for i in s.includes %}<li>{{ i }}</li>{% endfor %}</ul><p><b>You receive:</b> {{ s.receive }}</p><p><b>Not included:</b> {{ s.excludes | join('; ') }}</p></details>
+  <button class="btn btn-ghost btn-sm" type="button" data-service="{{ s.slug }}" data-title="{{ s.title }}" data-audience="{{ s.audience }}">Start with a free call →</button></div>

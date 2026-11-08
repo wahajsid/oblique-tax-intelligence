@@ -117,6 +117,12 @@ def _pdf_filename(calculator: str) -> str:
     return f"oblique-working-paper-{calculator.replace('_', '-')}.pdf"
 
 
+@router.get("/services")
+def services_index() -> dict:
+    from app import services as svc
+    return {k: svc.get(k) for k in svc.SERVICES}
+
+
 @router.get("/leads/config")
 def leads_config() -> dict:
     return leads.public_config()
@@ -134,7 +140,7 @@ def create_lead(body: leads.LeadInput, request: Request) -> dict:
     record = leads.make_record(body, ip)
     pdf_bytes = None
     summary = f"Enquiry via {body.context.calculator}"
-    if body.context.calculator in pdf.REGISTRY:
+    if body.context.calculator in pdf.REGISTRY and body.context.shared_inputs and body.context.inputs:
         try:
             pdf_bytes, result = pdf.render_pdf(body.context.calculator, body.context.inputs, source_url=body.context.page_url, prepared_for=record["name"])
             summary = f"{pdf.REGISTRY[body.context.calculator][2]} working paper requested"
@@ -146,7 +152,7 @@ def create_lead(body: leads.LeadInput, request: Request) -> dict:
         delivery = leads.deliver(record, summary, pdf_bytes, _pdf_filename(body.context.calculator))
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail="We could not record your enquiry right now. Please email info@obliqueconsult.com.") from exc
-    return {"status": "received", "lead_id": record["id"], "pdf_token": leads.pdf_token(record["id"]), "delivery": delivery,
+    return {"status": "received", "lead_id": record["id"], "pdf_token": leads.pdf_token(record["id"]) if pdf_bytes else None, "delivery": delivery, "booking_url": "https://calendly.com/alina-obliqueconsult/30min",
             "message": f"Thanks, {record['name'].split(' ')[0]}. We will be in touch at {record['email']}."}
 
 
