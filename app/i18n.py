@@ -16,7 +16,7 @@ I18N_DIR = Path(__file__).resolve().parent / "i18n"
 LANGS = {"en": {"dir": "ltr", "name": "English", "native": "English"}, "ar": {"dir": "rtl", "name": "Arabic", "native": "العربية"}}
 
 # Pages available in Arabic (path without the /ar prefix). Anything else under /ar/ falls back to English.
-AR_PATHS = {"/", "/uae/corporate-tax", "/vat", "/ksa/zakat-income-tax", "/ksa/withholding-tax", "/guides/AE", "/guides/SA", "/diagnose"}
+AR_PATHS = {"/", "/uae/corporate-tax", "/vat", "/ksa/zakat-income-tax", "/ksa/withholding-tax", "/guides/AE", "/guides/SA", "/diagnose", "/changes"}
 
 
 @lru_cache(maxsize=None)

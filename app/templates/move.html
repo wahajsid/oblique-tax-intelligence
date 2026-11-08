@@ -8,6 +8,7 @@
   <span class="eyebrow">Move to the UAE · {{ c.flag }} {{ c.name }} → 🇦🇪 UAE · {{ c.tax_year }}</span>
   <h1>Moving from {{ c.name }} to the UAE: what changes in your take-home pay</h1>
   <p>Your tax at home today against 0% in the UAE. Your costs, your exchange rate, and the residence questions to settle before the saving is real.</p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
   <div class="origin-grid" aria-label="Choose origin country">
     {% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae" {% if code == selected %}aria-current="true"{% endif %}>{{ o.flag }} {{ o.name }}</a>{% endfor %}
   </div>
@@ -54,10 +55,7 @@
     <div class="confidence" id="confidence"></div>
     <details class="rules"><summary>Rules and sources</summary><ul id="rules"></ul><p class="small muted" id="assumptions"></p></details>
     <div class="cta-row">
-      <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
-      <button class="btn btn-ghost" id="btn-download" type="button">Download JSON</button>
       <button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button>
-      <button class="btn btn-ghost" id="btn-print" type="button">Print</button>
       <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
       <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Plan it with Oblique</a>
     </div>

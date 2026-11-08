@@ -173,5 +173,13 @@
       }
     }
   },
-  "reviewed_by": "Oblique Consult tax team"
+  "reviewed_by": "Oblique Consult tax team",
+  "changelog": [
+    {
+      "date": "2026-11-07",
+      "version": "2026.1",
+      "summary": "First release: zakat at 2.5% of the base for a Hijri year and 2.577683% for a Gregorian year under Ministerial Resolution 1007 of 2024; income tax at 20% on the non-Saudi share; the withholding table from 5% to 20%; VAT at 15%. The Article 28 upper limit on the zakat base is not yet applied.",
+      "source": "Income Tax Law (Royal Decree M/1 of 1425H); MR 1007 (2024); VAT Law"
+    }
+  ]
 }

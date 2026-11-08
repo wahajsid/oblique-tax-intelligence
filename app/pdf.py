@@ -197,6 +197,15 @@ def _header_footer(title: str, meta: str):
         canvas.drawString(45 * mm, h - 11 * mm, "Tax Intelligence · Working paper")
         canvas.setFont("Helvetica", 7.5); canvas.setFillColor(MUTED)
         canvas.drawString(45 * mm, h - 15 * mm, meta)
+        # Oblique motif: thin rules at 11 degrees in the top-right corner, matching the website hero.
+        if doc.page == 1:
+            import math
+            dx = math.tan(math.radians(11)) * 24 * mm
+            canvas.setStrokeColor(LINE); canvas.setLineWidth(0.4)
+            for i in range(7):
+                x = w - 10 * mm - i * 7 * mm
+                canvas.line(x, h, x - dx, h - 24 * mm)
+            canvas.setLineWidth(1)
         canvas.setStrokeColor(LINE); canvas.line(18 * mm, h - 19 * mm, w - 18 * mm, h - 19 * mm)
         canvas.setFont("Helvetica", 7); canvas.setFillColor(MUTED)
         canvas.drawString(18 * mm, 10 * mm, "Desktop estimate, not tax advice. For precise figures for your circumstances, contact Oblique Consult · obliqueconsult.com")

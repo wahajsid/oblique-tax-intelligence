@@ -1,6 +1,6 @@
 {
-  "ruleset_version": "2026.1",
-  "last_reviewed": "2026-11-07",
+  "ruleset_version": "2026.2",
+  "last_reviewed": "2026-11-08",
   "description": "Jurisdiction profiles for the GCC comparison engine. Each figure carries a review status. 'verified' = confirmed against a primary or Big-4 source during review; 'verified_secondary' = consistent across advisory sources; 'pending_verification' = reported but not confirmed; 'draft_law' = not yet enacted.",
   "jurisdictions": {
     "AE": {
@@ -73,9 +73,10 @@
       "vat": {
         "rate": 0.15,
         "implemented": true,
-        "since": "2018-01-01",
+        "since": "2020-07-01",
         "review_status": "verified",
-        "source": "VAT Law; rate increase 1 July 2020"
+        "source": "VAT Law (Royal Decree M/113 of 1438H); 5% from 1 January 2018; Royal Order A/638 raised the rate to 15% from 1 July 2020",
+        "introduced": "2018-01-01"
       },
       "withholding_tax": {
         "rate_min": 0.05,
@@ -121,9 +122,10 @@
       "vat": {
         "rate": 0.1,
         "implemented": true,
-        "since": "2019-01-01",
+        "since": "2022-01-01",
         "review_status": "verified",
-        "source": "VAT rate increased 5% to 10% on 1 Jan 2022"
+        "source": "VAT Law (Decree-Law 48/2018); 5% from 1 January 2019; Decree-Law 33/2021 raised the rate to 10% from 1 January 2022",
+        "introduced": "2019-01-01"
       },
       "withholding_tax": {
         "rate": 0.0,
@@ -195,7 +197,7 @@
       },
       "personal_income_tax": {
         "rate": 0.05,
-        "note": "5% on annual income above OMR 42,000 reported effective 2028 (RD 56/2025). Earlier reports of postponement; confirm status.",
+        "note": "5% on annual income above OMR 42,000 from 1 January 2028 under Royal Decree 56/2025; executive regulations and thresholds to be confirmed before that date.",
         "review_status": "pending_verification",
         "source": "The National, July 2025; PwC Feb 2025"
       },
@@ -304,5 +306,25 @@
       "cit_filing_deadline": "3.5 months after year end"
     }
   },
-  "reviewed_by": "Oblique Consult tax team"
+  "reviewed_by": "Oblique Consult tax team",
+  "changelog": [
+    {
+      "date": "2026-11-08",
+      "version": "2026.2",
+      "summary": "Saudi and Bahraini VAT now show the date of the current rate (15% from 1 July 2020; 10% from 1 January 2022) separately from the date VAT was introduced. Oman personal income tax note restated against Royal Decree 56/2025 (from 1 January 2028), still pending verification.",
+      "source": "ZATCA; Bahrain NBR; Oman Tax Authority"
+    },
+    {
+      "date": "2026-11-08",
+      "version": "2026.1",
+      "summary": "GCC comparison converts the UAE AED 375,000 zero-rate band into the scenario currency at the dated table rate instead of applying it one to one.",
+      "source": "Internal correction after owner review"
+    },
+    {
+      "date": "2026-11-07",
+      "version": "2026.1",
+      "summary": "First release: profiles for the UAE, Saudi Arabia, Bahrain, Oman, Qatar and Kuwait covering corporate tax, zakat, VAT, withholding, domestic minimum top-up tax and transfer pricing, each with a review status.",
+      "source": "Primary legislation and practitioner summaries listed on each guide"
+    }
+  ]
 }

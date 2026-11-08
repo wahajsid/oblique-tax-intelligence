@@ -146,5 +146,19 @@
       }
     }
   },
-  "reviewed_by": "Oblique Consult tax team"
+  "reviewed_by": "Oblique Consult tax team",
+  "changelog": [
+    {
+      "date": "2026-11-08",
+      "version": "2026.2",
+      "summary": "Small Business Relief extended to tax periods ending on or before 31 December 2029 (Ministerial Decision No. 131 of 2026). The calculator now also asks whether revenue stayed within AED 3 million in every earlier period, because the relief is lost once the threshold is exceeded.",
+      "source": "Ministry of Finance announcement, 7 August 2026; MD 131/2026"
+    },
+    {
+      "date": "2026-11-07",
+      "version": "2026.1",
+      "summary": "First release: Corporate Tax 0% to AED 375,000 and 9% above; Qualifying Free Zone Person test with the de minimis limit; loss relief at 75%; interest deduction cap; domestic minimum top-up tax at 15% from 2025 for large groups; VAT at 5%; e-invoicing phases.",
+      "source": "Federal Decree-Law No. 47 of 2022 and the Cabinet and Ministerial Decisions cited on each rule"
+    }
+  ]
 }

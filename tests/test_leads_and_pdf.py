@@ -190,3 +190,40 @@ def test_lead_without_shared_inputs_gets_no_pdf_but_is_recorded(sqlite_sink):
     con = sqlite3.connect(sqlite_sink)
     rec = json.loads(con.execute("SELECT record FROM leads ORDER BY received_at DESC").fetchone()[0]); con.close()
     assert rec["service"] == "free_zone_review" and rec["context"]["shared_inputs"] is False and rec["context"]["inputs"] == {} and rec["context"]["source"] == "website"
+
+
+def test_changes_page_and_subscribe(monkeypatch, tmp_path):
+    client = TestClient(app)
+    for k in ["RESEND_API_KEY", "LEAD_EMAIL_TO", "LEAD_WEBHOOK_URL", "LEADS_SQLITE_PATH", "HUBSPOT_PORTAL_ID", "MS_TENANT_ID"]:
+        monkeypatch.delenv(k, raising=False)
+    r = client.get("/changes")
+    assert r.status_code == 200
+    assert "Small Business Relief extended" in r.text and "2026.2" in r.text
+    # Nothing is collected when no destination is configured.
+    r = client.post("/api/v1/subscribe", json={"email": "a@b.co", "topics": ["AE"], "consent_updates": True})
+    assert r.status_code == 503
+    monkeypatch.setenv("LEADS_SQLITE_PATH", str(tmp_path / "s.sqlite")); leads._hits.clear()
+    r = client.post("/api/v1/subscribe", json={"email": "not-an-email", "topics": ["AE"], "consent_updates": True})
+    assert r.status_code == 422
+    r = client.post("/api/v1/subscribe", json={"email": "a@b.co", "topics": ["AE"], "consent_updates": False})
+    assert r.status_code == 422
+    r = client.post("/api/v1/subscribe", json={"email": "a@b.co", "topics": ["AE", "SA"], "consent_updates": True, "website": "spam"})
+    assert r.status_code == 200 and r.json() == {"status": "received"}
+
+
+def test_front_end_exports_are_pdf_only():
+    client = TestClient(app)
+    for path in ["/uae/corporate-tax", "/move/gb-to-uae", "/diagnose"]:
+        html = client.get(path).text
+        assert "Copy JSON" not in html and "Download JSON" not in html and 'id="btn-pdf"' in html
+        assert "Book 30 minutes" in html
+
+
+def test_gcc_vat_dates_and_sitemap():
+    client = TestClient(app)
+    from app.engine import gcc_compare
+    j = gcc_compare.profiles()["jurisdictions"]
+    assert j["SA"]["vat"]["since"] == "2020-07-01" and j["SA"]["vat"]["introduced"] == "2018-01-01"
+    assert j["BH"]["vat"]["since"] == "2022-01-01" and j["BH"]["vat"]["introduced"] == "2019-01-01"
+    r = client.get("/sitemap.xml")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("application/xml") and "/changes" in r.text

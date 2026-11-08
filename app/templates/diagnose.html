@@ -6,6 +6,7 @@
   <span class="eyebrow">{{ t("Free diagnostic") }}</span>
   <h1>{{ t("Where is your tax exposure?") }}</h1>
   <p>{{ t("Ten questions. One ordered list of what to do next, deadlines first. Nothing to sign up for.") }}</p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
 </div>
 <div class="wrap diag-layout">
   <form class="panel diag-form" id="f" autocomplete="off">
@@ -25,9 +26,7 @@
     <div class="next-steps" id="next-steps" hidden></div>
     <p class="small muted" id="method"></p>
     <div class="cta-row">
-      <button class="btn btn-ghost" id="btn-copy" type="button">{{ t("Copy JSON") }}</button>
-      <button class="btn btn-ghost" id="btn-download" type="button">{{ t("Download") }}</button>
-      <button class="btn btn-ghost" id="btn-print" type="button">{{ t("Print") }}</button>
+      <button class="btn btn-dark" id="btn-pdf" type="button">{{ t("PDF action list") }}</button>
       <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">{{ t("Talk to Oblique") }}</a>
     </div>
     <p class="small muted" id="disclaimer"></p>

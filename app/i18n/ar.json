@@ -200,7 +200,14 @@
     "Australia": "أستراليا",
     "Germany": "ألمانيا",
     "South Africa": "جنوب أفريقيا",
-    "Pakistan": "باكستان"
+    "Pakistan": "باكستان",
+    "Not sure what to enter?": "لست متأكداً مما تُدخله؟",
+    "Book 30 minutes with us, free →": "احجز 30 دقيقة معنا، مجاناً ←",
+    "Rules change.": "القواعد تتغير.",
+    "See what changed and get told when it does →": "اطّلع على ما تغيّر واطلب إشعاراً عند التغيير ←",
+    "What changed": "ما الذي تغيّر",
+    "Six country guides →": "أدلة ست دول ←",
+    "PDF action list": "قائمة الإجراءات PDF"
   },
   "lead": {
     "Working paper": "ورقة العمل",
@@ -617,6 +624,32 @@
     "draft law": "مشروع قانون",
     "above": "فوق",
     "since": "منذ",
-    "15% for MNE groups with revenue of EUR 750m or more, from": "15% للمجموعات متعددة الجنسيات بإيرادات 750 مليون يورو فأكثر، من"
+    "15% for MNE groups with revenue of EUR 750m or more, from": "15% للمجموعات متعددة الجنسيات بإيرادات 750 مليون يورو فأكثر، من",
+    "VAT introduced": "بدء تطبيق ضريبة القيمة المضافة"
+  },
+  "changes": {
+    "Rule changes": "تغييرات القواعد",
+    "What changed.": "ما الذي تغيّر.",
+    "Each calculator runs on a dated ruleset. When a law, decision or rate changes, the ruleset gets a new version and a line here.": "تعمل كل حاسبة على مجموعة قواعد مؤرّخة. عندما يتغيّر قانون أو قرار أو نسبة، تحصل مجموعة القواعد على إصدار جديد وسطر هنا.",
+    "AE": "الإمارات",
+    "SA": "السعودية",
+    "GCC": "الخليج",
+    "Personal": "الضريبة الشخصية",
+    "UAE": "الإمارات",
+    "GCC comparison": "مقارنة الخليج",
+    "Personal tax": "الضريبة الشخصية",
+    "Source": "المصدر",
+    "Get told when it changes": "اطلب إشعاراً عند التغيير",
+    "One email per change, with what moved and what to do. Nothing else.": "رسالة واحدة لكل تغيير، بما تغيّر وما يجب فعله. لا شيء آخر.",
+    "Work email": "البريد الإلكتروني للعمل",
+    "Rules to follow": "القواعد التي تريد متابعتها",
+    "Oblique Consult may email me when these rules change. Unsubscribe in every email.": "يجوز لأوبليك كونسلت مراسلتي عند تغيّر هذه القواعد. إلغاء الاشتراك متاح في كل رسالة.",
+    "Tell me": "أخبرني",
+    "Done. You will hear from us when the rules move.": "تم. ستصلك رسالة عندما تتغيّر القواعد.",
+    "Notifications are not switched on yet. Email": "الإشعارات غير مفعّلة بعد. راسل",
+    "and we will add you by hand.": "وسنضيفك يدوياً.",
+    "How we handle your email →": "كيف نتعامل مع بريدك ←",
+    "Pick at least one ruleset.": "اختر مجموعة قواعد واحدة على الأقل.",
+    "Something went wrong. Please try again.": "حدث خطأ ما. حاول مرة أخرى."
   }
 }

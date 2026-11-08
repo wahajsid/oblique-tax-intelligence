@@ -15,7 +15,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import Response, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -299,13 +299,27 @@ def robots():
     return "User-agent: *\nDisallow: /\n"
 
 
-@app.get("/sitemap.xml")
+def _changes() -> list[dict]:
+    out = []
+    for key, label, data in [("AE", "UAE", load_rules("ae")), ("SA", "Saudi Arabia", load_rules("sa")),
+                             ("GCC", "GCC comparison", gcc_compare.profiles()), ("Personal", "Personal tax", personal_tax.rules())]:
+        for c in data.get("changelog", []):
+            out.append({"topic": key, "label": label, **c})
+    return sorted(out, key=lambda c: (c["date"], c["version"]), reverse=True)
+
+
+@app.get("/changes", response_class=HTMLResponse)
+def changes(request: Request):
+    return page(request, "changes.html", entries=_changes())
+
+
+@app.get("/sitemap.xml", response_class=Response, include_in_schema=False)
 def sitemap(request: Request):
     base = str(request.base_url).rstrip("/")
     codes = list(gcc_compare.profiles()["jurisdictions"])
     origins = personal_tax.enabled_countries()
     urls = ["/", "/uae/corporate-tax", "/vat", "/ksa/zakat-income-tax", "/ksa/withholding-tax", "/gcc/compare", "/move", "/diagnose",
-            "/personal-tax", "/guides", "/methodology", "/api", "/privacy", "/disclaimer", "/start/business", "/start/gcc", "/journeys", "/services"]
+            "/personal-tax", "/guides", "/methodology", "/api", "/privacy", "/disclaimer", "/changes", "/start/business", "/start/gcc", "/journeys", "/services"]
     urls += [f"/journeys/{s}" for s in journeys.JOURNEYS]
     urls += [f"/guides/{c}" for c in codes]
     urls += [f"/compare/{a}-vs-{b}" for i, a in enumerate(codes) for b in codes[i + 1:]]
@@ -317,4 +331,4 @@ def sitemap(request: Request):
                     f'<url><loc>{ar}</loc><xhtml:link rel="alternate" hreflang="en" href="{base}{u}"/><xhtml:link rel="alternate" hreflang="ar" href="{ar}"/></url>')
         return f"<url><loc>{base}{u}</loc></url>"
     body = "".join(entry(u) for u in urls)
-    return HTMLResponse(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">{body}</urlset>', media_type="application/xml")
+    return Response(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">{body}</urlset>', media_type="application/xml")

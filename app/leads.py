@@ -41,6 +41,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 CONSENT_VERSION = "2026-11-08.1"
 CONSENT_TEXT = {
+    "updates": "Oblique Consult may email me when the tax rules behind these calculators change. One message per change, unsubscribe in every email.",
     "contact": ("I agree that Oblique Consult may contact me about this enquiry and may process the details and the calculation "
                 "I submitted for that purpose. I can withdraw this at any time by emailing info@obliqueconsult.com."),
     "marketing": ("Optional: I would also like to receive occasional GCC tax updates from Oblique Consult. I can unsubscribe at any time."),
@@ -90,6 +91,49 @@ class LeadInput(BaseModel):
         if not v:
             raise ValueError("Contact consent is required to send your working paper")
         return v
+
+
+class SubscribeInput(BaseModel):
+    """Rule-change notifications. Email only; topics name the rulesets to follow."""
+    model_config = ConfigDict(extra="forbid")
+    email: str = Field(..., max_length=160)
+    topics: list[Literal["AE", "SA", "GCC", "Personal"]] = Field(..., min_length=1, max_length=4)
+    consent_updates: bool
+    consent_version: str = Field(CONSENT_VERSION, max_length=20)
+    page_url: str = Field("", max_length=2000)
+    source: str = Field("", max_length=80)
+    website: str = Field("", max_length=200)  # honeypot
+
+    @field_validator("email")
+    @classmethod
+    def _email(cls, v: str) -> str:
+        v = v.strip()
+        if not _EMAIL_RE.match(v):
+            raise ValueError("Enter a valid email address")
+        return v.lower()
+
+    @field_validator("consent_updates")
+    @classmethod
+    def _consent(cls, v: bool) -> bool:
+        if not v:
+            raise ValueError("Tick the box so we may email you when the rules change")
+        return v
+
+
+def make_subscription_record(sub: SubscribeInput, ip: str) -> dict[str, Any]:
+    """Shaped like an enquiry record so every configured sink can carry it unchanged."""
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return {
+        "id": str(uuid.uuid4()), "received_at": now, "source": "oblique-tax-intelligence",
+        "name": "Rule-change subscriber", "email": sub.email, "phone": "", "company": "",
+        "message": "Notify when these rulesets change: " + ", ".join(sub.topics), "interest": "other", "profile": "business", "service": "rule_updates",
+        "consents": {
+            "contact": {"given": True, "version": sub.consent_version, "text": CONSENT_TEXT["updates"], "at": now},
+            "marketing": {"given": False, "version": sub.consent_version, "text": CONSENT_TEXT["marketing"], "at": None},
+        },
+        "context": {"calculator": "rule_updates", "inputs": {"topics": sub.topics}, "page_url": sub.page_url, "source": sub.source, "shared_inputs": False},
+        "ip_hash": ip_hash(ip), "retention": RETENTION,
+    }
 
 
 # ------------------------------------------------------------------ config -----

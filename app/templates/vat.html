@@ -6,6 +6,7 @@
   <span class="eyebrow">{{ t(rules.name) }} · {{ t("VAT") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
   <h1>{{ t('UAE VAT calculator') if jur == 'AE' else t('KSA VAT calculator') }}</h1>
   <p>Standard rate {{ (rules.rules.vat.standard_rate.parameters.standard_rate * 100) | int }}%. Add it, strip it, or run the period return. <a href="/vat?j=AE">{{ t("UAE") }}</a> · <a href="/vat?j=SA">{{ t("Saudi Arabia") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">

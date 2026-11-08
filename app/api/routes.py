@@ -179,6 +179,24 @@ def working_paper(body: PdfRequest) -> Response:
                     headers={"Content-Disposition": f'attachment; filename="{_pdf_filename(body.calculator)}"', "Cache-Control": "no-store"})
 
 
+@router.post("/subscribe")
+def subscribe(body: leads.SubscribeInput, request: Request) -> dict:
+    """Rule-change notifications. Uses the same delivery sinks and consent handling as enquiries."""
+    if not leads.enabled():
+        raise HTTPException(status_code=503, detail="Rule-change notifications are not switched on yet. Follow the changes page or email info@obliqueconsult.com.")
+    if body.website:
+        return {"status": "received"}
+    ip = request.client.host if request.client else "0.0.0.0"
+    if leads.rate_limited(ip):
+        raise HTTPException(status_code=429, detail="Too many requests from this connection. Please try again in an hour.")
+    record = leads.make_subscription_record(body, ip)
+    try:
+        delivery = leads.deliver(record, "Rule-change subscription: " + ", ".join(body.topics), None, "")
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail="We could not record your request right now. Please email info@obliqueconsult.com.") from exc
+    return {"status": "received", "delivery": delivery}
+
+
 @router.post("/enquiries")
 def enquiries() -> None:
     raise HTTPException(status_code=410, detail="Use POST /api/v1/leads.")

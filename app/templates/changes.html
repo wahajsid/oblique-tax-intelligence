@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}What changed in the tax rules{% endblock %}
+{% block description %}Every change to the UAE, Saudi, GCC and personal tax rules behind these calculators, dated and sourced. Ask to be told when the next one lands.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">{{ t("Rule changes") }}</span>
+  <h1>{{ t("What changed.") }}</h1>
+  <p>{{ t("Each calculator runs on a dated ruleset. When a law, decision or rate changes, the ruleset gets a new version and a line here.") }}</p>
+</div>
+<div class="wrap changes-layout">
+  <section>
+    <div class="versions">
+      {% for k, v in site.rules_versions.items() %}<span class="pill">{{ t(k) }} {{ v }}</span>{% endfor %}
+    </div>
+    <ol class="changes">
+      {% for c in entries %}
+      <li class="change reveal">
+        <div class="change-meta"><time datetime="{{ c.date }}">{{ c.date }}</time><span class="pill">{{ t(c.label) }} {{ c.version }}</span></div>
+        <p>{{ t(c.summary) }}</p>
+        <p class="small muted">{{ t("Source") }}: {{ c.source }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+  <aside class="panel subscribe" id="subscribe">
+    <h2>{{ t("Get told when it changes") }}</h2>
+    <p class="muted">{{ t("One email per change, with what moved and what to do. Nothing else.") }}</p>
+    <form id="sub-form" autocomplete="off" novalidate>
+      <div class="field"><label for="sub-email">{{ t("Work email") }}</label><input type="email" id="sub-email" name="email" required placeholder="name@company.com"></div>
+      <fieldset class="topics"><legend>{{ t("Rules to follow") }}</legend>
+        <label><input type="checkbox" name="topics" value="AE" checked> {{ t("UAE") }}</label>
+        <label><input type="checkbox" name="topics" value="SA" checked> {{ t("Saudi Arabia") }}</label>
+        <label><input type="checkbox" name="topics" value="GCC"> {{ t("GCC comparison") }}</label>
+        <label><input type="checkbox" name="topics" value="Personal"> {{ t("Personal tax") }}</label>
+      </fieldset>
+      <label class="consent"><input type="checkbox" name="consent_updates" required> <span>{{ t("Oblique Consult may email me when these rules change. Unsubscribe in every email.") }}</span></label>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Tell me") }}</button></div>
+      <p class="error" id="sub-error" role="alert"></p>
+    </form>
+    <p class="ok" id="sub-ok" hidden>{{ t("Done. You will hear from us when the rules move.") }}</p>
+    <p class="small muted" id="sub-off" hidden>{{ t("Notifications are not switched on yet. Email") }} <a href="mailto:info@obliqueconsult.com">info@obliqueconsult.com</a> {{ t("and we will add you by hand.") }}</p>
+    <p class="small muted"><a href="/privacy">{{ t("How we handle your email →") }}</a></p>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async function () {
+  const f = document.getElementById('sub-form'), err = document.getElementById('sub-error');
+  try { const c = await (await fetch('/api/v1/leads/config')).json(); if (!c.enabled) { f.hidden = true; document.getElementById('sub-off').hidden = false; } } catch (e) {}
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault(); err.textContent = '';
+    const topics = [...f.querySelectorAll('input[name=topics]:checked')].map(i => i.value);
+    const body = { email: f.email.value, topics, consent_updates: f.consent_updates.checked, page_url: location.href, source: sessionStorage.getItem('utm_source') || '', website: f.website.value };
+    if (!topics.length) { err.textContent = tr('Pick at least one ruleset.'); return; }
+    const r = await fetch('/api/v1/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (r.ok) { f.hidden = true; document.getElementById('sub-ok').hidden = false; return; }
+    let d = {}; try { d = await r.json(); } catch (e2) {}
+    err.textContent = typeof d.detail === 'string' ? tr(d.detail) : (Array.isArray(d.detail) ? d.detail.map(x => x.msg.replace(/^Value error, /, '')).join(' ') : tr('Something went wrong. Please try again.'));
+  });
+})();
+</script>
+{% endblock %}

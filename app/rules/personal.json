@@ -795,5 +795,13 @@
       ]
     }
   },
-  "reviewed_by": "Oblique Consult tax team"
+  "reviewed_by": "Oblique Consult tax team",
+  "changelog": [
+    {
+      "date": "2026-11-08",
+      "version": "2026.1",
+      "summary": "First release: income tax and mandatory contributions for the United Kingdom, Hong Kong, Singapore, India, the United States, Australia, Germany and South Africa for the current filing year of each; Pakistan listed but disabled until the Finance Act 2026 slabs are confirmed; indicative exchange rates dated 6 November 2026.",
+      "source": "Each country's revenue authority, cited per rule"
+    }
+  ]
 }
