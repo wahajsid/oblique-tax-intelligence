@@ -105,9 +105,11 @@ def run(inp: DiagnosticInput) -> dict[str, Any]:
                 else "PLAN A REVIEW" if actions else "KEEP RECORDS CURRENT")
     from app import services as svc
     slugs = []
+    table = svc.DIAGNOSTIC_SERVICES_PERSONAL if inp.profile == "personal" else svc.DIAGNOSTIC_SERVICES
+    audience = "personal" if inp.profile == "personal" else "business"
     for a in actions:
-        sl = svc.DIAGNOSTIC_SERVICES.get(a["key"])
-        if sl and sl not in slugs:
+        sl = table.get(a["key"])
+        if sl and sl not in slugs and svc.SERVICES[sl]["audience"] == audience:
             slugs.append(sl)
     return {
         "calculator": "tax_exposure_diagnostic", "profile": inp.profile, "priority": priority, "answers": inp.answers, "actions": actions,

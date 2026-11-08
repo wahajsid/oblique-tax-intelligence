@@ -422,7 +422,11 @@
     "Mixed ownership: withholding tax and transfer pricing": "ملكية مختلطة: ضريبة الاستقطاع وتسعير التحويل",
     "Base rules under 2024 Regulations": "قواعد الوعاء وفق لائحة 2024",
     "gregorian": "ميلادية",
-    "hijri": "هجرية"
+    "hijri": "هجرية",
+    "Article 28 upper limit not applied": "الحد الأعلى وفق المادة 28 غير مطبّق",
+    "The 2024 Regulations cap the zakat base under Article 28. This calculator does not apply that cap, so the base, and the zakat on it, may be overstated for some companies. The figure is a screen until the base is confirmed.": "تضع لائحة 2024 حداً أعلى للوعاء الزكوي وفق المادة 28. لا تطبّق هذه الحاسبة ذلك الحد، لذا قد يكون الوعاء، والزكاة عليه، مبالغاً فيهما لبعض الشركات. الرقم فرز أولي حتى يتم تأكيد الوعاء.",
+    "Oblique applies Articles 23 to 28 in full in the computation it prepares.": "تطبّق أوبليك المواد من 23 إلى 28 كاملة في الاحتساب الذي تعدّه.",
+    "The Article 28 upper limit on the zakat base is not applied by this calculator. A technical review of the base is required before the figure is relied on.": "لا تطبّق هذه الحاسبة الحد الأعلى للوعاء الزكوي وفق المادة 28. تلزم مراجعة فنية للوعاء قبل الاعتماد على الرقم."
   },
   "wht_page": {
     "KSA Withholding Tax calculator": "حاسبة ضريبة الاستقطاع في السعودية",

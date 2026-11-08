@@ -120,6 +120,12 @@ FLAG_SERVICES: dict[str, str] = {
     "us_state_tax": "residency_review", "gb_60pct_trap": "residency_review",
 }
 
+# Personal profile: the same questions lead to individual services, never to business ones.
+DIAGNOSTIC_SERVICES_PERSONAL: dict[str, str] = {
+    "residency": "residency_review", "cross_border": "residency_review", "eligibility": "residency_review",
+    "deadline": "residency_review", "records": "relocation_plan",
+}
+
 DIAGNOSTIC_SERVICES: dict[str, str] = {
     "free_zone": "free_zone_review", "ct_registration": "uae_ct_review", "vat_threshold": "vat_registration",
     "related_party": "tp_documentation", "einvoicing": "einvoicing_readiness", "residency": "residency_review",

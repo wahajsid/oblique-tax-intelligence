@@ -24,6 +24,11 @@ def profiles() -> dict:
 
 @lru_cache(maxsize=None)
 def fx_table() -> dict:
+    from app import fx as _fx
+    return _fx.table()
+
+
+def _fx_table_static() -> dict:
     """AED per 1 unit of currency, shared with the relocation module (app/rules/personal.json)."""
     with (RULES_DIR / "personal.json").open(encoding="utf-8") as fh:
         return json.load(fh)["fx"]
@@ -83,7 +88,7 @@ def compare(s: GCCScenario) -> dict:
                                    formula=f"({s.taxable_profit:,.0f} - {band:,.2f}) x 9%"))
             if cur != "AED":
                 flags.append(Flag("ae_zero_band_fx", "info", "AED band converted at an indicative rate",
-                                  f"The AED 375,000 zero-rate band was converted to {cur} {band:,.2f} using {fx_rate} AED per {cur} (table dated {fx_table()['as_of']}; USD and SAR are pegged).", None))
+                                  f"The AED 375,000 zero-rate band was converted to {cur} {band:,.2f} using {fx_rate} AED per {cur} ({fx_table()['source']}; USD and SAR are pegged).", None))
         elif code in ("SA", "QA", "KW"):
             cit = s.taxable_profit * foreign * rate
             trace.append(TraceStep(f"CIT: {rate:.0%} on non-GCC share ({foreign:.0%})", m(cit)))

@@ -461,3 +461,5 @@ html[lang=ar] .bar-row .val .pct{margin-left:0;margin-right:6px}
 html[lang=ar] .hero::before{background:repeating-linear-gradient(79deg,transparent 0 56px,var(--line) 56px 57px);-webkit-mask-image:radial-gradient(70% 110% at 8% -10%,#000 0%,rgba(0,0,0,.6) 40%,transparent 72%);mask-image:radial-gradient(70% 110% at 8% -10%,#000 0%,rgba(0,0,0,.6) 40%,transparent 72%)}
 .hero .wrap{position:relative}
 .final-cta{position:relative;overflow:hidden}
+
+.turnstile-slot:empty{display:none}.turnstile-slot{margin:8px 0}

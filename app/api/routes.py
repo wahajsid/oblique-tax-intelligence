@@ -137,6 +137,8 @@ def create_lead(body: leads.LeadInput, request: Request) -> dict:
     ip = _client_ip(request)
     if leads.rate_limited(ip):
         raise HTTPException(status_code=429, detail="Too many enquiries from this connection. Please try again in an hour or email info@obliqueconsult.com.")
+    if leads.turnstile_enabled() and not leads.verify_turnstile(body.turnstile_token, ip):
+        raise HTTPException(status_code=400, detail="The spam check did not pass. Please try again, or email info@obliqueconsult.com.")
     record = leads.make_record(body, ip)
     pdf_bytes = None
     summary = f"Enquiry via {body.context.calculator}"
@@ -189,6 +191,8 @@ def subscribe(body: leads.SubscribeInput, request: Request) -> dict:
     ip = request.client.host if request.client else "0.0.0.0"
     if leads.rate_limited(ip):
         raise HTTPException(status_code=429, detail="Too many requests from this connection. Please try again in an hour.")
+    if leads.turnstile_enabled() and not leads.verify_turnstile(body.turnstile_token, ip):
+        raise HTTPException(status_code=400, detail="The spam check did not pass. Please try again, or email info@obliqueconsult.com.")
     record = leads.make_subscription_record(body, ip)
     try:
         delivery = leads.deliver(record, "Rule-change subscription: " + ", ".join(body.topics), None, "")

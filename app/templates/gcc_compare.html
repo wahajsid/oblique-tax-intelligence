@@ -48,7 +48,7 @@
       <tr><td>Personal income tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ p.personal_income_tax.note }}</td>{% endfor %}</tr>
       <tr><td>CIT filing deadline</td>{% for c, p in profiles.jurisdictions.items() %}<td>{{ p.cit_filing_deadline }}</td>{% endfor %}</tr>
     </tbody></table></div>
-    <div class="cta-row"><button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button><a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
+    <div class="cta-row"><button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button><a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=gcc_compare" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
   </section>
 </div>
 {% endblock %}

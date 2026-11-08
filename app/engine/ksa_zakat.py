@@ -14,6 +14,9 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .core import Answer, CalculationResult, Flag, TraceStep, ZERO, load_rules, param, ratio, rule
 
+# Flip to True only when the Article 28 formula is implemented AND signed off by the technical reviewer (see docs/LAUNCH_GATES.md).
+ARTICLE_28_IMPLEMENTED = False
+
 SCOPE_EXCLUDED = ("the Article 28 upper-limit base, partial-year proration, zakat on investment funds, "
                   "hydrocarbon rates, tax groups and treaty relief.")
 
@@ -133,5 +136,13 @@ def calculate(inp: KSAZakatInput) -> CalculationResult:
     if r_base["review_status"] != "verified":
         res.flag(Flag("zakat_regs_review", "info", "Base rules under 2024 Regulations", r_base.get("verification_note", ""), None))
 
+    if not ARTICLE_28_IMPLEMENTED:
+        # Mandatory until the Article 28 upper-limit formula is implemented and technically reviewed.
+        # It cannot be cleared by the visitor confirming scope.
+        res.flag(Flag("zakat_art28_unmodelled", "attention", "Article 28 upper limit not applied",
+                      "The 2024 Regulations cap the zakat base under Article 28. This calculator does not apply that cap, so the base, and the zakat on it, "
+                      "may be overstated for some companies. The figure is a screen until the base is confirmed.",
+                      "Oblique applies Articles 23 to 28 in full in the computation it prepares."))
+        res.review_reasons.append("The Article 28 upper limit on the zakat base is not applied by this calculator. A technical review of the base is required before the figure is relied on.")
     res.apply_scope_gate(inp.scope_confirmed, inp.special_regime, SCOPE_EXCLUDED)
     return res

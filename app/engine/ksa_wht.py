@@ -30,6 +30,11 @@ def categories() -> dict:
     return rule("sa", "withholding_tax", "rates")["parameters"]["categories"]
 
 
+def _rate(x) -> str:
+    """7.5% stays 7.5%, 15% stays 15%, 7.75% stays 7.75%: never rounded to a whole number for display."""
+    return (f"{Decimal(x) * 100:.4f}".rstrip("0").rstrip(".")) + "%"
+
+
 def calculate(inp: KSAWHTInput) -> CalculationResult:
     data = load_rules("sa")
     r = rule("sa", "withholding_tax", "rates")
@@ -56,8 +61,8 @@ def calculate(inp: KSAWHTInput) -> CalculationResult:
         total_wht += wht
         total_cost += gross
         label = cats[p.category]["label"]
-        res.add(TraceStep(f"{label}: WHT at {applied:.0%}" + (" (treaty)" if applied != statutory else "") + (" grossed up" if p.grossed_up else ""),
-                          m(wht), formula=f"{gross:,.2f} x {applied:.0%}", rule_id=r["rule_id"], kind="tax"))
+        res.add(TraceStep(f"{label}: WHT at {_rate(applied)}" + (" (treaty)" if applied != statutory else "") + (" grossed up" if p.grossed_up else ""),
+                          m(wht), formula=f"{gross:,.2f} x {_rate(applied)}", rule_id=r["rule_id"], kind="tax"))
         lines.append({"category": p.category, "label": label, "gross": m(gross), "statutory_rate": float(statutory),
                       "applied_rate": float(applied), "wht": m(wht), "net_to_payee": m(gross - wht)})
         if p.treaty_rate is not None and p.treaty_rate < statutory:

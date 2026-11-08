@@ -23,6 +23,7 @@ from fastapi.templating import Jinja2Templates
 
 from app import __version__
 from app.api.routes import router as api_router
+from app import fx as fx_feed
 from app import i18n, journeys, services
 from app.engine import diagnostic, gcc_compare, ksa_wht, personal_tax
 from app.engine.core import load_rules
@@ -42,8 +43,10 @@ app.include_router(api_router)
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 templates = Jinja2Templates(directory=BASE / "templates")
 
-CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
-       "font-src 'self'; connect-src 'self'; frame-src https://play.obliqueconsult.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
+TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "") if (os.environ.get("TURNSTILE_SITE_KEY") and os.environ.get("TURNSTILE_SECRET")) else ""
+_TS_SCRIPT = " https://challenges.cloudflare.com" if TURNSTILE_SITE_KEY else ""
+CSP = (f"default-src 'self'; script-src 'self' 'unsafe-inline'{_TS_SCRIPT}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+       f"font-src 'self'; connect-src 'self'; frame-src https://play.obliqueconsult.com{_TS_SCRIPT}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
 # 'unsafe-inline' is needed for the small per-page <script> blocks and Swagger UI; move them to files before production.
 
 
@@ -97,7 +100,7 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
         "game_url": "https://play.obliqueconsult.com", "game_utm": "?utm_source=tax-tools",
-        "booking_url": "https://calendly.com/alina-obliqueconsult/30min",
+        "booking_url": "https://calendly.com/alina-obliqueconsult/30min", "turnstile_site_key": TURNSTILE_SITE_KEY,
         "version": __version__, "indexable": INDEXABLE,
         "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
                            "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}
@@ -173,7 +176,7 @@ def page_gcc(request: Request):
 def page_move(request: Request, origin: str | None = None):
     origins = personal_tax.enabled_countries()
     sel = origin.upper() if origin and origin.upper() in origins else "GB"
-    return page(request, "move.html", origins=origins, selected=sel, fx=personal_tax.rules()["fx"], personal=personal_tax.rules())
+    return page(request, "move.html", origins=origins, selected=sel, fx=fx_feed.table(), personal=personal_tax.rules())
 
 
 @app.get("/move/{origin}-to-uae", response_class=HTMLResponse)
@@ -183,7 +186,7 @@ def page_move_origin(request: Request, origin: str):
     sel = code.get(origin.lower())
     if not sel:
         return page(request, "404.html", status_code=404)
-    return page(request, "move.html", origins=origins, selected=sel, fx=personal_tax.rules()["fx"], personal=personal_tax.rules())
+    return page(request, "move.html", origins=origins, selected=sel, fx=fx_feed.table(), personal=personal_tax.rules())
 
 
 @app.get("/personal-tax", response_class=HTMLResponse)
@@ -274,7 +277,7 @@ def compare_pair(request: Request, a: str, b: str):
 
 @app.get("/methodology", response_class=HTMLResponse)
 def methodology(request: Request):
-    return page(request, "methodology.html", ae=load_rules("ae"), sa=load_rules("sa"), gcc=gcc_compare.profiles(), personal=personal_tax.rules())
+    return page(request, "methodology.html", ae=load_rules("ae"), sa=load_rules("sa"), gcc=gcc_compare.profiles(), personal=personal_tax.rules(), fx=fx_feed.table())
 
 
 @app.get("/api", response_class=HTMLResponse)

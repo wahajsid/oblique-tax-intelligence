@@ -13,7 +13,7 @@
 <link rel="icon" href="/static/img/favicon.png" type="image/png">
 {% block head %}{% endblock %}
 </head>
-<body data-contact="{{ site.contact_url }}" data-booking="{{ site.booking_url }}">
+<body data-contact="{{ site.contact_url }}" data-booking="{{ site.booking_url }}"{% if site.turnstile_site_key %} data-turnstile="{{ site.turnstile_site_key }}"{% endif %}>
 <a class="skip" href="#main">{{ t("Skip to content") }}</a>
 <header class="topbar">
   <div class="wrap">
@@ -79,5 +79,6 @@
 <script>window.LANG={{ lang|tojson }};window.I18N={{ i18n_json|tojson }};window.AR_PATHS={{ ar_paths|tojson }};</script>
 <script src="/static/js/calc.js"></script>
 {% block scripts %}{% endblock %}
+{% if site.turnstile_site_key %}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>{% endif %}
 </body>
 </html>

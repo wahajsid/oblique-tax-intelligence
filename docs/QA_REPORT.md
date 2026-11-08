@@ -106,3 +106,14 @@ An outside review (text-only crawl, no JavaScript) was received after the day's 
 | Analytics | Not added (privacy page promise). First-party counter is a later option |
 | Founder relocation journey, deeper GCC calculators | Roadmap, not started |
 
+## Owner review, 8 November 2026 (evening)
+
+| Finding | Status |
+|---|---|
+| Zakat Article 28 warning could disappear once scope was confirmed | Fixed: permanent flag and review reason; outcome stays review-required until `ARTICLE_28_IMPLEMENTED` is flipped after technical sign-off |
+| WHT 7.5% shown as 8% in the working paper | Fixed: rates keep their decimals in trace labels, formulas and the PDF |
+| "Free call" went to the nine-field contact form, defaulted to Transfer Pricing, lost context | Fixed: with no destination configured it goes to Calendly with UTMs naming the calculator and service; with a destination the contextual dialog opens |
+| Personal diagnostic recommended a UAE–Saudi transaction review | Fixed: recommendations filtered by audience; personal profile maps to residency and relocation services |
+| ECB FX feed | Added (`app/fx.py`); verified with a fixture of the ECB XML; falls back to the dated table when offline, and says so |
+| Turnstile | Added behind two environment variables; verified the gate rejects without a token and calls siteverify with one |
+

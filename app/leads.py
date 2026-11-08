@@ -76,6 +76,7 @@ class LeadInput(BaseModel):
     consent_version: str = Field(CONSENT_VERSION, max_length=20)
     context: LeadContext
     website: str = Field("", max_length=200)  # honeypot: must stay empty
+    turnstile_token: str = Field("", max_length=4000)
 
     @field_validator("email")
     @classmethod
@@ -103,6 +104,7 @@ class SubscribeInput(BaseModel):
     page_url: str = Field("", max_length=2000)
     source: str = Field("", max_length=80)
     website: str = Field("", max_length=200)  # honeypot
+    turnstile_token: str = Field("", max_length=4000)
 
     @field_validator("email")
     @classmethod
@@ -153,8 +155,26 @@ def enabled() -> bool:
     return any(sinks_configured().values())
 
 
+# --------------------------------------------------------------- Turnstile -----
+def turnstile_enabled() -> bool:
+    return bool(os.environ.get("TURNSTILE_SITE_KEY") and os.environ.get("TURNSTILE_SECRET"))
+
+
+def verify_turnstile(token: str, ip: str) -> bool:
+    """Cloudflare Turnstile server-side check. Only called when TURNSTILE_SECRET is set."""
+    if not token:
+        return False
+    try:
+        r = httpx.post("https://challenges.cloudflare.com/turnstile/v0/siteverify",
+                       data={"secret": os.environ["TURNSTILE_SECRET"], "response": token, "remoteip": ip}, timeout=10)
+        r.raise_for_status()
+        return bool(r.json().get("success"))
+    except Exception:  # noqa: BLE001 - a Cloudflare outage must not accept spam, nor crash
+        return False
+
+
 def public_config() -> dict[str, Any]:
-    return {"enabled": enabled(), "consent_version": CONSENT_VERSION, "consent_text": CONSENT_TEXT, "retention": RETENTION,
+    return {"enabled": enabled(), "turnstile_site_key": os.environ.get("TURNSTILE_SITE_KEY", "") if turnstile_enabled() else "", "consent_version": CONSENT_VERSION, "consent_text": CONSENT_TEXT, "retention": RETENTION,
             "controller": "Oblique Consult, Dubai and Sharjah, United Arab Emirates", "contact": "info@obliqueconsult.com",
             "processors": [k for k, v in sinks_configured().items() if v and k != "sqlite"]}
 

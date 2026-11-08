@@ -202,6 +202,22 @@
     catch (e) { config = { enabled: false }; }
     return config;
   }
+  // Direct booking with context: Calendly stores UTM parameters with the event, so the adviser sees which calculator and service led here.
+  function bookingLink(ctx) {
+    const base = document.body.dataset.booking || document.body.dataset.contact || '/';
+    const q = new URLSearchParams({ utm_source: sessionStorage.getItem('utm_source') || 'tax-tools', utm_medium: (ctx && ctx.calculator) || 'site', utm_campaign: (ctx && ctx.service) || 'free-call' });
+    return base + (base.includes('?') ? '&' : '?') + q.toString();
+  }
+  window.bookingLink = bookingLink;
+  // Cloudflare Turnstile (only when the site key is configured). Explicit render so it never loads where there is no form.
+  const tsWidgets = {};
+  window.mountTurnstile = function (slotId) {
+    const key = document.body.dataset.turnstile; const slot = $(slotId); if (!key || !slot) return;
+    const go = () => { if (!window.turnstile) { setTimeout(go, 200); return; } if (tsWidgets[slotId] !== undefined) { window.turnstile.reset(tsWidgets[slotId]); return; }
+      tsWidgets[slotId] = window.turnstile.render(slot, { sitekey: key, theme: document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark', size: 'flexible' }); };
+    go();
+  };
+  window.turnstileToken = function (slotId) { return (window.turnstile && tsWidgets[slotId] !== undefined) ? (window.turnstile.getResponse(tsWidgets[slotId]) || '') : ''; };
   function download(blob, name) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name + '.pdf'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
@@ -228,6 +244,7 @@
     if (pending.audience) { const r2 = document.querySelector(`#lead-form input[name=profile][value=${pending.audience}]`); if (r2) { r2.checked = true; r2.dispatchEvent(new Event('change', { bubbles: true })); } }
     $('lead-submit').textContent = tr(pending.interest === 'expert_review' ? 'Send' : 'Send my working paper');
     $('lead-desc').hidden = !!pending.serviceTitle;
+    window.mountTurnstile('lead-turnstile');
     setTimeout(() => $('lead-name').focus(), 50);
   }
   function closeModal() {
@@ -238,7 +255,7 @@
     pending = ctx;
     const c = await loadConfig();
     if (!c.enabled) {  // no destination configured: PDFs are simply free; service enquiries go to the contact page
-      if (ctx.interest === 'expert_review' || !ctx.inputs || !Object.keys(ctx.inputs).length) { location.href = document.body.dataset.contact || '/'; return; }
+      if (ctx.interest === 'expert_review' || !ctx.inputs || !Object.keys(ctx.inputs).length) { location.href = bookingLink(ctx); return; }
       try { await fetchPdf(ctx, null); } catch (e) { alert(e.message); }
       return;
     }
@@ -261,7 +278,7 @@
         profile: f.get('profile') || 'business',
         consent_contact: !!f.get('consent_contact'), consent_marketing: !!f.get('consent_marketing'), consent_version: config.consent_version,
         service: pending.service || '',
-        context: { calculator: pending.calculator, inputs: (f.get('share_inputs') || pending.interest !== 'expert_review') ? pending.inputs : {}, shared_inputs: !!(f.get('share_inputs') || pending.interest !== 'expert_review'), page_url: location.href.split('#')[0], source: (sessionStorage.getItem('utm_source') || '') }, website: f.get('website') || '' };
+        context: { calculator: pending.calculator, inputs: (f.get('share_inputs') || pending.interest !== 'expert_review') ? pending.inputs : {}, shared_inputs: !!(f.get('share_inputs') || pending.interest !== 'expert_review'), page_url: location.href.split('#')[0], source: (sessionStorage.getItem('utm_source') || '') }, website: f.get('website') || '', turnstile_token: window.turnstileToken('lead-turnstile') };
       try {
         const r = await fetch('/api/v1/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'omit', body: JSON.stringify(body) });
         const j = await r.json();
@@ -290,7 +307,7 @@
     let cfg; try { cfg = await (await fetch('/api/v1/leads/config', { cache: 'no-store' })).json(); } catch (e) { return; }
     if (!cfg.enabled) return;
     ctas.forEach(a => a.addEventListener('click', (e) => {
-      if (!window._lastCalc) return;           // nothing calculated yet: fall through to the contact page
+      if (!window._lastCalc) return;           // nothing calculated yet: fall through to the booking link
       e.preventDefault();
       window.requestWorkingPaper(Object.assign({}, window._lastCalc, { interest: 'expert_review' }));
     }));

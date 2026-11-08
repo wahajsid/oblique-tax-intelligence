@@ -35,6 +35,7 @@
       </fieldset>
       <label class="consent"><input type="checkbox" name="consent_updates" required> <span>{{ t("Oblique Consult may email me when these rules change. Unsubscribe in every email.") }}</span></label>
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <div class="turnstile-slot" id="sub-turnstile"></div>
       <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Tell me") }}</button></div>
       <p class="error" id="sub-error" role="alert"></p>
     </form>
@@ -48,11 +49,11 @@
 <script>
 (async function () {
   const f = document.getElementById('sub-form'), err = document.getElementById('sub-error');
-  try { const c = await (await fetch('/api/v1/leads/config')).json(); if (!c.enabled) { f.hidden = true; document.getElementById('sub-off').hidden = false; } } catch (e) {}
+  try { const c = await (await fetch('/api/v1/leads/config')).json(); if (!c.enabled) { f.hidden = true; document.getElementById('sub-off').hidden = false; } else if (window.mountTurnstile) window.mountTurnstile('sub-turnstile'); } catch (e) {}
   f.addEventListener('submit', async (e) => {
     e.preventDefault(); err.textContent = '';
     const topics = [...f.querySelectorAll('input[name=topics]:checked')].map(i => i.value);
-    const body = { email: f.email.value, topics, consent_updates: f.consent_updates.checked, page_url: location.href, source: sessionStorage.getItem('utm_source') || '', website: f.website.value };
+    const body = { email: f.email.value, topics, consent_updates: f.consent_updates.checked, page_url: location.href, source: sessionStorage.getItem('utm_source') || '', website: f.website.value, turnstile_token: (window.turnstileToken && window.turnstileToken('sub-turnstile')) || '' };
     if (!topics.length) { err.textContent = tr('Pick at least one ruleset.'); return; }
     const r = await fetch('/api/v1/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (r.ok) { f.hidden = true; document.getElementById('sub-ok').hidden = false; return; }

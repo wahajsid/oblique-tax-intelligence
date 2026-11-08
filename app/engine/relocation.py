@@ -46,7 +46,9 @@ def compare(inp: RelocationInput) -> dict[str, Any]:
     data = personal_tax.rules()
     c = data["countries"][inp.origin]
     cur = c["currency"]
-    fx = inp.fx_aed_per_unit if inp.fx_aed_per_unit is not None else D(data["fx"]["aed_per_unit"][cur])
+    from app import fx as _fxmod
+    fx_tab = _fxmod.table()
+    fx = inp.fx_aed_per_unit if inp.fx_aed_per_unit is not None else D(str(fx_tab["aed_per_unit"][cur]))
 
     origin = personal_tax.calculate(personal_tax.PersonalTaxInput(
         country=inp.origin, gross_income=inp.gross_income, cpf_member=inp.cpf_member, us_person=inp.us_person,
@@ -78,7 +80,7 @@ def compare(inp: RelocationInput) -> dict[str, Any]:
     if inp.retained_connections != "no":
         flags.append({"severity": "attention", "title": "Retained home-country connections", "detail": "Property, business, family or significant days at home can keep you resident or keep home-source income taxable. Do not assume home tax falls to zero."})
     if inp.uae_salary_aed is None:
-        flags.append({"severity": "info", "title": "UAE package assumed equal to current income", "detail": f"Converted at {fx} AED per {cur} (indicative rate as of {data['fx']['as_of']}). Enter your actual UAE offer for a real comparison."})
+        flags.append({"severity": "info", "title": "UAE package assumed equal to current income", "detail": f"Converted at {fx} AED per {cur} ({fx_tab['source']}). Enter your actual UAE offer for a real comparison."})
     flags.append({"severity": "info", "title": "Cost of living and benefits", "detail": "The UAE has 5% VAT, no state pension accrual for expatriates, and employer-funded health cover and end-of-service gratuity instead of social insurance. Use the 'additional annual costs' field to reflect housing and schooling."})
 
     m = lambda v, cur_=cur: money(v, cur_)  # noqa: E731
@@ -92,7 +94,7 @@ def compare(inp: RelocationInput) -> dict[str, Any]:
         "uae": {"gross_aed": money(uae_gross_aed, "AED"), "tax_aed": money(uae_tax_aed, "AED"), "additional_costs_aed": money(inp.additional_annual_costs_aed, "AED"),
                 "net_aed": money(uae_net_aed, "AED"), "monthly_net_aed": money(uae_net_aed / 12, "AED"), "notes": uae_notes,
                 "residual_us": residual.as_dict() if residual else None},
-        "comparison": {"fx_aed_per_unit": float(fx), "fx_as_of": data["fx"]["as_of"], "fx_overridden": inp.fx_aed_per_unit is not None,
+        "comparison": {"fx_aed_per_unit": float(fx), "fx_as_of": fx_tab["as_of"], "fx_source": fx_tab["source"], "fx_live": fx_tab["live"], "fx_overridden": inp.fx_aed_per_unit is not None,
                        "annual_net_gain_aed": money(annual_gain_aed, "AED"), "annual_net_gain_local": m(annual_gain_aed / fx),
                        "annual_tax_saved_aed": money(origin_tax_aed - uae_tax_aed, "AED"),
                        "first_year_gain_aed": money(first_year_aed, "AED"), "years": inp.years, "horizon_gain_aed": money(horizon_aed, "AED"),

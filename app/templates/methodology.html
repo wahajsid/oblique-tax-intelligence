@@ -28,7 +28,7 @@
   {% endfor %}{% endfor %}</table>
   {% endfor %}
   <h3>Personal income tax (origin countries for the UAE move comparison)</h3>
-  <p class="small muted">Ruleset {{ personal.ruleset_version }} reviewed {{ personal.last_reviewed }}. FX table as of {{ personal.fx.as_of }} is indicative and user-overridable. <a href="/api/v1/rules/personal">Machine-readable</a>.</p>
+  <p class="small muted">Ruleset {{ personal.ruleset_version }} reviewed {{ personal.last_reviewed }}. Exchange rates: {{ fx.source }}; user-overridable in the move calculator. <a href="/api/v1/rules/personal">Machine-readable</a>.</p>
   <table><tr><th>Country</th><th>Tax year</th><th>Status</th><th>Note / source</th></tr>
   {% for cc, c in personal.countries.items() %}<tr><td>{{ c.flag }} {{ c.name }}{% if not c.enabled %} <span class="pill">disabled</span>{% endif %}</td><td class="small">{{ c.tax_year }}</td><td><span class="status-dot {{ c.review_status }}"></span>{{ c.review_status | replace('_',' ') }}</td><td class="small">{% if c.verification_note %}<em>{{ c.verification_note }}</em><br>{% endif %}<a href="{{ c.source_url }}" target="_blank" rel="noopener">{{ c.source_reference }}</a></td></tr>{% endfor %}</table>
   <h2>Governance</h2>

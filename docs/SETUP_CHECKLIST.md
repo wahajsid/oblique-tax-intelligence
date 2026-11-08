@@ -78,9 +78,9 @@ Then in Railway set `SITE_URL=https://tax.obliqueconsult.com` if canonical URLs 
 
 | Need | Option | Variable |
 |---|---|---|
-| Exchange rates with a date | ECB daily reference rates (free, no key) or exchangerate.host | code change: feed into `fx` in personal.json |
+| Exchange rates with a date | Done: ECB daily reference rates, no key. Set `FX_FEED=off` only to force the dated table | none |
 | Rule-change emails to subscribers | Resend Broadcasts or M365 mail merge from the Supabase list | none; export from Supabase |
-| Spam protection if the honeypot is not enough | Cloudflare Turnstile (first-party friendly) | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` (code change) |
+| Spam protection if the honeypot is not enough | Done: Cloudflare Turnstile. Create a widget at dash.cloudflare.com → Turnstile for `tax.obliqueconsult.com` (and the Railway host while testing), mode Managed | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` |
 | Public API access for partners | API keys table in Supabase + per-key rate limit | code change; keep unpromoted until then |
 | Error monitoring | Sentry (self-hosted or EU region) | `SENTRY_DSN` (code change; update privacy page) |
 | Analytics | First-party page counter in the app, or Plausible EU | update privacy page first |

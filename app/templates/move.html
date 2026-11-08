@@ -33,7 +33,7 @@
       </div>
       <div class="two">
         <div class="field"><label>Horizon (years)</label><input type="number" name="years" value="5" min="1" max="10"></div>
-        <div class="field"><label>FX: AED per 1 {{ c.currency }} <span class="hint" title="Indicative rate as of {{ fx.as_of }}; override with today's rate">?</span></label><input type="number" name="fx_aed_per_unit" value="" data-nullable="1" min="0" step="any" placeholder="{{ fx.aed_per_unit[c.currency] }}"></div>
+        <div class="field"><label>FX: AED per 1 {{ c.currency }} <span class="hint" title="{{ fx.source }}; override with your own rate">?</span></label><input type="number" name="fx_aed_per_unit" value="" data-nullable="1" min="0" step="any" placeholder="{{ fx.aed_per_unit[c.currency] }}"></div>
       </div>
     </fieldset>
     <fieldset>
@@ -57,7 +57,7 @@
     <div class="cta-row">
       <button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button>
       <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
-      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Plan it with Oblique</a>
+      <a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=move_to_uae" target="_blank" rel="noopener">Plan it with Oblique</a>
     </div>
     <p class="small muted" id="disclaimer"></p>
   </section>
@@ -83,7 +83,7 @@ initCalc({
     const badge = document.getElementById('status-badge'); badge.className = 'badge ' + r.review_status; badge.textContent = 'Rules: ' + (labels[r.review_status] || r.review_status); badge.title = 'Review status of the origin-country tax rules used.';
     const neg = c.annual_net_gain_aed < 0;
     document.getElementById('gain').innerHTML = `<div class="gain ${neg ? 'negative' : ''}"><div class="k">${neg ? 'Estimated annual net cost of moving' : 'Estimated annual net gain from moving'}</div>
-      <div class="v">${fmtMoney(Math.abs(c.annual_net_gain_aed), 'AED')}</div><div class="sub">≈ ${fmtMoney(Math.abs(c.annual_net_gain_local), cur)} a year · tax saved ${fmtMoney(c.annual_tax_saved_aed, 'AED')} · after extra UAE living costs${c.fx_overridden ? '' : ' · indicative FX ' + c.fx_aed_per_unit + ' AED/' + cur + ' as of ' + c.fx_as_of}</div></div>`;
+      <div class="v">${fmtMoney(Math.abs(c.annual_net_gain_aed), 'AED')}</div><div class="sub">≈ ${fmtMoney(Math.abs(c.annual_net_gain_local), cur)} a year · tax saved ${fmtMoney(c.annual_tax_saved_aed, 'AED')} · after extra UAE living costs${c.fx_overridden ? '' : ' · FX ' + c.fx_aed_per_unit + ' AED/' + cur + (c.fx_live ? ' (ECB reference rate of ' + c.fx_as_of + ')' : ' (indicative table of ' + c.fx_as_of + ')')}</div></div>`;
     const row = (k, v, cls = '') => `<div class="row ${cls}"><span>${escHtml(k)}</span><b>${v}</b></div>`;
     document.getElementById('versus').innerHTML = `
       <div class="side"><h3>${o.flag} ${escHtml(o.name)} today</h3>${row('Gross income', fmtMoney(o.gross_local, cur))}${row('Income tax + contributions', '− ' + fmtMoney(o.tax_local, cur))}${row('Effective rate', fmtPct(o.effective_rate))}${row('Marginal income tax rate', fmtPct(o.marginal_income_tax_rate))}${row('Net per year', fmtMoney(o.net_local, cur), 'total')}${row('Net per month', fmtMoney(o.monthly_net_local, cur))}${row('Net per year in AED', fmtMoney(o.net_aed, 'AED'))}</div>
