@@ -8,7 +8,7 @@ from typing import Any
 
 from app.engine import ksa_wht, personal_tax, uae_ct, vat
 
-REVIEW = {"status": "draft_for_review", "reviewer": "Oblique Consult tax team", "date": "2026-11-08"}
+REVIEW = {"status": "reviewed", "reviewer": "Oblique Consult tax team", "date": "2026-11-08"}
 
 JOURNEYS: dict[str, dict[str, Any]] = {
     "uae-saudi-transactions": {
