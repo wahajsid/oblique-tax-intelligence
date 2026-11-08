@@ -184,8 +184,19 @@ def test_ksa_wht_unknown_category():
 def test_gcc_compare_ranks_and_scopes():
     c = gcc_compare.compare(gcc_compare.GCCScenario(taxable_profit=1_000_000, foreign_ownership_pct=100))
     totals = {r["code"]: r["total_direct_tax"] for r in c["rows"]}
-    assert totals == {"BH": 0.0, "AE": 56_250.0, "QA": 100_000.0, "OM": 150_000.0, "KW": 150_000.0, "SA": 200_000.0}
+    # AE: band AED 375,000 / 3.6725 = USD 102,110.28 ; (1,000,000 - 102,110.28) x 9% = 80,810.07
+    assert totals == {"BH": 0.0, "AE": 80_810.07, "QA": 100_000.0, "OM": 150_000.0, "KW": 150_000.0, "SA": 200_000.0}
     assert c["rows"][0]["code"] == "BH"
+
+
+def test_gcc_compare_band_in_aed_and_sar():
+    c_aed = gcc_compare.compare(gcc_compare.GCCScenario(taxable_profit=1_000_000, currency="AED", jurisdictions=["AE"]))
+    assert c_aed["rows"][0]["corporate_tax"] == 56_250.0            # (1,000,000 - 375,000) x 9% in AED itself
+    c_sar = gcc_compare.compare(gcc_compare.GCCScenario(taxable_profit=1_000_000, currency="SAR", jurisdictions=["AE"]))
+    # band in SAR = 375,000 / 0.979333 = 382,913.65 ; (1,000,000 - 382,913.65) x 9% = 55,537.77
+    assert c_sar["rows"][0]["corporate_tax"] == pytest.approx(55_537.77, abs=0.01)
+    with pytest.raises(Exception):
+        gcc_compare.GCCScenario(currency="JPY")
 
 
 def test_gcc_compare_gcc_owned_pays_zakat_not_cit():
@@ -201,4 +212,5 @@ def test_gcc_compare_dmtt_top_up():
     bh = next(r for r in c["rows"] if r["code"] == "BH")
     assert bh["dmtt_top_up"] == 1_500_000.0
     ae = next(r for r in c["rows"] if r["code"] == "AE")
-    assert ae["dmtt_top_up"] == pytest.approx(1_500_000 - (10_000_000 - 375_000) * 0.09)
+    band = 375_000 / 3.6725
+    assert ae["dmtt_top_up"] == pytest.approx(1_500_000 - (10_000_000 - band) * 0.09, abs=0.01)

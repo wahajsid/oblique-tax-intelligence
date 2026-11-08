@@ -11,7 +11,7 @@ import json
 from decimal import Decimal
 from functools import lru_cache
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .core import RULES_DIR, D, Flag, TraceStep, ZERO, money, ratio
 
@@ -20,6 +20,22 @@ from .core import RULES_DIR, D, Flag, TraceStep, ZERO, money, ratio
 def profiles() -> dict:
     with (RULES_DIR / "gcc.json").open(encoding="utf-8") as fh:
         return json.load(fh)
+
+
+@lru_cache(maxsize=None)
+def fx_table() -> dict:
+    """AED per 1 unit of currency, shared with the relocation module (app/rules/personal.json)."""
+    with (RULES_DIR / "personal.json").open(encoding="utf-8") as fh:
+        return json.load(fh)["fx"]
+
+
+SUPPORTED_CURRENCIES = ("USD", "AED", "SAR", "EUR", "GBP")
+
+
+def aed_band_in(currency: str, aed_amount) -> tuple[Decimal, Decimal]:
+    """Convert an AED threshold into the scenario currency. Returns (amount, aed_per_unit)."""
+    rate = D(fx_table()["aed_per_unit"][currency])
+    return D(aed_amount) / rate, rate
 
 
 class GCCScenario(BaseModel):
@@ -33,7 +49,15 @@ class GCCScenario(BaseModel):
     annual_management_fees_paid_abroad: Decimal = Field(ZERO, ge=0)
     dividends_distributed_abroad: Decimal = Field(ZERO, ge=0)
     jurisdictions: list[str] = Field(default_factory=lambda: ["AE", "SA", "BH", "OM", "QA", "KW"])
-    currency: str = Field("USD", description="Currency the scenario figures are expressed in (no FX is applied)")
+    currency: str = Field("USD", description="Currency the scenario figures are expressed in; AED thresholds are converted at the indicative FX table")
+
+    @field_validator("currency")
+    @classmethod
+    def _cur(cls, v: str) -> str:
+        v = v.upper()
+        if v not in SUPPORTED_CURRENCIES:
+            raise ValueError(f"currency must be one of {', '.join(SUPPORTED_CURRENCIES)}")
+        return v
 
 
 def compare(s: GCCScenario) -> dict:
@@ -52,10 +76,14 @@ def compare(s: GCCScenario) -> dict:
         rate = D(ct["headline_rate"])
 
         if code == "AE":
-            above = max(s.taxable_profit - D(ct["zero_band"]), ZERO)
+            band, fx_rate = aed_band_in(cur, ct["zero_band"])
+            above = max(s.taxable_profit - band, ZERO)
             cit = above * rate
-            trace.append(TraceStep("CT: 9% above the AED 375k band (band applied 1:1 in the scenario currency for screening)", m(cit), formula=f"({s.taxable_profit:,.0f} - 375,000) x 9%"))
-            flags.append(Flag("ae_zero_band_currency", "info", "Zero band shown in scenario currency", "The AED 375,000 band is applied without FX conversion in this screen.", None))
+            trace.append(TraceStep(f"CT: 9% above the AED 375,000 band = {cur} {band:,.2f} at {fx_rate} AED per {cur}", m(cit),
+                                   formula=f"({s.taxable_profit:,.0f} - {band:,.2f}) x 9%"))
+            if cur != "AED":
+                flags.append(Flag("ae_zero_band_fx", "info", "AED band converted at an indicative rate",
+                                  f"The AED 375,000 zero-rate band was converted to {cur} {band:,.2f} using {fx_rate} AED per {cur} (table dated {fx_table()['as_of']}; USD and SAR are pegged).", None))
         elif code in ("SA", "QA", "KW"):
             cit = s.taxable_profit * foreign * rate
             trace.append(TraceStep(f"CIT: {rate:.0%} on non-GCC share ({foreign:.0%})", m(cit)))

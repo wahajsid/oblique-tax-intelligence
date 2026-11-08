@@ -39,11 +39,12 @@ def test_unknown_fields_rejected():
 
 # -------------------------------------------------------- decimal precision --
 def test_three_decimal_currencies_in_gcc_compare():
-    c = gcc_compare.compare(gcc_compare.GCCScenario(taxable_profit=Decimal("1000.333"), jurisdictions=["BH", "OM", "KW"], currency="OMR"))
+    c = gcc_compare.compare(gcc_compare.GCCScenario(taxable_profit=Decimal("1000.333"), jurisdictions=["BH", "OM", "KW"], currency="AED"))
     om = next(r for r in c["rows"] if r["code"] == "OM")
-    # 1000.333 x 15% = 150.04995 -> 150.050 at 3 dp
+    # 1000.333 x 15% = 150.04995 -> 150.05 at the scenario currency's 2 dp (AED)
     assert om["corporate_tax"] == 150.05
-    assert str(om["corporate_tax"]) in ("150.05", "150.050")
+    from app.engine.core import money
+    assert money("150.04995", "OMR") == 150.05 and money("150.0495", "OMR") == 150.05 and money("0.0005", "KWD") == 0.001
 
 
 def test_half_up_rounding_not_bankers():

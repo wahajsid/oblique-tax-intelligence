@@ -9,7 +9,9 @@
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
-    <fieldset><legend>Scenario (common currency, e.g. USD)</legend>
+    <fieldset><legend>Scenario</legend>
+      <div class="field"><label>Currency of the figures below <span class="hint" title="AED thresholds such as the UAE 375,000 band are converted at the indicative FX table (USD and SAR are pegged)">?</span></label>
+        <select name="currency"><option value="USD" selected>USD</option><option value="AED">AED</option><option value="SAR">SAR</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></div>
       <div class="field"><label>Profit for the year</label><input type="number" name="taxable_profit" value="2000000" min="0" step="10000"></div>
       <div class="field"><label>Revenue</label><input type="number" name="revenue" value="15000000" min="0" step="10000"></div>
       <div class="field"><label>Non-GCC ownership %</label><input type="number" name="foreign_ownership_pct" value="100" min="0" max="100"></div>
@@ -53,7 +55,7 @@
 <script>
 (function(){
   const form = document.getElementById('f'), tb = document.querySelector('#cmp tbody'), err = document.getElementById('form-error');
-  const ser = () => { const d = {}; for (const el of form.elements) if (el.name) d[el.name] = el.type==='checkbox'? el.checked : Number(el.value||0); return d; };
+  const ser = () => { const d = {}; for (const el of form.elements) if (el.name) d[el.name] = el.type==='checkbox'? el.checked : el.tagName==='SELECT' ? el.value : Number(el.value||0); return d; };
   async function run(){
     const r = await fetch('/api/v1/gcc/compare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ser())});
     const j = await r.json(); if(!r.ok){err.textContent='Invalid input';return;}
