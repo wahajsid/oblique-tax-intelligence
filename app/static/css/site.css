@@ -251,3 +251,9 @@ form[aria-busy=true]{opacity:.7;pointer-events:none}
 .radio-row legend{padding:0;margin:0 4px 0 0}
 .radio{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:var(--ink)}
 .field input:invalid:not(:placeholder-shown){border-color:rgba(255,138,122,.7)}
+
+/* Game strip */
+.game-strip{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:center}
+.leaderboard-slot{min-height:120px;display:flex;justify-content:flex-end}
+.leaderboard-slot iframe{border-radius:16px}
+@media(max-width:860px){.game-strip{grid-template-columns:1fr}.leaderboard-slot{justify-content:flex-start}}

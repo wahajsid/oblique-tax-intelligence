@@ -42,7 +42,7 @@ app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 templates = Jinja2Templates(directory=BASE / "templates")
 
 CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
-       "font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
+       "font-src 'self'; connect-src 'self'; frame-src https://play.obliqueconsult.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
 # 'unsafe-inline' is needed for the small per-page <script> blocks and Swagger UI; move them to files before production.
 
 
@@ -79,6 +79,7 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
+        "game_url": "https://play.obliqueconsult.com", "game_utm": "?utm_source=tax-tools",
         "version": __version__, "indexable": INDEXABLE,
         "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
                            "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}

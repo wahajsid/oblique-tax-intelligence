@@ -256,3 +256,14 @@
     document.querySelectorAll('form .field').forEach(() => {});
   });
 })();
+
+/* ---- Game leaderboard embed: only where play.obliqueconsult.com allows framing ---- */
+document.addEventListener('DOMContentLoaded', () => {
+  const slot = document.getElementById('leaderboard-slot'); if (!slot) return;
+  if (/(^|\.)obliqueconsult\.com$/.test(location.hostname)) {
+    const f = document.createElement('iframe'); f.src = slot.dataset.src; f.title = 'Monthly leaderboard'; f.loading = 'lazy'; f.width = '320'; f.height = '340'; f.style.border = '0'; f.style.background = 'transparent';
+    slot.appendChild(f);
+  } else {
+    slot.innerHTML = `<a class="card" href="${slot.dataset.src.replace('/embed/leaderboard', '/?utm_source=tax-tools')}"><h3 style="margin:0">Monthly leaderboard</h3><p class="muted" style="margin:6px 0 0">Shown here once the tools run on tax.obliqueconsult.com. Open the game →</p></a>`;
+  }
+});

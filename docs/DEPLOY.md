@@ -21,14 +21,23 @@ Then add the email variables from section 4. Railway redeploys automatically whe
 
 ## 3. Put it on your domain
 
-Recommended address: **`tax.obliqueconsult.com`**. The main site runs on Framer, which cannot proxy a path like `/tax-intelligence` to another server, so a subdomain is the clean option and keeps the two deployments independent.
+The domain map for Oblique's three properties (DNS is at Hover):
+
+| Address | What | Hosted on | DNS record at Hover |
+| --- | --- | --- | --- |
+| `obliqueconsult.com`, `www` | the website | Framer | already set; do not touch |
+| `tax.obliqueconsult.com` | these calculators (Tax Intelligence) | Railway | CNAME `tax` → the target Railway shows |
+| `play.obliqueconsult.com` | the UAE tax game (repo `oblique-play`) | Vercel | CNAME `play` → `cname.vercel-dns.com` (see the game's FRAMER.md) |
+| optional `tools.obliqueconsult.com` | alias of `tax.` | Railway | CNAME `tools` → same Railway target |
+| optional `puzzle.obliqueconsult.com` | short link to the game's daily puzzle | Vercel redirect | per the game's FRAMER.md |
+
+Framer cannot proxy a path like `/tax-intelligence` to another server, so subdomains are the clean option and keep the three deployments independent.
 
 1. Railway → service → **Settings** → **Networking** → **Custom Domain** → enter `tax.obliqueconsult.com`. Railway shows a CNAME target such as `xxxxx.up.railway.app`.
-2. Open the DNS for `obliqueconsult.com` (wherever the domain's nameservers point: usually the registrar, or Cloudflare). Add a record: **Type** CNAME, **Name** `tax`, **Target** the value Railway showed, **Proxy** off (DNS only) if Cloudflare asks.
+2. Hover → `obliqueconsult.com` → DNS → add: **Type** CNAME, **Hostname** `tax`, **Target** the value Railway showed.
 3. Wait a few minutes. Railway turns the domain green and issues the HTTPS certificate itself. Visit `https://tax.obliqueconsult.com/api/v1/health`.
-4. Optional later: add `tools.obliqueconsult.com` the same way as a second alias.
 
-Nothing in the app needs changing for the domain; links are relative and the sitemap uses the host it is served on.
+Nothing in the app needs changing for the domain; links are relative and the sitemap uses the host it is served on. The game's leaderboard box on the tools home page appears automatically once the tools run on `*.obliqueconsult.com` (the game only allows framing from there).
 
 ## 4. Email delivery for enquiries (choose one)
 
@@ -57,15 +66,20 @@ The app sends from a mailbox you own (for example `tax@obliqueconsult.com`) usin
 
 Either option can run alongside `LEAD_WEBHOOK_URL` (Zapier/Make) or a HubSpot form if you later want leads in a CRM too; every configured destination receives each enquiry.
 
-## 5. Linking from obliqueconsult.com (Framer)
+## 5. Navigation across the three properties
 
-Navigation changes to make in Framer:
+**On obliqueconsult.com (Framer).** Two links in the top menu, side by side after Services: **Tax Tools** → `https://tax.obliqueconsult.com/?utm_source=website` and **Tax Game** → `https://play.obliqueconsult.com/?utm_source=website` (the game's FRAMER.md already specifies its links and the two embed boxes). Then:
 
-- **Top nav**: add **"Tax Tools"** (or "Tax Intelligence") linking to `https://tax.obliqueconsult.com`, placed after "Services" and before "Insights/Articles". Open in the same tab; the tool's header links back to the main site.
-- **Services → Corporate Tax and VAT pages**: a short block "Try the calculator" linking to the matching tool (`/uae/corporate-tax`, `/vat?j=AE`, `/ksa/zakat-income-tax`).
-- **Footer**: under Resources, add "Tax calculators" and "Move to the UAE calculator" (`/move`).
-- **Articles**: each UAE CT or VAT article can end with the relevant calculator link; the diagnostic (`/diagnose`) is a good universal call-to-action.
-- **Home page**: one card in the services grid or a strip above the footer: "Free GCC tax calculators and the UAE relocation comparison".
+- **Services → Corporate Tax page**: two buttons under the intro, "Calculate it" → `tax.../uae/corporate-tax` and "Test yourself" → `play.../quiz/ct`. Same pattern on the VAT page with `/vat?j=AE` and `/quiz/vat`. The zakat service page gets "Calculate it" → `tax.../ksa/zakat-income-tax`.
+- **Home page**: one strip with three cards, left to right: Calculators (`tax.`), Move to the UAE (`tax.../move`), Today's puzzle (the game's spot-the-error embed box). The leaderboard embed suits the LaunchPad or About page rather than the home page.
+- **Footer, Resources column**: Tax calculators · Move to the UAE · UAE Tax Game · Privacy.
+- **Articles**: end each UAE CT or VAT article with the matching calculator link and the matching quiz link; the diagnostic (`tax.../diagnose`) is the universal call-to-action for everything else.
+
+**On tax.obliqueconsult.com (these tools).** Already done in the code: "Tax Game" in the top nav and footer, a quiz strip on the home page with the game's leaderboard box, and a "try today's quiz" line under the UAE Corporate Tax and VAT results. Links carry `?utm_source=tax-tools` so players who came from the calculators show up separately in HubSpot.
+
+**On play.obliqueconsult.com (the game).** Worth adding in the game's own nav and after each quiz: "Work it out properly" → `https://tax.obliqueconsult.com/uae/corporate-tax?utm_source=game` (or `/vat?j=AE` after a VAT quiz), and "Talk to Oblique" → the contact page. That closes the loop: play → calculate → enquire.
+
+**Lead capture note.** The game already feeds HubSpot. If you want calculator enquiries in the same place, set `HUBSPOT_PORTAL_ID` and `HUBSPOT_FORM_GUID` on the tools alongside the Microsoft 365 email variables; every enquiry then goes to both.
 
 Leave `SITE_INDEXABLE` off until sign-off; the Framer links still work, search engines simply will not list the tool pages yet.
 
