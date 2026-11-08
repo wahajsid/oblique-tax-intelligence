@@ -13,14 +13,27 @@ KEYWORDS = {
 }
 
 
+SNAPSHOT = Path(__file__).resolve().parent / "test_names.json"
+
+
+def scan_tests() -> list[str]:
+    out: list[str] = []
+    if TESTS.exists():
+        for f in sorted(TESTS.glob("test_*.py")):
+            out += re.findall(r"^def (test_\w+)", f.read_text(encoding="utf-8"), flags=re.M)
+    return out
+
+
 @lru_cache(maxsize=None)
 def _tests() -> list[str]:
-    out: list[str] = []
-    if not TESTS.exists():
-        return out
-    for f in TESTS.glob("test_*.py"):
-        out += re.findall(r"^def (test_\w+)", f.read_text(encoding="utf-8"), flags=re.M)
-    return out
+    """Prefer the live test files; fall back to the committed snapshot (kept current by a test)."""
+    live = scan_tests()
+    if live:
+        return live
+    if SNAPSHOT.exists():
+        import json
+        return json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    return []
 
 
 def test_count(calculator: str | None) -> int:
@@ -29,3 +42,10 @@ def test_count(calculator: str | None) -> int:
         return len(names)
     kws = KEYWORDS.get(calculator, [calculator])
     return sum(1 for n in names if any(k in n for k in kws))
+
+
+def write_snapshot() -> int:
+    import json
+    names = scan_tests()
+    SNAPSHOT.write_text(json.dumps(names, indent=0) + "\n", encoding="utf-8")
+    return len(names)

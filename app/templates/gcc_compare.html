@@ -12,20 +12,20 @@
     <fieldset><legend>Scenario</legend>
       <div class="field"><label>Currency of the figures below <span class="hint" title="AED thresholds such as the UAE 375,000 band are converted at the indicative FX table (USD and SAR are pegged)">?</span></label>
         <select name="currency"><option value="USD" selected>USD</option><option value="AED">AED</option><option value="SAR">SAR</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></div>
-      <div class="field"><label>Profit for the year</label><input type="number" name="taxable_profit" value="2000000" min="0" step="10000"></div>
-      <div class="field"><label>Revenue</label><input type="number" name="revenue" value="15000000" min="0" step="10000"></div>
+      <div class="field"><label>Profit for the year</label><input type="number" name="taxable_profit" value="2000000" min="0" step="any"></div>
+      <div class="field"><label>Revenue</label><input type="number" name="revenue" value="15000000" min="0" step="any"></div>
       <div class="field"><label>Non-GCC ownership %</label><input type="number" name="foreign_ownership_pct" value="100" min="0" max="100"></div>
     </fieldset>
     <fieldset><legend>Outbound payments per year</legend>
       <div class="two">
-        <div class="field"><label>Royalties abroad</label><input type="number" name="annual_royalties_paid_abroad" value="0" min="0" step="10000"></div>
-        <div class="field"><label>Management fees abroad</label><input type="number" name="annual_management_fees_paid_abroad" value="0" min="0" step="10000"></div>
+        <div class="field"><label>Royalties abroad</label><input type="number" name="annual_royalties_paid_abroad" value="0" min="0" step="any"></div>
+        <div class="field"><label>Management fees abroad</label><input type="number" name="annual_management_fees_paid_abroad" value="0" min="0" step="any"></div>
       </div>
-      <div class="field"><label>Dividends distributed abroad</label><input type="number" name="dividends_distributed_abroad" value="0" min="0" step="10000"></div>
+      <div class="field"><label>Dividends distributed abroad</label><input type="number" name="dividends_distributed_abroad" value="0" min="0" step="any"></div>
     </fieldset>
     <fieldset><legend>Group</legend>
       <label class="check"><input type="checkbox" name="is_mne_constituent"> Part of a multinational group</label>
-      <div class="field"><label>Group consolidated revenue (EUR)</label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="1000000"></div>
+      <div class="field"><label>Group consolidated revenue (EUR)</label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="any"></div>
     </fieldset>
     <div class="form-actions"><button class="btn btn-dark" type="submit">Compare</button></div>
     <div class="error" id="form-error"></div>

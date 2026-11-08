@@ -12,9 +12,9 @@
     <input type="hidden" name="country" value="{{ code }}">
     <fieldset>
       <legend>Income ({{ c.currency }})</legend>
-      <div class="field"><label>Annual gross employment income</label><input type="number" name="gross_income" value="{{ {'GB':75000,'HK':600000,'SG':120000,'IN':2400000,'US':150000,'AU':120000,'DE':80000,'ZA':900000}.get(code, 100000) }}" min="0" step="1000" required></div>
+      <div class="field"><label>Annual gross employment income</label><input type="number" name="gross_income" value="{{ {'GB':75000,'HK':600000,'SG':120000,'IN':2400000,'US':150000,'AU':120000,'DE':80000,'ZA':900000}.get(code, 100000) }}" min="0" step="any" required></div>
       {% if code == 'SG' %}<label class="check"><input type="checkbox" name="cpf_member"> Singapore citizen or PR (CPF applies)</label>{% endif %}
-      {% if code == 'US' %}<div class="field"><label>Flat state income tax rate % (optional)</label><input type="number" name="state_tax_rate_pct" value="0" min="0" max="15" step="0.1"></div>{% endif %}
+      {% if code == 'US' %}<div class="field"><label>Flat state income tax rate % (optional)</label><input type="number" name="state_tax_rate_pct" value="0" min="0" max="15" step="any"></div>{% endif %}
       {% if code == 'DE' %}<label class="check"><input type="checkbox" name="childless" checked> No children (care insurance surcharge)</label>{% endif %}
     </fieldset>
     <p class="small muted">Assumptions: {{ c.assumptions | join(' ') }}</p>

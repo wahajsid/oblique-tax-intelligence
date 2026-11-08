@@ -8,7 +8,7 @@ from typing import Any
 
 from app.engine import ksa_wht, personal_tax, uae_ct, vat
 
-REVIEW = {"status": "draft_for_review", "reviewer": "Pending named technical reviewer", "date": "2026-11-08"}
+REVIEW = {"status": "draft_for_review", "reviewer": "Oblique Consult tax team", "date": "2026-11-08"}
 
 JOURNEYS: dict[str, dict[str, Any]] = {
     "uae-saudi-transactions": {
@@ -37,7 +37,7 @@ JOURNEYS: dict[str, dict[str, Any]] = {
         "lead": "Moving yourself is one decision. Where your company is taxed afterwards is a separate one, and running it from Dubai can move it with you.",
         "who": "UK founders and directors relocating to the UAE who will keep operating a UK limited company.",
         "service": "uk_company_review",
-        "tools": [("UK → UAE comparison", "/move/gb-to-uae"), ("UAE Corporate Tax", "/uae/corporate-tax"), ("Diagnostic (individual)", "/diagnose")],
+        "tools": [("UK → UAE comparison", "/move/gb-to-uae"), ("UAE Corporate Tax", "/uae/corporate-tax"), ("Diagnostic (individual)", "/diagnose?profile=personal")],
         "sections": [
             ("Your own residence: the Statutory Residence Test",
              "You stop being UK resident when you meet an automatic overseas test or fail the ties test. Most founders plan around full-time work abroad (fewer than 91 UK days and fewer than 31 UK workdays) or the day-count tests. Split-year treatment can apply in the year you leave, so timing the move against 6 April matters. Keep a day log from day one."),
@@ -59,7 +59,7 @@ JOURNEYS: dict[str, dict[str, Any]] = {
         "lead": "The 0% rate was never for everything. Mainland sales are usually non-qualifying revenue, and the de minimis limit is lower than most people think.",
         "who": "Free Zone companies with UAE mainland customers, or planning to win them.",
         "service": "free_zone_review",
-        "tools": [("UAE Corporate Tax (Free Zone section)", "/uae/corporate-tax#free-zone"), ("UAE VAT", "/vat?j=AE"), ("Diagnostic (business)", "/diagnose")],
+        "tools": [("UAE Corporate Tax (Free Zone section)", "/uae/corporate-tax#free-zone"), ("UAE VAT", "/vat?j=AE"), ("Diagnostic (business)", "/diagnose?profile=business")],
         "sections": [
             ("What qualifies, and what does not",
              "A Qualifying Free Zone Person pays 0% only on Qualifying Income: income from transactions with other Free Zone persons (where they are the beneficial recipient) and from a closed list of qualifying activities, such as manufacturing, fund management, headquarters services, logistics and distribution from a designated zone. Selling goods or services to a mainland UAE customer is generally non-qualifying revenue, taxed at 9%, with no AED 375,000 band."),

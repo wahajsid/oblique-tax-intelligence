@@ -258,7 +258,7 @@ def test_services_recommended_from_flags_and_calculator():
 def test_confidence_block_separates_rules_calculation_and_fit():
     r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=1_000_000, revenue=10_000_000)).as_dict()
     c = r["confidence"]
-    assert c["rules"]["status"] == "verified" and "reviewer" in c["rules"]["reviewed_by"].lower()
+    assert c["rules"]["status"] == "verified" and c["rules"]["reviewed_by"] == "Oblique Consult tax team"
     assert c["calculation"]["checks"] > 5 and c["calculation"]["suite_total"] > c["calculation"]["checks"]
     assert c["fit"]["confirmed"] is False and c["fit"]["reasons"]
 
@@ -284,3 +284,13 @@ def test_journeys_and_paths_render_with_live_examples():
     html = client.get("/").text
     assert "Check my business tax" in html and "Expand or trade across the GCC" in html and "Plan my move to the UAE" in html
     assert "/journeys/uae-saudi-transactions" in client.get("/sitemap.xml").text
+
+
+
+def test_test_name_snapshot_is_current():
+    """The confidence panel falls back to app/test_names.json when the tests folder is absent in production.
+    Regenerate it whenever tests change: python -c "from app import quality; quality.write_snapshot()" """
+    import json
+    from app import quality
+    assert json.loads(quality.SNAPSHOT.read_text()) == quality.scan_tests(), "run quality.write_snapshot()"
+    assert quality.test_count("uae_corporate_tax") > 5

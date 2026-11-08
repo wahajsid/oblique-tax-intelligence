@@ -107,13 +107,13 @@
     const root = document.getElementById('results'); if (!root) return;
     root.classList.remove('stale'); document.getElementById('stale-note')?.remove();
   }
+  let labelSeq = 0;
   function associateLabels(root) {
     // Give every input/select/textarea an id and point its label at it (screen readers, click-to-focus).
-    let i = 0;
     root.querySelectorAll('.field').forEach(f => {
       const label = f.querySelector('label'); const ctl = f.querySelector('input, select, textarea');
       if (!label || !ctl) return;
-      if (!ctl.id) ctl.id = (ctl.name || 'field') + '-' + (++i);
+      if (!ctl.id) ctl.id = (ctl.name || 'field') + '-' + (++labelSeq);
       if (!label.htmlFor) label.htmlFor = ctl.id;
       const hint = label.querySelector('.hint');
       if (hint && hint.title && !ctl.getAttribute('aria-describedby')) {
@@ -157,7 +157,8 @@
     });
     if (cfg.autorun !== false) run(cfg);
   };
-  window.fmtMoney = fmt; window.fmtPct = pct; window.escHtml = esc; window.renderResult = render;
+  window.fmtMoney = fmt; window.fmtPct = pct; window.escHtml = esc; window.renderResult = render; window.associateLabels = associateLabels;
+  document.addEventListener('DOMContentLoaded', () => document.querySelectorAll('form').forEach(f => associateLabels(f)));
 })();
 
 /* ---- Remember where the visitor came from (utm_source), for enquiry attribution only ---- */

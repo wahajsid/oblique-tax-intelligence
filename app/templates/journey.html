@@ -5,7 +5,7 @@
 {% block content %}
 <div class="wrap page-head"><span class="eyebrow">{{ j.eyebrow }}</span><h1>{{ j.title }}</h1><p>{{ j.lead }}</p>
   <p class="small muted"><b>For:</b> {{ j.who }}</p>
-  <p class="review-line"><span class="status-dot {{ 'pending_verification' if j.review.status == 'draft_for_review' else 'verified' }}"></span>{{ 'Draft for technical review' if j.review.status == 'draft_for_review' else 'Reviewed' }} · {{ j.review.reviewer }} · {{ j.review.date }}</p>
+  <p class="review-line"><span class="status-dot {{ 'pending_verification' if j.review.status == 'draft_for_review' else 'verified' }}"></span>{{ 'Draft, under review by' if j.review.status == 'draft_for_review' else 'Reviewed by' }} {{ j.review.reviewer }} · {{ j.review.date }}</p>
 </div>
 <div class="wrap journey">
   <article class="prose">

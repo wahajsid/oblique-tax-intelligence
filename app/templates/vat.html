@@ -16,22 +16,22 @@
         <select name="mode" id="mode"><option value="add_vat">Add VAT to a net amount</option><option value="extract_vat">Extract VAT from a gross amount</option><option value="return">Prepare a period return</option></select></div>
     </fieldset>
     <fieldset id="simple">
-      <div class="field"><label>Amount ({{ rules.currency }})</label><input type="number" name="amount" value="100000" min="0" step="100"></div>
+      <div class="field"><label>Amount ({{ rules.currency }})</label><input type="number" name="amount" value="100000" min="0" step="any"></div>
       <div class="field"><label>Supply type</label><select name="rate_type"><option value="standard">Standard-rated</option><option value="zero">Zero-rated (exports, qualifying categories)</option><option value="exempt">Exempt</option></select></div>
     </fieldset>
     <fieldset id="ret" hidden>
       <legend>Period figures ({{ rules.currency }}, net of VAT)</legend>
       <div class="two">
-        <div class="field"><label>Standard-rated sales</label><input type="number" name="standard_rated_sales" value="0" min="0" step="1000"></div>
-        <div class="field"><label>Zero-rated sales</label><input type="number" name="zero_rated_sales" value="0" min="0" step="1000"></div>
-        <div class="field"><label>Exempt sales</label><input type="number" name="exempt_sales" value="0" min="0" step="1000"></div>
-        <div class="field"><label>Standard-rated purchases</label><input type="number" name="standard_rated_purchases" value="0" min="0" step="1000"></div>
-        <div class="field"><label>Reverse-charge imports</label><input type="number" name="reverse_charge_imports" value="0" min="0" step="1000"></div>
-        <div class="field"><label>Blocked input VAT</label><input type="number" name="blocked_input_vat" value="0" min="0" step="100"></div>
+        <div class="field"><label>Standard-rated sales</label><input type="number" name="standard_rated_sales" value="0" min="0" step="any"></div>
+        <div class="field"><label>Zero-rated sales</label><input type="number" name="zero_rated_sales" value="0" min="0" step="any"></div>
+        <div class="field"><label>Exempt sales</label><input type="number" name="exempt_sales" value="0" min="0" step="any"></div>
+        <div class="field"><label>Standard-rated purchases</label><input type="number" name="standard_rated_purchases" value="0" min="0" step="any"></div>
+        <div class="field"><label>Reverse-charge imports</label><input type="number" name="reverse_charge_imports" value="0" min="0" step="any"></div>
+        <div class="field"><label>Blocked input VAT</label><input type="number" name="blocked_input_vat" value="0" min="0" step="any"></div>
       </div>
     </fieldset>
     <details class="adv"><summary>Registration check</summary>
-      <div class="field"><label>Annual taxable supplies ({{ rules.currency }})</label><input type="number" name="annual_taxable_supplies" value="" data-nullable="1" min="0" step="1000"></div>
+      <div class="field"><label>Annual taxable supplies ({{ rules.currency }})</label><input type="number" name="annual_taxable_supplies" value="" data-nullable="1" min="0" step="any"></div>
     </details>
     {% include "_scope_gate.html" %}
     <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
