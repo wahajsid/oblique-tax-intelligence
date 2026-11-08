@@ -45,11 +45,12 @@ Nothing is collected until at least one destination is set. Set the variables on
 
 | Variable | Effect |
 | --- | --- |
-| `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`, `MS_SENDER`, `LEAD_EMAIL_TO` | **Recommended for Oblique:** send from your own Microsoft 365 mailbox (e.g. tax@obliqueconsult.com) via Microsoft Graph, PDF attached, reply-to set to the visitor. No DNS changes. Setup in docs/DEPLOY.md |
+| `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`, `MS_SENDER`, `LEAD_EMAIL_TO` | **Recommended for Oblique:** send from your own Microsoft 365 mailbox (e.g. tax@obliqueconsult.com) via Microsoft Graph, PDF attached, reply-to set to the visitor. No DNS changes. Setup in docs/DEPLOY.md; full go-live list in docs/SETUP_CHECKLIST.md |
 | `RESEND_API_KEY`, `LEAD_EMAIL_TO` (comma-separated), optional `LEAD_EMAIL_FROM` | Alternative: email via Resend with the PDF attached (needs SPF/DKIM DNS records for the sending domain) |
 | `LEAD_WEBHOOK_URL`, optional `LEAD_WEBHOOK_SECRET`, `LEAD_WEBHOOK_INCLUDE_PDF=true` | JSON POST per enquiry (Zapier, Make, n8n, Slack); HMAC-SHA256 signature in `X-Signature-256` |
 | `HUBSPOT_PORTAL_ID`, `HUBSPOT_FORM_GUID`, optional `HUBSPOT_SUBSCRIPTION_TYPE_ID` | Submit to a HubSpot form with legal-consent fields |
-| `LEADS_SQLITE_PATH` | Append to a SQLite file (mount a persistent volume, e.g. `/data/leads.sqlite`) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, optional `SUPABASE_TABLE` | Insert one row per enquiry or rule-change subscription into a Supabase table (service role, server-side only; DDL in docs/SETUP_CHECKLIST.md) |
+| `LEADS_SQLITE_PATH` | Append to a SQLite file (local testing; Railway's disk is not persistent) |
 | `APP_SECRET` | Stable key for PDF tokens and IP hashing (set one; otherwise a random key per restart) |
 | `LEAD_RATE_LIMIT_PER_HOUR` | Default 5 enquiries per IP per hour |
 

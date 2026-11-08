@@ -134,10 +134,11 @@ def calc_hk(inp: PersonalTaxInput) -> CalculationResult:
     std = progressive(net_income, r["standard_rate"]["parameters"]["brackets"], res, r["standard_rate"]["rule_id"], "Standard rate on net income", "HKD")
     tax = min(prog, std)
     res.add(TraceStep(f"Lower of progressive ({prog:,.0f}) and standard rate ({std:,.0f})", money(tax, "HKD"), kind="subtotal"))
-    red = min(tax, D(r["one_off_reduction"]["parameters"]["cap"]))
+    red_rule = r.get("one_off_reduction")
+    red = min(tax, D(red_rule["parameters"]["cap"])) if red_rule else ZERO
     if red:
         tax -= red
-        res.add(TraceStep("Less: 2025/26 one-off tax reduction (100%, capped HKD 3,000)", money(-red, "HKD"), rule_id=r["one_off_reduction"]["rule_id"]))
+        res.add(TraceStep(f"Less: one-off tax reduction (100%, capped HKD {D(red_rule['parameters']['cap']):,.0f})", money(-red, "HKD"), rule_id=red_rule["rule_id"]))
     marginal = marginal_rate(nci, r["progressive"]["parameters"]["brackets"]) if prog <= std else D("0.15")
     return _finish(res, g, tax, [("MPF employee contribution", mpf)], marginal, {"standard_rate_applies": std < prog})
 

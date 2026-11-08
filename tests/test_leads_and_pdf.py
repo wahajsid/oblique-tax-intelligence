@@ -1,6 +1,7 @@
 """Lead capture (consent, sinks, rate limit, honeypot) and PDF working papers."""
 import json
 import sqlite3
+from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
@@ -227,3 +228,38 @@ def test_gcc_vat_dates_and_sitemap():
     assert j["BH"]["vat"]["since"] == "2022-01-01" and j["BH"]["vat"]["introduced"] == "2019-01-01"
     r = client.get("/sitemap.xml")
     assert r.status_code == 200 and r.headers["content-type"].startswith("application/xml") and "/changes" in r.text
+
+
+def test_supabase_sink_posts_one_row(monkeypatch):
+    for var in ("RESEND_API_KEY", "LEAD_WEBHOOK_URL", "HUBSPOT_PORTAL_ID", "HUBSPOT_FORM_GUID", "LEADS_SQLITE_PATH", "MS_TENANT_ID"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("SUPABASE_URL", "https://abc.supabase.co/"); monkeypatch.setenv("SUPABASE_SERVICE_KEY", "service-key")
+    calls = []
+
+    class FakeResp:
+        status_code = 201
+        def raise_for_status(self): pass
+
+    def fake_post(url, json=None, headers=None, timeout=None, **kw):
+        calls.append((url, json, headers)); return FakeResp()
+    monkeypatch.setattr(leads.httpx, "post", fake_post)
+    leads._hits.clear()
+    client = TestClient(app)
+    r = client.post("/api/v1/leads", json={"name": "Test Person", "email": "t@example.com", "consent_contact": True, "interest": "working_paper",
+                                            "context": {"calculator": "vat", "inputs": {"jurisdiction": "AE", "mode": "add", "amount": 1000}, "shared_inputs": True}})
+    assert r.status_code == 200 and r.json()["delivery"] == {"supabase": "ok"}
+    url, row, headers = calls[-1]
+    assert url == "https://abc.supabase.co/rest/v1/leads" and headers["apikey"] == "service-key" and headers["Prefer"] == "return=minimal"
+    assert row["kind"] == "enquiry" and row["calculator"] == "vat" and row["inputs"]["amount"] == 1000 and "pdf" not in row
+    r = client.post("/api/v1/subscribe", json={"email": "t@example.com", "topics": ["AE"], "consent_updates": True})
+    assert r.status_code == 200 and calls[-1][1]["kind"] == "subscription"
+
+
+def test_hk_2026_27_and_india_2026_27_metadata():
+    from app.engine import personal_tax
+    rules = personal_tax.rules()["countries"]
+    assert rules["HK"]["tax_year"].startswith("2026/27") and rules["HK"]["rules"]["allowance"]["parameters"]["allowance"] == 145000
+    assert rules["HK"]["rules"]["one_off_reduction"]["parameters"]["cap"] == 0
+    assert rules["IN"]["tax_year"].startswith("Tax year 2026-27")
+    r = personal_tax.calculate(personal_tax.PersonalTaxInput(country="HK", gross_income=Decimal(600_000))).as_dict()
+    assert not any("one-off" in s["label"] for s in r["trace"])

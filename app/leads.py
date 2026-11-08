@@ -144,6 +144,7 @@ def sinks_configured() -> dict[str, bool]:
         "email": bool(e("RESEND_API_KEY") and e("LEAD_EMAIL_TO")),
         "webhook": bool(e("LEAD_WEBHOOK_URL")),
         "hubspot": bool(e("HUBSPOT_PORTAL_ID") and e("HUBSPOT_FORM_GUID")),
+        "supabase": bool(e("SUPABASE_URL") and e("SUPABASE_SERVICE_KEY")),
         "sqlite": bool(e("LEADS_SQLITE_PATH")),
     }
 
@@ -295,6 +296,24 @@ def _send_hubspot(rec: dict[str, Any], summary: str, pdf: bytes | None, filename
     r.raise_for_status()
 
 
+def _store_supabase(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> None:
+    """Insert one row into a Supabase (PostgREST) table. Table DDL is in docs/SETUP_CHECKLIST.md.
+    Uses the service-role key server-side only; the PDF is never stored."""
+    base = os.environ["SUPABASE_URL"].rstrip("/")
+    key = os.environ["SUPABASE_SERVICE_KEY"]
+    table = os.environ.get("SUPABASE_TABLE", "leads")
+    row = {"id": rec["id"], "received_at": rec["received_at"], "kind": "subscription" if rec.get("service") == "rule_updates" else "enquiry",
+           "name": rec["name"], "email": rec["email"], "phone": rec["phone"], "company": rec["company"], "message": rec["message"],
+           "interest": rec["interest"], "profile": rec["profile"], "service": rec.get("service", ""), "calculator": rec["context"]["calculator"],
+           "source": rec["context"].get("source", ""), "page_url": rec["context"].get("page_url", ""), "summary": summary,
+           "consent_contact": rec["consents"]["contact"], "consent_marketing": rec["consents"]["marketing"],
+           "inputs": rec["context"]["inputs"] if rec["context"].get("shared_inputs", True) else None,
+           "ip_hash": rec["ip_hash"], "retention": rec["retention"]}
+    r = httpx.post(f"{base}/rest/v1/{table}", json=row, timeout=15,
+                   headers={"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json", "Prefer": "return=minimal"})
+    r.raise_for_status()
+
+
 def _store_sqlite(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> None:
     path = os.environ["LEADS_SQLITE_PATH"]
     con = sqlite3.connect(path)
@@ -306,7 +325,7 @@ def _store_sqlite(rec: dict[str, Any], summary: str, pdf: bytes | None, filename
         con.close()
 
 
-SINKS = {"m365": _send_m365, "email": _send_email, "webhook": _send_webhook, "hubspot": _send_hubspot, "sqlite": _store_sqlite}
+SINKS = {"m365": _send_m365, "email": _send_email, "webhook": _send_webhook, "hubspot": _send_hubspot, "supabase": _store_supabase, "sqlite": _store_sqlite}
 
 
 def deliver(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> dict[str, str]:

@@ -49,6 +49,8 @@
 "test_changes_page_and_subscribe",
 "test_front_end_exports_are_pdf_only",
 "test_gcc_vat_dates_and_sitemap",
+"test_supabase_sink_posts_one_row",
+"test_hk_2026_27_and_india_2026_27_metadata",
 "test_scope_gate_marks_review_required_by_default",
 "test_scope_gate_clears_when_confirmed",
 "test_scope_gate_special_regime_yes_requires_review",

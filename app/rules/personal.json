@@ -1,5 +1,5 @@
 {
-  "ruleset_version": "2026.1",
+  "ruleset_version": "2026.2",
   "last_reviewed": "2026-11-08",
   "description": "Personal income tax and mandatory employee contributions for common origin countries of people relocating to the UAE. Used by the Personal Tax calculator and the Move-to-UAE comparison. Each country record carries a review status; 'enabled: false' means the rules are not shown to visitors until verified.",
   "fx": {
@@ -106,33 +106,33 @@
       "currency": "HKD",
       "flag": "🇭🇰",
       "enabled": true,
-      "tax_year": "2025/26 (1 April 2025 to 31 March 2026)",
+      "tax_year": "2026/27 (1 April 2026 to 31 March 2027)",
       "review_status": "verified",
       "last_reviewed": "2026-11-08",
-      "source_reference": "Inland Revenue Department: Salaries Tax rates and allowances 2025/26; PwC HK Tax Facts 2025/26",
-      "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+      "source_reference": "Inland Revenue Department, 2026-27 Budget tax measures; Inland Revenue (Amendment) (Tax Concessions, Concessionary Deductions and Allowances) Ordinance 2026 (Ord. No. 2 of 2026, gazetted 22 May 2026); PwC HK Tax Facts 2026/27",
+      "source_url": "https://www.ird.gov.hk/eng/tax/budget.htm",
       "assumptions": [
         "Single person, basic allowance only.",
         "Mandatory Provident Fund employee contribution 5% capped at HKD 1,500 per month, deductible.",
-        "Lower of progressive tax and standard-rate tax applies; the 2025/26 one-off 100% reduction capped at HKD 3,000 is applied."
+        "Lower of progressive tax and standard-rate tax applies. No one-off reduction is enacted for 2026/27; the 2025/26 reduction (100%, capped at HKD 3,000) applied to that year's final tax only."
       ],
       "rules": {
         "allowance": {
           "rule_id": "hk.st.basic_allowance",
-          "description": "Basic allowance HKD 132,000 (2025/26).",
+          "description": "Basic allowance HKD 145,000 from 2026/27 (HKD 132,000 for 2025/26).",
           "review_status": "verified",
-          "source_reference": "IRD",
-          "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+          "source_reference": "Ord. No. 2 of 2026; IRD 2026-27 Budget tax measures",
+          "source_url": "https://www.ird.gov.hk/eng/tax/budget.htm",
           "parameters": {
-            "allowance": 132000
+            "allowance": 145000
           }
         },
         "progressive": {
           "rule_id": "hk.st.progressive",
-          "description": "Progressive rates on net chargeable income: 2% on the first HKD 50,000, 6% on the next 50,000, 10% on the next 50,000, 14% on the next 50,000, 17% on the remainder.",
+          "description": "Progressive rates on net chargeable income, unchanged for 2026/27: 2% on the first HKD 50,000, 6% on the next 50,000, 10% on the next 50,000, 14% on the next 50,000, 17% on the remainder.",
           "review_status": "verified",
           "source_reference": "IRD",
-          "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+          "source_url": "https://www.ird.gov.hk/eng/tax/budget.htm",
           "parameters": {
             "brackets": [
               [
@@ -160,10 +160,10 @@
         },
         "standard_rate": {
           "rule_id": "hk.st.standard_rate",
-          "description": "Two-tiered standard rate on net income before allowances: 15% on the first HKD 5,000,000 and 16% on the remainder. Tax is the lower of progressive and standard-rate computations.",
+          "description": "Two-tiered standard rate on net income before allowances, unchanged for 2026/27: 15% on the first HKD 5,000,000 and 16% on the remainder. Tax is the lower of progressive and standard-rate computations.",
           "review_status": "verified",
           "source_reference": "IRD; PwC HK Tax Facts",
-          "source_url": "https://www.pwchk.com/en/tax/hong-kong-budget-2025-2026/tax-facts-and-figures-en.pdf",
+          "source_url": "https://www.pwchk.com/en/tax/hong-kong-budget-2026-2027/tax-facts-and-figures-en.pdf",
           "parameters": {
             "brackets": [
               [
@@ -178,13 +178,13 @@
           }
         },
         "one_off_reduction": {
-          "rule_id": "hk.st.reduction_2025_26",
-          "description": "2025/26 Budget: 100% reduction of salaries tax capped at HKD 3,000.",
+          "rule_id": "hk.st.reduction_2026_27",
+          "description": "No one-off salaries tax reduction has been enacted for 2026/27. The 2026-27 Budget's 100% reduction capped at HKD 3,000 applies to the final tax for 2025/26 only. Any 2026/27 reduction would come in the February 2027 Budget.",
           "review_status": "verified",
-          "source_reference": "2025/26 Budget",
-          "source_url": "https://getstarted.hk/tax/2025-26-budget-and-tax-measures/",
+          "source_reference": "IRD, 2026-27 Budget tax measures; Ord. No. 2 of 2026",
+          "source_url": "https://www.ird.gov.hk/eng/faq/budget2026_27.htm",
           "parameters": {
-            "cap": 3000
+            "cap": 0
           }
         },
         "mpf": {
@@ -318,24 +318,24 @@
       "currency": "INR",
       "flag": "🇮🇳",
       "enabled": true,
-      "tax_year": "FY 2025-26 / AY 2026-27 (new tax regime)",
+      "tax_year": "Tax year 2026-27 (1 April 2026 to 31 March 2027), default regime under section 202 of the Income-tax Act 2025",
       "review_status": "verified_secondary",
       "last_reviewed": "2026-11-08",
-      "verification_note": "Slab breakpoints, standard deduction and the Section 87A rebate are confirmed across Budget 2025 summaries; surcharge marginal relief is applied in simplified form. Confirm FY 2026-27 slabs against the Finance Act 2026 before relying on them for income earned after 1 April 2026.",
-      "source_reference": "Finance Act 2025 (new regime, Section 115BAC); India Briefing summary",
-      "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html",
+      "verification_note": "Budget 2026 (1 February 2026) left the default-regime slabs, the INR 75,000 standard deduction, the rebate, surcharge and cess unchanged; the Income-tax Act 2025 applies from 1 April 2026 and renumbers the provisions (new regime: section 202; rebate: section 156, formerly 87A). Figures are consistent across practitioner sources; the Finance Act 2026 text and the Act's rebate section were not read line by line. Surcharge marginal relief is applied in simplified form.",
+      "source_reference": "Income-tax Act 2025, section 202 (default regime) and section 156 (rebate); Finance Act 2026; Budget 2026-27 (no change to personal rates)",
+      "source_url": "https://taxguru.in/income-tax/new-tax-regime-provisions-under-income-tax-act-2025-individual-huf.html",
       "assumptions": [
-        "Resident individual under 60, new tax regime, salaried (standard deduction INR 75,000).",
-        "Section 87A rebate up to INR 60,000 where total income does not exceed INR 12,00,000, with marginal relief just above.",
+        "Resident individual under 60, default (new) regime, salaried (standard deduction INR 75,000).",
+        "Rebate up to INR 60,000 where total income does not exceed INR 12,00,000, with marginal relief just above (section 156 of the Income-tax Act 2025, formerly section 87A).",
         "Surcharge of 10% / 15% / 25% above INR 50 lakh / 1 crore / 2 crore with simplified marginal relief; 4% health and education cess.",
         "Employee Provident Fund (12% of basic salary) is not modelled."
       ],
       "rules": {
         "standard_deduction": {
           "rule_id": "in.pit.standard_deduction",
-          "description": "Standard deduction INR 75,000 for salaried taxpayers under the new regime.",
+          "description": "Standard deduction INR 75,000 for salaried taxpayers under the default regime, unchanged for tax year 2026-27.",
           "review_status": "verified",
-          "source_reference": "Finance Act 2024/2025",
+          "source_reference": "Finance Act 2024; carried into the Income-tax Act 2025; unchanged by Budget 2026",
           "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html",
           "parameters": {
             "deduction": 75000
@@ -343,10 +343,10 @@
         },
         "slabs": {
           "rule_id": "in.pit.slabs",
-          "description": "New regime slabs FY 2025-26: 0% to INR 4,00,000; 5% to 8,00,000; 10% to 12,00,000; 15% to 16,00,000; 20% to 20,00,000; 25% to 24,00,000; 30% above.",
+          "description": "Default-regime slabs for tax year 2026-27 (section 202, Income-tax Act 2025; unchanged from FY 2025-26): 0% to INR 4,00,000; 5% to 8,00,000; 10% to 12,00,000; 15% to 16,00,000; 20% to 20,00,000; 25% to 24,00,000; 30% above.",
           "review_status": "verified_secondary",
-          "source_reference": "Finance Act 2025",
-          "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html",
+          "source_reference": "Income-tax Act 2025, section 202; Finance Act 2026",
+          "source_url": "https://taxguru.in/income-tax/new-tax-regime-provisions-under-income-tax-act-2025-individual-huf.html",
           "parameters": {
             "brackets": [
               [
@@ -382,10 +382,10 @@
         },
         "rebate_87a": {
           "rule_id": "in.pit.rebate_87a",
-          "description": "Rebate under Section 87A: tax up to INR 60,000 is rebated where total income does not exceed INR 12,00,000; marginal relief limits tax to the income above 12,00,000.",
-          "review_status": "verified",
-          "source_reference": "Finance Act 2025",
-          "source_url": "https://www.valueresearchonline.com/stories/227767/income-tax-changes-fy26-5-numbers-you-should-know/",
+          "description": "Rebate for resident individuals (section 156 of the Income-tax Act 2025, formerly section 87A): tax up to INR 60,000 is rebated where total income does not exceed INR 12,00,000; marginal relief limits tax to the income above 12,00,000.",
+          "review_status": "verified_secondary",
+          "source_reference": "Income-tax Act 2025, section 156; practitioner summaries for tax year 2026-27",
+          "source_url": "https://taxguru.in/income-tax/section-156-section-87a-changed-didnt.html",
           "parameters": {
             "income_limit": 1200000,
             "max_rebate": 60000
@@ -395,7 +395,7 @@
           "rule_id": "in.pit.surcharge",
           "description": "Surcharge 10% of tax above INR 50 lakh, 15% above 1 crore, 25% above 2 crore (capped at 25% under the new regime), with marginal relief.",
           "review_status": "verified_secondary",
-          "source_reference": "Income-tax Act, Finance Act 2025",
+          "source_reference": "Income-tax Act 2025; Finance Act 2026 (rates unchanged)",
           "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html",
           "parameters": {
             "tiers": [
@@ -797,6 +797,12 @@
   },
   "reviewed_by": "Oblique Consult tax team",
   "changelog": [
+    {
+      "date": "2026-11-08",
+      "version": "2026.2",
+      "summary": "Hong Kong moved to year of assessment 2026/27: basic allowance HKD 145,000 (Ordinance No. 2 of 2026); rates unchanged; no one-off reduction for 2026/27. India moved to tax year 2026-27 under the Income-tax Act 2025: slabs, INR 75,000 standard deduction, INR 60,000 rebate to INR 12 lakh, surcharge and cess all unchanged by Budget 2026; provisions renumbered (section 202 regime, section 156 rebate).",
+      "source": "IRD 2026-27 Budget tax measures; Income-tax Act 2025; Budget 2026-27"
+    },
     {
       "date": "2026-11-08",
       "version": "2026.1",

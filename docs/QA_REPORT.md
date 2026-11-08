@@ -15,9 +15,9 @@ Hand-checked expectations (worked before running the code):
 | Case | Expected | Engine |
 |---|---|---|
 | UK £75,000 | income tax 17,432.00; NI 3,016 + 494.60 | match |
-| Hong Kong HK$600,000 | 58,500 progressive vs 87,300 standard, less 3,000 reduction = 55,500; MPF 18,000 | match |
+| Hong Kong HK$600,000 (2026/27) | NCI 437,000 after MPF 18,000 and allowance 145,000: 16,000 + 17% × 237,000 = 56,290 progressive vs 87,300 standard; no reduction | match |
 | Singapore S$120,000 (no CPF) | 7,835 | match |
-| India ₹20,00,000 | slab 185,000 + cess 7,400 = 192,400 | match |
+| India ₹20,00,000 (tax year 2026-27) | slab 185,000 + cess 7,400 = 192,400 | match |
 | USA $150,000 single | federal 24,734; SS 9,300; Medicare 2,175 | match |
 | Australia A$100,000 | 20,520 + levy 2,000 | match |
 | Germany €60,000 | zvE 47,940 → 9,832; contributions 13,050 | match |
@@ -99,7 +99,7 @@ An outside review (text-only crawl, no JavaScript) was received after the day's 
 | Share links carry figures in the URL | Fixed earlier: inputs travel in the fragment, never sent to a server; copy warns |
 | KSA VAT "since 2018", Bahrain "since 2019" | Fixed now: `since` is the current-rate date, `introduced` added (GCC 2026.2) |
 | Oman PIT 2028 "uncertain" | Note restated against RD 56/2025; stays pending verification until the executive regulations are checked |
-| HK 2025/26 and India FY 2025-26 tax years | Open. Current-year rates need verification from primary sources before the engines are updated (launch gate 2) |
+| HK 2025/26 and India FY 2025-26 tax years | Fixed: HK 2026/27 (allowance 145,000, Ord. No. 2 of 2026; no one-off reduction); India tax year 2026-27 under the Income-tax Act 2025 (unchanged figures, renumbered sections). Personal 2026.2 |
 | "Reviewed by Oblique tax team" vs actual approvals | Journeys approved by the team on 8 Nov; rule files carry `reviewed_by`; the Arabic catalogue is marked pending |
 | API keys and rate limits | Open by design while the API is unpromoted; API removed from the main nav. Rate limiting exists on enquiries and subscriptions only |
 | Sitemap response type | Confirmed `application/xml`; OpenAPI no longer describes it as JSON |
