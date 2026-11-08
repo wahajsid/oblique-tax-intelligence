@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}GCC Tax Calculators: UAE Corporate Tax, VAT, KSA Zakat & Cross-border Comparison{% endblock %}
+{% block head %}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"{{ site.name }}","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"{{ site.company }}","url":"{{ site.company_url }}"}}</script>
+{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Oblique Tax Intelligence</span>
+      <h1>Tax clarity.<br>In seconds.</h1>
+      <p class="lead">Calculate your exposure. Compare jurisdictions. Understand your options. Make decisions with confidence. Built by the Oblique Consult tax team for CFOs, tax directors and founders operating in the GCC.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/uae/corporate-tax">UAE Corporate Tax calculator</a>
+        <a class="btn btn-ghost" href="/gcc/compare">Compare GCC jurisdictions</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>6</b><span>GCC jurisdictions</span></div>
+        <div class="stat"><b>8</b><span>origin countries for the UAE move comparison</span></div>
+        <div class="stat"><b>100%</b><span>of rules carry a source and review status</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>Same USD 1m profit, 100% foreign-owned: indicative direct tax</h3>
+      <table>{% for r in quick.rows %}<tr><td>{{ r.flag }} {{ r.name }}</td><td>{{ '{:,.0f}'.format(r.total_direct_tax) }} <span class="muted small">({{ '%.1f' % (r.effective_rate_on_profit*100) }}%)</span></td></tr>{% endfor %}</table>
+      <p class="small muted" style="margin-top:10px">Screening only. Scope, substance, VAT and Pillar Two shown separately in the <a href="/gcc/compare">comparison engine</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Calculators</span><h2>Professional-grade GCC tax decision tools</h2></div></div>
+    <div class="grid">
+      {% for m in modules %}
+      <div class="card">
+        <div><span class="pill {{ 'p0' if m.priority == 'P0' else '' }}">{{ m.priority }}</span> <span class="pill">{{ m.jur }}</span></div>
+        <h3><a href="/{{ m.slug }}">{{ m.title }}</a></h3>
+        <p class="muted" style="margin:0">{{ m.blurb }}</p>
+        <span class="meta">For: {{ m.audience }}</span>
+        <a href="/{{ m.slug }}">Open calculator →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">How it works</span><h2>AI explains the calculation. A deterministic engine performs it.</h2></div></div>
+    <div class="steps">
+      <div class="step"><h3>Enter your facts</h3><p class="muted">Accounting profit, reconciling items, ownership, group status. Results update as you type; no sign-up to see a number.</p></div>
+      <div class="step"><h3>Versioned rules apply</h3><p class="muted">Every rate, threshold and relief lives in a versioned ruleset with effective dates, a source reference and a review status.</p></div>
+      <div class="step"><h3>Read the working paper</h3><p class="muted">A line-by-line reconciliation shows the formula and rule behind each step. Copy the JSON or print it.</p></div>
+      <div class="step"><h3>Resolve the open questions</h3><p class="muted">The tax exposure diagnostic lists what the calculator could not decide from your inputs and what an Oblique review would settle.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Moving to the UAE?</span><h2>See what 0% personal income tax really changes for you</h2></div><a href="/move">Open the comparison →</a></div>
+    <p class="muted" style="max-width:70ch">Pick where you are moving from. We compute this year's income tax and contributions at home, convert at an indicative rate you can override, subtract your UAE living costs and show the annual, first-year and {{ 5 }}-year difference, plus the residence questions to settle first.</p>
+    <div class="origin-grid">{% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae">{{ o.flag }} {{ o.name }} → UAE</a>{% endfor %}</div>
+    <div class="grid" style="margin-top:10px">
+      <div class="card"><span class="pill p0">Free</span><h3><a href="/diagnose">Tax exposure diagnostic</a></h3><p class="muted" style="margin:0">Ten questions become a prioritised action list. Deadlines first. Nothing to sign up for.</p><a href="/diagnose">Start the diagnostic →</a></div>
+      <div class="card"><span class="pill">Personal tax</span><h3><a href="/personal-tax">Income tax by country</a></h3><p class="muted" style="margin:0">Standalone calculators for the UK, US, India, Singapore, Hong Kong, Australia, Germany and South Africa with full working papers.</p><a href="/personal-tax">Open →</a></div>
+      <div class="card"><span class="pill">Desktop estimates</span><h3>Perspective first, precision from Oblique</h3><p class="muted" style="margin:0">Every result is a quick, simplified calculation. When you need the exact number for your facts, get in touch.</p><a href="{{ site.contact_url }}" target="_blank" rel="noopener">Contact Oblique →</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Jurisdiction guides</span><h2>Know the regime before you model it</h2></div><a href="/guides">All guides →</a></div>
+    <div class="grid">
+      {% for c, p in profiles.jurisdictions.items() %}
+      <div class="card">
+        <h3><a href="/guides/{{ c }}">{{ p.flag }} {{ p.name }}</a></h3>
+        <p class="muted" style="margin:0">CIT {{ (p.corporate_tax.headline_rate*100)|round(0)|int }}% · VAT {{ ((p.vat.rate*100)|round(0)|int ~ '%') if p.vat.implemented else 'none' }} · DMTT {{ 'yes' if p.dmtt.applies else 'no' }} · Zakat {{ 'yes' if p.zakat.applies else 'no' }}</p>
+        <a href="/guides/{{ c }}">Read the guide →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="text-align:center;max-width:760px">
+    <span class="eyebrow">Expert validation</span>
+    <h2>Ready to turn an estimate into a position you can defend?</h2>
+    <p class="muted">Everything here is a desktop estimate. Oblique Consult's team has cleared 150+ audits across the UAE and KSA; for precise figures for your facts, request an expert-validated assessment.</p>
+    <a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">Work With Oblique</a>
+  </div>
+</section>
+{% endblock %}

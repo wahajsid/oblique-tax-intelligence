@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}KSA Withholding Tax Calculator{% endblock %}
+{% block description %}Saudi Arabia withholding tax by payment category (5% to 20%), treaty rates and contractual gross-up. Links to the 15% KSA VAT calculator.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">Kingdom of Saudi Arabia · Withholding Tax · Ruleset {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
+  <h1>KSA Withholding Tax calculator</h1>
+  <p>Withholding on payments from KSA to non-residents. Add each payment, choose its category and optionally a treaty rate. For the 15% VAT return use the <a href="/vat?j=SA">KSA VAT calculator</a>.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <fieldset><legend>Payments to non-residents (SAR)</legend>
+      <div id="rows"></div>
+      <button type="button" class="btn btn-ghost btn-sm" id="add">+ Add payment</button>
+    </fieldset>
+    {% include "_scope_gate.html" %}
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  {% include "_result_shell.html" %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const CATS = {{ categories | tojson }};
+const rows = document.getElementById('rows');
+function addRow(cat='royalties', amount=100000) {
+  const d = document.createElement('div'); d.className = 'wht-row';
+  d.innerHTML = `<div class="field"><label>Category</label><select data-k="category">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${k===cat?'selected':''}>${v.label} (${(v.rate*100).toFixed(0)}%)</option>`).join('')}</select></div>
+  <div class="two"><div class="field"><label>Gross amount</label><input type="number" data-k="amount" value="${amount}" min="0" step="1000"></div>
+  <div class="field"><label>Treaty rate % <span class="hint" title="Leave blank for statutory rate">?</span></label><input type="number" data-k="treaty_rate" value="" min="0" max="100" step="0.5"></div></div>
+  <label class="check"><input type="checkbox" data-k="grossed_up"> Payer bears the tax (gross-up)</label>
+  <button type="button" class="btn btn-ghost btn-sm rm">Remove</button><hr>`;
+  d.querySelector('.rm').onclick = () => { d.remove(); document.getElementById('f').dispatchEvent(new Event('input')); };
+  rows.appendChild(d);
+}
+document.getElementById('add').onclick = () => { addRow('technical_consulting', 50000); document.getElementById('f').dispatchEvent(new Event('input')); };
+addRow('royalties', 100000); addRow('management_fees', 250000); addRow('dividends', 1000000);
+initCalc({
+  form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/ksa/withholding-tax',
+  body: (data) => ({ scope_confirmed: data.scope_confirmed, special_regime: data.special_regime, payments: [...rows.querySelectorAll('.wht-row')].map(r => {
+    const g = k => r.querySelector(`[data-k=${k}]`);
+    const tr = g('treaty_rate').value;
+    return { category: g('category').value, amount: Number(g('amount').value || 0), treaty_rate: tr === '' ? null : Number(tr) / 100, grossed_up: g('grossed_up').checked };
+  }) }),
+  tiles: (o, c) => [
+    ['Total withholding tax', fmtMoney(o.total_wht, c)], ['Total cost to payer', fmtMoney(o.total_cost_to_payer, c)],
+    ...o.lines.map(l => [l.label + ' @ ' + fmtPct(l.applied_rate), fmtMoney(l.wht, c)])
+  ]
+});
+</script>
+{% endblock %}

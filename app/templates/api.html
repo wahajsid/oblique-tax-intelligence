@@ -1,0 +1,40 @@
+{% extends "base.html" %}{% block title %}GCC Tax API for developers{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Developer API</span><h1>GCC business tax calculations in one JSON format</h1><p>The same deterministic engine behind the calculators, exposed as a versioned REST API. Every response includes the trace, the flags and the rule metadata, so your product can show its working.</p></div>
+<section class="wrap narrow prose" style="padding-bottom:50px">
+  <p><a class="btn btn-primary" href="/docs">Interactive docs (Swagger)</a> <a class="btn btn-ghost" href="/redoc">ReDoc</a> <a class="btn btn-ghost" href="/openapi.json">OpenAPI schema</a></p>
+  <h2>Endpoints</h2>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+    <tr><td>POST</td><td><code>/api/v1/uae/corporate-tax</code></td><td>UAE Corporate Tax with reconciliation, SBR, QFZP, losses, interest cap, DMTT screen</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/vat</code></td><td>UAE or KSA VAT: add, extract, period return, registration check</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/ksa/zakat-income-tax</code></td><td>KSA zakat base and mixed-ownership income tax</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/ksa/withholding-tax</code></td><td>KSA WHT by category with treaty rates and gross-up</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/gcc/compare</code></td><td>Six-jurisdiction comparison for one scenario</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/personal-tax</code></td><td>Personal income tax and contributions for GB, HK, SG, IN, US, AU, DE, ZA</td></tr>
+    <tr><td>POST</td><td><code>/api/v1/move-to-uae</code></td><td>Origin-country tax vs UAE comparison with FX, costs and horizon</td></tr>
+    <tr><td>GET / POST</td><td><code>/api/v1/diagnostic/questions</code>, <code>/api/v1/diagnostic</code></td><td>Tax exposure diagnostic</td></tr>
+    <tr><td>GET</td><td><code>/api/v1/rules/{ae|sa|personal}</code>, <code>/api/v1/rules</code></td><td>Versioned rulesets and GCC profiles</td></tr>
+    <tr><td>GET</td><td><code>/api/v1/health</code></td><td>Service and ruleset versions</td></tr>
+  </table>
+  <h2>Example</h2>
+<pre><code>curl -X POST {{ request.base_url }}api/v1/uae/corporate-tax \
+  -H "Content-Type: application/json" \
+  -d '{"accounting_profit": 1500000, "revenue": 12000000, "entertainment_expenses": 100000}'</code></pre>
+<pre><code>{
+  "calculator": "uae_corporate_tax",
+  "outcome": "ILLUSTRATIVE_ESTIMATE", "review_status": "verified",
+  "outputs": {"regime": "standard", "taxable_income": 1550000.0, "corporate_tax_payable": 105750.0, ...},
+  "trace": [{"label": "Accounting profit before tax", "amount": 1500000.0, "kind": "input"}, ...],
+  "flags": [...], "rules": [{"rule_id": "ae.ct.standard_rate", "review_status": "verified", "source_reference": "..."}]
+}</code></pre>
+  <h2>Plans</h2>
+  <table>
+    <tr><th>Tier</th><th>Included</th><th>Price</th></tr>
+    <tr><td>Sandbox</td><td>1,000 requests/month, all endpoints, no card</td><td>Free</td></tr>
+    <tr><td>Professional</td><td>25,000 requests/month, SLA, rule-change webhooks</td><td>Contact Oblique</td></tr>
+    <tr><td>Enterprise</td><td>Unlimited, private rulesets, expert sign-off workflow, ERP/CRM integration</td><td>Annual licence</td></tr>
+  </table>
+  <p class="small muted">Prices are placeholders for the prototype. Authentication (API keys) and rate limiting are not yet implemented. Every response includes <code>outcome</code> (ILLUSTRATIVE_ESTIMATE or REVIEW_REQUIRED) and <code>persisted: false</code>.</p>
+</section>
+{% endblock %}

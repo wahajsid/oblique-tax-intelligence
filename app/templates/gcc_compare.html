@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}GCC Corporate Tax Comparison: UAE vs KSA vs Bahrain vs Oman vs Qatar vs Kuwait{% endblock %}
+{% block description %}Compare corporate tax, zakat, withholding tax, VAT and Pillar Two top-up across the six GCC states for the same operation, with scope and review status shown for every figure.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">GCC · Cross-border comparison</span>
+  <h1>GCC tax comparison engine</h1>
+  <p>Model one operation across the six GCC states. The engine keeps statutory liability, scope conditions, VAT and Pillar Two separate rather than collapsing them into a single score.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <fieldset><legend>Scenario (common currency, e.g. USD)</legend>
+      <div class="field"><label>Profit for the year</label><input type="number" name="taxable_profit" value="2000000" min="0" step="10000"></div>
+      <div class="field"><label>Revenue</label><input type="number" name="revenue" value="15000000" min="0" step="10000"></div>
+      <div class="field"><label>Non-GCC ownership %</label><input type="number" name="foreign_ownership_pct" value="100" min="0" max="100"></div>
+    </fieldset>
+    <fieldset><legend>Outbound payments per year</legend>
+      <div class="two">
+        <div class="field"><label>Royalties abroad</label><input type="number" name="annual_royalties_paid_abroad" value="0" min="0" step="10000"></div>
+        <div class="field"><label>Management fees abroad</label><input type="number" name="annual_management_fees_paid_abroad" value="0" min="0" step="10000"></div>
+      </div>
+      <div class="field"><label>Dividends distributed abroad</label><input type="number" name="dividends_distributed_abroad" value="0" min="0" step="10000"></div>
+    </fieldset>
+    <fieldset><legend>Group</legend>
+      <label class="check"><input type="checkbox" name="is_mne_constituent"> Part of a multinational group</label>
+      <div class="field"><label>Group consolidated revenue (EUR)</label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="1000000"></div>
+    </fieldset>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Compare</button></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  <section>
+    <div class="cmp-wrap"><table class="cmp" id="cmp"><thead><tr>
+      <th>Jurisdiction</th><th>CIT / income tax</th><th>Zakat</th><th>WHT on outbound</th><th>DMTT top-up</th><th>Total direct tax</th><th>Effective rate</th><th>VAT</th><th>Scope note</th></tr></thead><tbody></tbody></table></div>
+    <div class="legend"><span><span class="status-dot verified"></span>Verified</span><span><span class="status-dot verified_secondary"></span>Verified (secondary)</span><span><span class="status-dot pending_verification"></span>Pending verification</span><span><span class="status-dot draft_law"></span>Draft law</span></div>
+    <p class="small muted" id="caveat"></p>
+    <h3>Capability matrix</h3>
+    <div class="cmp-wrap"><table class="cmp" id="matrix"><thead><tr><th>Dimension</th>{% for c, p in profiles.jurisdictions.items() %}<th>{{ p.flag }} {{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>
+      <tr><td>Corporate income tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.corporate_tax.review_status }}"></span>{{ (p.corporate_tax.headline_rate*100)|round(0)|int }}%<br><span class="small muted">{{ p.corporate_tax.applies_to }}</span></td>{% endfor %}</tr>
+      <tr><td>Zakat</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.zakat.review_status }}"></span>{{ 'Yes' if p.zakat.applies else 'No' }}<br><span class="small muted">{{ p.zakat.note }}</span></td>{% endfor %}</tr>
+      <tr><td>VAT</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.vat.review_status }}"></span>{{ (p.vat.rate*100)|round(0)|int ~ '%' if p.vat.implemented else 'Not implemented' }}</td>{% endfor %}</tr>
+      <tr><td>Withholding tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.withholding_tax.review_status }}"></span>{{ p.withholding_tax.note }}</td>{% endfor %}</tr>
+      <tr><td>DMTT / Pillar Two</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.dmtt.review_status }}"></span>{{ ('15% from ' ~ p.dmtt.since) if p.dmtt.applies else p.dmtt.note }}</td>{% endfor %}</tr>
+      <tr><td>Transfer pricing</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.transfer_pricing.review_status }}"></span>{{ p.transfer_pricing.regime }}</td>{% endfor %}</tr>
+      <tr><td>Personal income tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ p.personal_income_tax.note }}</td>{% endfor %}</tr>
+      <tr><td>CIT filing deadline</td>{% for c, p in profiles.jurisdictions.items() %}<td>{{ p.cit_filing_deadline }}</td>{% endfor %}</tr>
+    </tbody></table></div>
+    <div class="cta-row"><a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  const form = document.getElementById('f'), tb = document.querySelector('#cmp tbody'), err = document.getElementById('form-error');
+  const ser = () => { const d = {}; for (const el of form.elements) if (el.name) d[el.name] = el.type==='checkbox'? el.checked : Number(el.value||0); return d; };
+  async function run(){
+    const r = await fetch('/api/v1/gcc/compare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ser())});
+    const j = await r.json(); if(!r.ok){err.textContent='Invalid input';return;}
+    tb.innerHTML = j.rows.map((x,i)=>`<tr class="${i===0?'best':''}"><td><span class="flag-emoji">${x.flag}</span><b>${x.name}</b></td>
+      <td class="num"><span class="status-dot ${x.cit_review_status}"></span>${fmtMoney(x.corporate_tax)}</td><td class="num">${fmtMoney(x.zakat)}</td><td class="num">${fmtMoney(x.withholding_tax)}</td>
+      <td class="num"><span class="status-dot ${x.dmtt_review_status}"></span>${x.dmtt_in_scope? fmtMoney(x.dmtt_top_up):'n/a'}</td><td class="num"><b>${fmtMoney(x.total_direct_tax)}</b></td><td class="num">${fmtPct(x.effective_rate_on_profit)}</td>
+      <td>${x.vat_implemented? (x.vat_rate*100).toFixed(0)+'%':'None'}</td><td class="small muted">${x.cit_scope}${x.flags.length? '<br><em>'+x.flags.map(f=>f.title).join('; ')+'</em>':''}</td></tr>`).join('');
+    document.getElementById('caveat').textContent = j.caveat;
+  }
+  let t; form.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(run,300)}); form.addEventListener('submit',e=>{e.preventDefault();run()}); run();
+})();
+</script>
+{% endblock %}

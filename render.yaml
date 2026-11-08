@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: oblique-tax-intelligence
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13"
+      - key: SITE_INDEXABLE
+        value: "false"

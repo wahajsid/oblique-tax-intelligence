@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site.name }}{% endblock %} | {{ site.company }}</title>
+<meta name="description" content="{% block description %}GCC business tax calculators and a move-to-UAE comparison with a full working-paper trace: UAE Corporate Tax, VAT, KSA Zakat, withholding tax and cross-border comparison by Oblique Consult.{% endblock %}">
+{% if not site.indexable %}<meta name="robots" content="noindex,nofollow">{% endif %}
+<link rel="stylesheet" href="/static/css/fonts.css">
+<link rel="stylesheet" href="/static/css/site.css">
+<link rel="icon" href="/static/img/favicon.png" type="image/png">
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <img src="/static/img/logo-mark.svg" alt="{{ site.company }}" height="26">
+      <span class="brand-sub">Tax Intelligence</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <div class="dropdown">
+        <button class="nav-link" aria-haspopup="true">Calculators</button>
+        <div class="menu">
+          {% for m in modules if m.priority == 'P0' %}<a href="/{{ m.slug }}">{{ m.title }}</a>{% endfor %}
+        </div>
+      </div>
+      <a class="nav-link" href="/move">Move to UAE</a>
+      <a class="nav-link" href="/diagnose">Diagnostic</a>
+      <a class="nav-link" href="/guides">Guides</a>
+      <a class="nav-link" href="/methodology">Methodology</a>
+      <a class="nav-link" href="/api">API</a>
+      <a class="btn btn-primary btn-sm" href="{{ site.company_url }}" target="_blank" rel="noopener">Work With Oblique</a>
+    </nav>
+  </div>
+</header>
+<noscript><p class="noscript">JavaScript is needed for the interactive calculators. Nothing is submitted or stored. You can still read the guides, methodology and rules.</p></noscript>
+<main id="main" tabindex="-1">
+{% block content %}{% endblock %}
+</main>
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <img src="/static/img/logo-wordmark.svg" alt="{{ site.company }}" height="26" class="footer-logo">
+      <p class="muted">Independent tax, accounting and advisory for businesses in the UAE, Saudi Arabia and the wider GCC.</p>
+      <p class="muted small">Ruleset {{ site.version }} · Deterministic rules engine · No cookies, no tracking, no third-party scripts; your inputs are not stored.</p>
+    </div>
+    <div>
+      <h4>Calculators</h4>
+      {% for m in modules if m.priority == 'P0' %}<a href="/{{ m.slug }}">{{ m.title }}</a>{% endfor %}
+    </div>
+    <div>
+      <h4>Resources</h4>
+      <a href="/guides">Jurisdiction guides</a>
+      <a href="/personal-tax">Personal tax by country</a>
+      <a href="/methodology">Methodology &amp; sources</a>
+      <a href="/api">Developer API</a>
+      <a href="/privacy">Privacy &amp; data</a>
+      <a href="/disclaimer">Disclaimer</a>
+    </div>
+    <div>
+      <h4>Oblique Consult</h4>
+      <a href="{{ site.company_url }}" target="_blank" rel="noopener">obliqueconsult.com</a>
+      <a href="{{ site.contact_url }}" target="_blank" rel="noopener">Get in touch for precise figures</a>
+    </div>
+  </div>
+  <div class="wrap legal">
+    <p class="small muted">Desktop estimates, not tax advice. For precise figures based on your circumstances, get in touch with {{ site.company }}. &copy; {{ site.company }}.</p>
+  </div>
+</footer>
+<script src="/static/js/calc.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

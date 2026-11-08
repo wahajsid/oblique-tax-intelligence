@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ 'UAE' if jur == 'AE' else 'KSA' }} VAT Calculator{% endblock %}
+{% block description %}{{ 'UAE 5%' if jur == 'AE' else 'Saudi Arabia 15%' }} VAT calculator: add or extract VAT, prepare a period return with reverse charge and partial exemption, and check registration thresholds.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">{{ rules.name }} · VAT · Ruleset {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
+  <h1>{{ 'UAE' if jur == 'AE' else 'KSA' }} VAT calculator</h1>
+  <p>Standard rate {{ (rules.rules.vat.standard_rate.parameters.standard_rate * 100) | int }}%. Switch jurisdiction: <a href="/vat?j=AE">UAE</a> · <a href="/vat?j=SA">Saudi Arabia</a>.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <input type="hidden" name="jurisdiction" value="{{ jur }}">
+    <fieldset>
+      <legend>What do you need?</legend>
+      <div class="field"><label>Mode</label>
+        <select name="mode" id="mode"><option value="add_vat">Add VAT to a net amount</option><option value="extract_vat">Extract VAT from a gross amount</option><option value="return">Prepare a period return</option></select></div>
+    </fieldset>
+    <fieldset id="simple">
+      <div class="field"><label>Amount ({{ rules.currency }})</label><input type="number" name="amount" value="100000" min="0" step="100"></div>
+      <div class="field"><label>Supply type</label><select name="rate_type"><option value="standard">Standard-rated</option><option value="zero">Zero-rated (exports, qualifying categories)</option><option value="exempt">Exempt</option></select></div>
+    </fieldset>
+    <fieldset id="ret" hidden>
+      <legend>Period figures ({{ rules.currency }}, net of VAT)</legend>
+      <div class="two">
+        <div class="field"><label>Standard-rated sales</label><input type="number" name="standard_rated_sales" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Zero-rated sales</label><input type="number" name="zero_rated_sales" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Exempt sales</label><input type="number" name="exempt_sales" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Standard-rated purchases</label><input type="number" name="standard_rated_purchases" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Reverse-charge imports</label><input type="number" name="reverse_charge_imports" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Blocked input VAT</label><input type="number" name="blocked_input_vat" value="0" min="0" step="100"></div>
+      </div>
+    </fieldset>
+    <details class="adv"><summary>Registration check</summary>
+      <div class="field"><label>Annual taxable supplies ({{ rules.currency }})</label><input type="number" name="annual_taxable_supplies" value="" data-nullable="1" min="0" step="1000"></div>
+    </details>
+    {% include "_scope_gate.html" %}
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  {% include "_result_shell.html" %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const modeSel = document.getElementById('mode');
+const sync = () => { const r = modeSel.value === 'return'; document.getElementById('ret').hidden = !r; document.getElementById('simple').hidden = r; };
+modeSel.addEventListener('change', sync); sync();
+initCalc({
+  form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/vat',
+  tiles: (o, c) => o.net_vat_payable !== undefined ? [
+    [o.position === 'payable' ? 'Net VAT payable' : 'Net VAT refundable', fmtMoney(Math.abs(o.net_vat_payable), c)],
+    ['Output VAT', fmtMoney(o.output_vat, c)], ['Recoverable input VAT', fmtMoney(o.recoverable_input_vat, c)],
+    ['Reverse-charge VAT', fmtMoney(o.reverse_charge_vat, c)], ['Recovery ratio', fmtPct(o.recovery_ratio)],
+    o.registration_status ? ['Registration', o.registration_status.replace(/_/g,' ')] : null,
+  ] : [
+    ['VAT', fmtMoney(o.vat, c)], ['Net', fmtMoney(o.net, c)], ['Gross', fmtMoney(o.gross, c)], ['Rate', fmtPct(o.rate)],
+    o.registration_status ? ['Registration', o.registration_status.replace(/_/g,' ')] : null,
+  ]
+});
+</script>
+{% endblock %}

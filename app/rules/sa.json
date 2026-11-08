@@ -1,0 +1,124 @@
+{
+  "jurisdiction": "SA",
+  "name": "Kingdom of Saudi Arabia",
+  "currency": "SAR",
+  "ruleset_version": "2026.1",
+  "last_reviewed": "2026-11-07",
+  "rules": {
+    "zakat": {
+      "rate": {
+        "rule_id": "sa.zakat.rate",
+        "description": "Zakat at 2.5% of the zakat base for a Hijri (lunar) year; for a Gregorian financial year the rate is prorated by days (365/354), giving 2.577683%.",
+        "effective_from": "2024-01-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Executive Regulations for Zakat Collection (Ministerial Resolution No. 1007 of 2024); ZATCA FAQ",
+        "source_url": "https://zatca.gov.sa/en/HelpCenter/FAQs/Pages/default.aspx",
+        "parameters": {"hijri_rate": 0.025, "gregorian_rate": 0.02577683, "hijri_days": 354, "gregorian_days": 365}
+      },
+      "base": {
+        "rule_id": "sa.zakat.base",
+        "description": "Zakat base = sources of funds (equity, retained earnings, provisions and reserves, long-term and other non-current liabilities, adjusted net profit for the year) less deductions for assets not subject to zakat (net fixed assets, long-term investments, capital work in progress, intangible assets and other deductible items). Minimum base: the base cannot be lower than adjusted net profit. Alternative bases with upper and lower limits apply under Articles 27 and 28.",
+        "effective_from": "2024-01-01",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "Structure confirmed via EY, KPMG and Andersen summaries of MR 1007 (Articles 23 to 28). The exact upper-limit formula under Article 28 was not confirmed from the regulation text and is NOT applied by this engine.",
+        "source_reference": "Ministerial Resolution No. 1007 (29 Feb 2024), Articles 23 to 28; amended by MR 947 (2025) and MR 1248",
+        "source_url": "https://www.ey.com/en_gl/technical/tax-alerts/saudi-arabia-issues-new-executive-regulations-for-zakat-collecti",
+        "parameters": {"minimum_base_is_adjusted_net_profit": true, "upper_limit_applied": false}
+      },
+      "mixed_ownership": {
+        "rule_id": "sa.zakat.mixed_ownership",
+        "description": "Companies owned by both Saudi/GCC nationals and non-Saudi persons pay zakat on the Saudi/GCC share of the zakat base and income tax on the non-Saudi share of taxable profit.",
+        "effective_from": "2004-07-30",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Income Tax Law (Royal Decree M/1 of 1425H), Art. 2; Zakat Regulations",
+        "source_url": "https://www2.deloitte.com/content/dam/Deloitte/global/Documents/Tax/dttl-tax-saudiarabiahighlights-2024.pdf",
+        "parameters": {}
+      }
+    },
+    "income_tax": {
+      "standard_rate": {
+        "rule_id": "sa.cit.standard_rate",
+        "description": "Corporate income tax at 20% of adjusted net profit attributable to non-Saudi/non-GCC shareholders. Oil and hydrocarbon producers taxed at 50% to 85%; natural gas investment at 20%.",
+        "effective_from": "2004-07-30",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Income Tax Law (Royal Decree M/1 of 1425H), Art. 7",
+        "source_url": "https://www2.deloitte.com/content/dam/Deloitte/global/Documents/Tax/dttl-tax-saudiarabiahighlights-2024.pdf",
+        "parameters": {"rate": 0.20, "hydrocarbon_rate_min": 0.50, "hydrocarbon_rate_max": 0.85}
+      },
+      "tax_loss_relief": {
+        "rule_id": "sa.cit.tax_losses",
+        "description": "Tax losses may be carried forward indefinitely, but the offset in any year is limited to 25% of that year's taxable profit.",
+        "effective_from": "2004-07-30",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Income Tax Law, Art. 21; Implementing Regulations",
+        "source_url": "https://www2.deloitte.com/content/dam/Deloitte/global/Documents/Tax/dttl-tax-saudiarabiahighlights-2024.pdf",
+        "parameters": {"max_offset_pct": 0.25}
+      }
+    },
+    "withholding_tax": {
+      "rates": {
+        "rule_id": "sa.wht.rates",
+        "description": "Withholding tax on payments from Saudi residents (or PEs) to non-residents for Saudi-source income. Statutory rates; double tax treaties may reduce them.",
+        "effective_from": "2004-07-30",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "Management fees 20%, royalties 15%, technical/consulting 5% and dividends 5% confirmed by Deloitte/ZATCA bulletin summaries. Interest 5%, rent 5%, insurance 5%, telecom 5% and 'other' 15% are the standard published table and should be confirmed against the ZATCA circular table before professional reliance.",
+        "source_reference": "Income Tax Law, Art. 68; Implementing Regulations, Art. 63; ZATCA Tax Bulletin Dec 2025",
+        "source_url": "https://zatca.gov.sa/en/MediaCenter/Publications/Documents/Tax-Circular-WHT-Implementation-Under-Double-Taxation-Agreement.PDF",
+        "parameters": {
+          "categories": {
+            "management_fees": {"label": "Management fees", "rate": 0.20},
+            "royalties": {"label": "Royalties", "rate": 0.15},
+            "dividends": {"label": "Dividends", "rate": 0.05},
+            "interest": {"label": "Interest / loan charges", "rate": 0.05},
+            "rent": {"label": "Rent", "rate": 0.05},
+            "technical_consulting": {"label": "Technical or consulting services", "rate": 0.05},
+            "insurance_reinsurance": {"label": "Insurance or reinsurance premiums", "rate": 0.05},
+            "international_telecom": {"label": "International telecommunication services", "rate": 0.05},
+            "airline_shipping": {"label": "Air tickets, air/sea freight", "rate": 0.05},
+            "other_services": {"label": "Other payments / services", "rate": 0.15}
+          }
+        }
+      }
+    },
+    "vat": {
+      "standard_rate": {
+        "rule_id": "sa.vat.standard_rate",
+        "description": "Standard VAT rate of 15% (increased from 5% on 1 July 2020).",
+        "effective_from": "2020-07-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "VAT Law (Royal Decree M/113 of 1438H); Royal Order A/638 of 2020",
+        "source_url": "https://www.pwc.com/m1/en/publications/middle-east-economy-watch/february-2025/gcc-economies-are-broadening-their-tax-bases.html",
+        "parameters": {"standard_rate": 0.15, "zero_rate": 0.0}
+      },
+      "registration_thresholds": {
+        "rule_id": "sa.vat.registration",
+        "description": "Mandatory registration above SAR 375,000 of annual taxable supplies; voluntary registration above SAR 187,500.",
+        "effective_from": "2018-01-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "VAT Implementing Regulations, Art. 3 and 7",
+        "source_url": "https://zatca.gov.sa/en/HelpCenter/FAQs/Pages/default.aspx",
+        "parameters": {"mandatory": 375000, "voluntary": 187500}
+      }
+    },
+    "domestic_minimum_top_up_tax": {
+      "status": {
+        "rule_id": "sa.dmtt.status",
+        "description": "Saudi Arabia had not enacted a domestic minimum top-up tax as of the last review.",
+        "effective_from": null,
+        "effective_to": null,
+        "review_status": "pending_verification",
+        "source_reference": "PwC Middle East Economy Watch, Feb 2025",
+        "source_url": "https://www.pwc.com/m1/en/publications/middle-east-economy-watch/february-2025/gcc-economies-are-broadening-their-tax-bases.html",
+        "parameters": {"enacted": false}
+      }
+    }
+  }
+}

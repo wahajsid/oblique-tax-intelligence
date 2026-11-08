@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Personal income tax calculators by country{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Personal tax</span><h1>Income tax calculators for the countries people move to the UAE from</h1><p>Each calculator shows income tax and mandatory contributions with a full working paper and sources, and links to the move-to-UAE comparison.</p></div>
+<section class="wrap section" style="padding-top:10px">
+  <div class="grid">
+  {% for cc, o in origins.items() %}
+    <div class="card"><h3><a href="/personal-tax/{{ cc }}">{{ o.flag }} {{ o.name }}</a></h3><p class="muted" style="margin:0">{{ o.tax_year }} · <span class="status-dot {{ o.review_status }}"></span>{{ o.review_status | replace('_',' ') }}</p><a href="/personal-tax/{{ cc }}">Calculate →</a> <a href="/move/{{ cc|lower }}-to-uae">Compare with UAE →</a></div>
+  {% endfor %}
+  {% for cc, o in personal.countries.items() if not o.enabled %}
+    <div class="card"><h3>{{ o.flag }} {{ o.name }}</h3><p class="muted" style="margin:0">Coming soon: {{ o.verification_note }}</p></div>
+  {% endfor %}
+  </div>
+</section>
+{% endblock %}

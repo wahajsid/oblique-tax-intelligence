@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Free GCC tax exposure diagnostic{% endblock %}
+{% block description %}Ten yes/no questions become a prioritised action list for UAE and KSA tax: deadlines first, then registration, VAT thresholds, free zone status, transfer pricing, residence and records. No contact details needed.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">Free diagnostic</span>
+  <h1>Where is your tax exposure? Ten questions, one action list.</h1>
+  <p>Answer yes, no or not sure. Deadlines take priority. You get the full checklist on screen with no email gate; it is not a risk score and not a tax opinion.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <fieldset>
+      <legend>Your focus</legend>
+      <div class="field"><label>Profile</label><select name="profile" id="profile"><option value="business">Business / founder / finance team</option><option value="personal">Personal / expatriate</option></select></div>
+    </fieldset>
+    <div id="questions"></div>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Build my checklist</button></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  <section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="Checklist">
+    <div class="results-head"><h2>Your action list</h2><span class="badge verified" id="status-badge">Checklist</span></div>
+    <div id="priority"></div>
+    <ol class="actions-list" id="actions"></ol>
+    <p class="small muted" id="method"></p>
+    <div class="cta-row">
+      <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
+      <button class="btn btn-ghost" id="btn-download" type="button">Download</button>
+      <button class="btn btn-ghost" id="btn-print" type="button">Print</button>
+      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Book a review with Oblique</a>
+    </div>
+    <p class="desk-note"><b>Desktop checklist.</b> Built from your answers only. For a review of your actual position, get in touch with Oblique Consult.</p>
+    <p class="small muted" id="disclaimer"></p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const Q = {{ questions | tojson }};
+const qbox = document.getElementById('questions');
+function renderQuestions() {
+  const profile = document.getElementById('profile').value;
+  qbox.innerHTML = Object.entries(Q).filter(([k, q]) => q.profiles.includes(profile)).map(([k, q], i) =>
+    `<div class="q"><label for="q_${k}">${i + 1}. ${escHtml(q.label)}</label><select id="q_${k}" name="${k}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`).join('');
+}
+document.getElementById('profile').addEventListener('change', renderQuestions); renderQuestions();
+initCalc({
+  form: 'f', endpoint: '/api/v1/diagnostic', contactUrl: '{{ site.contact_url }}', downloadName: 'oblique-diagnostic', autorun: false,
+  body: (data) => { const answers = {}; for (const k in data) if (k !== 'profile') answers[k] = data[k]; return { profile: data.profile, answers }; },
+  tiles: () => [],
+  render: (r, cfg) => {
+    const root = document.getElementById('results'); root.hidden = false;
+    const cls = r.priority === 'CHECK DEADLINE NOW' ? 'now' : r.priority === 'KEEP RECORDS CURRENT' ? 'ok' : '';
+    document.getElementById('priority').innerHTML = `<span class="priority ${cls}">${escHtml(r.priority)}</span><p class="muted">${r.open_items} open item${r.open_items === 1 ? '' : 's'} from your answers.</p>`;
+    document.getElementById('actions').innerHTML = r.actions.map(a => `<li><span class="urg">${a.urgency === 'now' ? 'Act now' : a.urgency === 'soon' ? 'You said yes' : 'Clarify'}</span><b>${escHtml(a.label)}</b><p>${escHtml(a.action)}</p><span class="small"><em>${escHtml(a.advisory_hook)}</em>${a.link ? ` · <a href="${a.link}">Open the calculator →</a>` : ''}</span></li>`).join('')
+      || '<li>No open items. Keep supporting records current and confirm obligations independently.</li>';
+    document.getElementById('method').textContent = r.methodology + ' ' + r.warnings.join(' ');
+    document.getElementById('disclaimer').textContent = r.disclaimer;
+    root.dataset.json = JSON.stringify(r, null, 2);
+    if (cfg._explicit) root.focus({ preventScroll: window.innerWidth >= 960 });
+    cfg._explicit = false;
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,175 @@
+{
+  "ruleset_version": "2026.1",
+  "last_reviewed": "2026-11-08",
+  "description": "Personal income tax and mandatory employee contributions for common origin countries of people relocating to the UAE. Used by the Personal Tax calculator and the Move-to-UAE comparison. Each country record carries a review status; 'enabled: false' means the rules are not shown to visitors until verified.",
+  "fx": {
+    "as_of": "2026-11-06",
+    "note": "Indicative mid-market rates, AED per 1 unit of the origin currency, for screening only. The visitor can override the rate. AED is pegged at 3.6725 per USD; HKD trades in a 7.75 to 7.85 band per USD.",
+    "review_status": "pending_verification",
+    "aed_per_unit": {"AED": 1, "USD": 3.6725, "GBP": 4.90, "EUR": 4.25, "INR": 0.0408, "SGD": 2.85, "HKD": 0.471, "AUD": 2.45, "ZAR": 0.212, "PKR": 0.0131}
+  },
+  "uae": {
+    "personal_income_tax": {"rule_id": "ae.pit.none", "description": "The UAE levies no personal income tax on employment income and no social security contributions for expatriate employees (GCC nationals contribute to GPSSA/ADPF).", "effective_from": null, "review_status": "verified", "source_reference": "UAE Ministry of Finance; PwC Tax Summaries UAE Individual", "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income"}
+  },
+  "countries": {
+    "GB": {
+      "name": "United Kingdom", "currency": "GBP", "flag": "🇬🇧", "enabled": true, "tax_year": "2026/27 (6 April 2026 to 5 April 2027)",
+      "review_status": "verified", "last_reviewed": "2026-11-08",
+      "source_reference": "HMRC Income Tax rates and Personal Allowances; National Insurance rates 2026/27 (thresholds frozen)",
+      "source_url": "https://www.gov.uk/income-tax-rates",
+      "assumptions": ["England, Wales or Northern Ireland rates (Scottish bands differ).", "Employment income only; no benefits in kind, pension contributions or student loan.", "Class 1 employee National Insurance on a single employment."],
+      "rules": {
+        "personal_allowance": {"rule_id": "gb.pit.personal_allowance", "description": "Personal Allowance GBP 12,570, reduced by GBP 1 for every GBP 2 of income above GBP 100,000 (nil from GBP 125,140).", "review_status": "verified", "source_reference": "HMRC", "source_url": "https://www.gov.uk/income-tax-rates", "parameters": {"allowance": 12570, "taper_start": 100000}},
+        "bands": {"rule_id": "gb.pit.bands", "description": "Basic rate 20% on the first GBP 37,700 of taxable income, higher rate 40% to GBP 125,140, additional rate 45% above.", "review_status": "verified", "source_reference": "HMRC", "source_url": "https://www.gov.uk/income-tax-rates", "parameters": {"brackets": [[37700, 0.20], [125140, 0.40], [null, 0.45]]}},
+        "national_insurance": {"rule_id": "gb.nic.class1", "description": "Employee Class 1 NIC: 8% between the primary threshold GBP 12,570 and the upper earnings limit GBP 50,270, 2% above.", "review_status": "verified", "source_reference": "HMRC National Insurance rates", "source_url": "https://www.gov.uk/national-insurance-rates-letters", "parameters": {"primary_threshold": 12570, "upper_earnings_limit": 50270, "main_rate": 0.08, "upper_rate": 0.02}}
+      },
+      "relocation_flags": [
+        "UK Statutory Residence Test: you usually need to spend fewer than 16 days (or 46 days if not UK resident in all of the previous three years) in the UK, or meet the full-time work abroad test, to be non-resident; split-year treatment may apply in the year of departure.",
+        "Temporary non-residence rules can tax certain gains and income realised while abroad if you return within five years.",
+        "UK-source income such as rental income remains taxable in the UK; the UK has a double tax treaty with the UAE."
+      ]
+    },
+    "HK": {
+      "name": "Hong Kong SAR", "currency": "HKD", "flag": "🇭🇰", "enabled": true, "tax_year": "2025/26 (1 April 2025 to 31 March 2026)",
+      "review_status": "verified", "last_reviewed": "2026-11-08",
+      "source_reference": "Inland Revenue Department: Salaries Tax rates and allowances 2025/26; PwC HK Tax Facts 2025/26",
+      "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+      "assumptions": ["Single person, basic allowance only.", "Mandatory Provident Fund employee contribution 5% capped at HKD 1,500 per month, deductible.", "Lower of progressive tax and standard-rate tax applies; the 2025/26 one-off 100% reduction capped at HKD 3,000 is applied."],
+      "rules": {
+        "allowance": {"rule_id": "hk.st.basic_allowance", "description": "Basic allowance HKD 132,000 (2025/26).", "review_status": "verified", "source_reference": "IRD", "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf", "parameters": {"allowance": 132000}},
+        "progressive": {"rule_id": "hk.st.progressive", "description": "Progressive rates on net chargeable income: 2% on the first HKD 50,000, 6% on the next 50,000, 10% on the next 50,000, 14% on the next 50,000, 17% on the remainder.", "review_status": "verified", "source_reference": "IRD", "source_url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf", "parameters": {"brackets": [[50000, 0.02], [100000, 0.06], [150000, 0.10], [200000, 0.14], [null, 0.17]]}},
+        "standard_rate": {"rule_id": "hk.st.standard_rate", "description": "Two-tiered standard rate on net income before allowances: 15% on the first HKD 5,000,000 and 16% on the remainder. Tax is the lower of progressive and standard-rate computations.", "review_status": "verified", "source_reference": "IRD; PwC HK Tax Facts", "source_url": "https://www.pwchk.com/en/tax/hong-kong-budget-2025-2026/tax-facts-and-figures-en.pdf", "parameters": {"brackets": [[5000000, 0.15], [null, 0.16]]}},
+        "one_off_reduction": {"rule_id": "hk.st.reduction_2025_26", "description": "2025/26 Budget: 100% reduction of salaries tax capped at HKD 3,000.", "review_status": "verified", "source_reference": "2025/26 Budget", "source_url": "https://getstarted.hk/tax/2025-26-budget-and-tax-measures/", "parameters": {"cap": 3000}},
+        "mpf": {"rule_id": "hk.mpf.employee", "description": "MPF employee contribution 5% of relevant income, capped at HKD 1,500 per month (HKD 18,000 per year); deductible for salaries tax.", "review_status": "verified", "source_reference": "MPFA", "source_url": "https://www.mpfa.org.hk/en/mpf-system/mandatory-contribution", "parameters": {"rate": 0.05, "annual_cap": 18000}}
+      },
+      "relocation_flags": [
+        "Hong Kong taxes on a territorial basis: income from a Hong Kong employment stays taxable for days of service in Hong Kong after you leave.",
+        "Tax clearance (IR56G) is required before departure; employers must withhold final payments for one month.",
+        "MPF accrued benefits can be withdrawn on permanent departure from Hong Kong (one claim only)."
+      ]
+    },
+    "SG": {
+      "name": "Singapore", "currency": "SGD", "flag": "🇸🇬", "enabled": true, "tax_year": "YA 2027 (income earned in calendar 2026)",
+      "review_status": "verified_secondary", "last_reviewed": "2026-11-08",
+      "verification_note": "Resident rate table is the schedule in force since YA 2024 and consistent across IRAS-derived sources; the IRAS page itself could not be fetched during review. No personal income tax rebate is applied.",
+      "source_reference": "IRAS Individual Income Tax rates (resident); PwC Tax Summaries Singapore",
+      "source_url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates",
+      "assumptions": ["Tax resident, employment income only, Earned Income Relief SGD 1,000 (under 55).", "CPF employee contributions (20% of ordinary wages up to SGD 8,000 per month) apply only if you tick 'CPF member' (citizens and permanent residents) and are deducted as relief.", "No rebate applied."],
+      "rules": {
+        "bands": {"rule_id": "sg.pit.bands", "description": "Resident progressive rates: 0% on the first SGD 20,000, 2% next 10,000, 3.5% next 10,000, 7% next 40,000, 11.5% next 40,000, 15% next 40,000, 18% next 40,000, 19% next 40,000, 19.5% next 40,000, 20% next 40,000, 22% next 180,000, 23% next 500,000, 24% above SGD 1,000,000.", "review_status": "verified_secondary", "source_reference": "IRAS", "source_url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates", "parameters": {"brackets": [[20000, 0.0], [30000, 0.02], [40000, 0.035], [80000, 0.07], [120000, 0.115], [160000, 0.15], [200000, 0.18], [240000, 0.19], [280000, 0.195], [320000, 0.20], [500000, 0.22], [1000000, 0.23], [null, 0.24]]}},
+        "earned_income_relief": {"rule_id": "sg.pit.eir", "description": "Earned Income Relief SGD 1,000 for taxpayers under 55.", "review_status": "verified_secondary", "source_reference": "IRAS", "source_url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions", "parameters": {"relief": 1000}},
+        "cpf": {"rule_id": "sg.cpf.employee", "description": "CPF employee contribution 20% of ordinary wages (age 55 and below) up to the SGD 8,000 monthly ordinary wage ceiling; deductible as CPF relief.", "review_status": "verified_secondary", "source_reference": "CPF Board contribution rates 2026", "source_url": "https://www.cpf.gov.sg/employer/employer-obligations/how-much-cpf-contributions-to-pay", "parameters": {"rate": 0.20, "monthly_ceiling": 8000}}
+      },
+      "relocation_flags": [
+        "Singapore tax residence is based on physical presence or employment of 183 days or more; a mid-year departure usually keeps you resident for that year.",
+        "Employers must seek tax clearance (Form IR21) and withhold all monies due when a non-citizen employee ceases employment or leaves Singapore.",
+        "CPF balances remain in Singapore unless you renounce citizenship or PR status."
+      ]
+    },
+    "IN": {
+      "name": "India", "currency": "INR", "flag": "🇮🇳", "enabled": true, "tax_year": "FY 2025-26 / AY 2026-27 (new tax regime)",
+      "review_status": "verified_secondary", "last_reviewed": "2026-11-08",
+      "verification_note": "Slab breakpoints, standard deduction and the Section 87A rebate are confirmed across Budget 2025 summaries; surcharge marginal relief is applied in simplified form. Confirm FY 2026-27 slabs against the Finance Act 2026 before relying on them for income earned after 1 April 2026.",
+      "source_reference": "Finance Act 2025 (new regime, Section 115BAC); India Briefing summary",
+      "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html",
+      "assumptions": ["Resident individual under 60, new tax regime, salaried (standard deduction INR 75,000).", "Section 87A rebate up to INR 60,000 where total income does not exceed INR 12,00,000, with marginal relief just above.", "Surcharge of 10% / 15% / 25% above INR 50 lakh / 1 crore / 2 crore with simplified marginal relief; 4% health and education cess.", "Employee Provident Fund (12% of basic salary) is not modelled."],
+      "rules": {
+        "standard_deduction": {"rule_id": "in.pit.standard_deduction", "description": "Standard deduction INR 75,000 for salaried taxpayers under the new regime.", "review_status": "verified", "source_reference": "Finance Act 2024/2025", "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html", "parameters": {"deduction": 75000}},
+        "slabs": {"rule_id": "in.pit.slabs", "description": "New regime slabs FY 2025-26: 0% to INR 4,00,000; 5% to 8,00,000; 10% to 12,00,000; 15% to 16,00,000; 20% to 20,00,000; 25% to 24,00,000; 30% above.", "review_status": "verified_secondary", "source_reference": "Finance Act 2025", "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html", "parameters": {"brackets": [[400000, 0.0], [800000, 0.05], [1200000, 0.10], [1600000, 0.15], [2000000, 0.20], [2400000, 0.25], [null, 0.30]]}},
+        "rebate_87a": {"rule_id": "in.pit.rebate_87a", "description": "Rebate under Section 87A: tax up to INR 60,000 is rebated where total income does not exceed INR 12,00,000; marginal relief limits tax to the income above 12,00,000.", "review_status": "verified", "source_reference": "Finance Act 2025", "source_url": "https://www.valueresearchonline.com/stories/227767/income-tax-changes-fy26-5-numbers-you-should-know/", "parameters": {"income_limit": 1200000, "max_rebate": 60000}},
+        "surcharge": {"rule_id": "in.pit.surcharge", "description": "Surcharge 10% of tax above INR 50 lakh, 15% above 1 crore, 25% above 2 crore (capped at 25% under the new regime), with marginal relief.", "review_status": "verified_secondary", "source_reference": "Income-tax Act, Finance Act 2025", "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html", "parameters": {"tiers": [[5000000, 0.10], [10000000, 0.15], [20000000, 0.25]]}},
+        "cess": {"rule_id": "in.pit.cess", "description": "Health and education cess 4% of income tax plus surcharge.", "review_status": "verified", "source_reference": "Income-tax Act", "source_url": "https://www.india-briefing.com/news/personal-income-tax-changes-india-within-new-regime-for-fy-2025-26-36042.html", "parameters": {"rate": 0.04}}
+      },
+      "relocation_flags": [
+        "Residential status is tested each financial year (182-day rule, with a 120-day rule for Indian citizens with Indian income above INR 15 lakh); an Indian citizen not liable to tax elsewhere can be 'deemed resident'.",
+        "Income accruing in India (rent, interest, capital gains on Indian assets) remains taxable in India for non-residents; India and the UAE have a tax treaty.",
+        "NRE/NRO account re-designation and PAN/Aadhaar compliance are required after departure."
+      ]
+    },
+    "US": {
+      "name": "United States", "currency": "USD", "flag": "🇺🇸", "enabled": true, "tax_year": "2026 (federal, single filer)",
+      "review_status": "verified", "last_reviewed": "2026-11-08",
+      "source_reference": "IRS Rev. Proc. 2025-32 (2026 inflation adjustments); SSA 2026 wage base",
+      "source_url": "https://taxfoundation.org/data/all/federal/2026-tax-brackets/",
+      "assumptions": ["Single filer, standard deduction, wage income only.", "Federal tax and FICA only; state and city income tax are NOT included unless you enter a flat state rate.", "US citizens and green-card holders remain subject to US tax on worldwide income after moving; the post-move estimate applies the Foreign Earned Income Exclusion with the stacking rule."],
+      "rules": {
+        "standard_deduction": {"rule_id": "us.fit.standard_deduction", "description": "Standard deduction USD 16,100 (single, 2026).", "review_status": "verified", "source_reference": "Rev. Proc. 2025-32", "source_url": "https://www.cpapracticeadvisor.com/2025/10/09/irs-adjusts-tax-brackets-standard-deduction-for-2026/170661/", "parameters": {"deduction": 16100}},
+        "brackets": {"rule_id": "us.fit.brackets", "description": "2026 single brackets: 10% to USD 12,400; 12% to 50,400; 22% to 105,700; 24% to 201,775; 32% to 256,225; 35% to 640,600; 37% above.", "review_status": "verified", "source_reference": "Rev. Proc. 2025-32; Tax Foundation", "source_url": "https://taxfoundation.org/data/all/federal/2026-tax-brackets/", "parameters": {"brackets": [[12400, 0.10], [50400, 0.12], [105700, 0.22], [201775, 0.24], [256225, 0.32], [640600, 0.35], [null, 0.37]]}},
+        "fica": {"rule_id": "us.fica.employee", "description": "Social Security 6.2% up to the USD 184,500 wage base; Medicare 1.45% on all wages plus 0.9% Additional Medicare Tax above USD 200,000 (single).", "review_status": "verified", "source_reference": "SSA 2026 COLA fact sheet; IRC 3101", "source_url": "https://www.ssa.gov/news/press/factsheets/colafacts2026.pdf", "parameters": {"ss_rate": 0.062, "ss_wage_base": 184500, "medicare_rate": 0.0145, "additional_medicare_rate": 0.009, "additional_medicare_threshold": 200000}},
+        "feie": {"rule_id": "us.fit.feie", "description": "Foreign Earned Income Exclusion USD 132,900 for 2026 (bona fide residence or 330-day physical presence test); excluded income still pushes remaining income into higher brackets (stacking rule).", "review_status": "verified", "source_reference": "Rev. Proc. 2025-32", "source_url": "https://kpmg.com/xx/en/our-insights/gms-flash-alert/flash-alert-2025-226.html", "parameters": {"exclusion": 132900}}
+      },
+      "relocation_flags": [
+        "US citizens and green-card holders file and may owe US tax on worldwide income wherever they live; the UAE has no treaty with the US. FEIE and the foreign housing exclusion reduce, but may not eliminate, the US bill, and FICA stops only if your employer is not a US entity.",
+        "State domicile can follow you: some states (for example California, New York, Virginia) keep taxing residents who have not clearly abandoned domicile.",
+        "FBAR and FATCA reporting of UAE bank accounts continues; expatriation (renouncing citizenship or a long-term green card) can trigger an exit tax."
+      ]
+    },
+    "AU": {
+      "name": "Australia", "currency": "AUD", "flag": "🇦🇺", "enabled": true, "tax_year": "2026-27 (1 July 2026 to 30 June 2027)",
+      "review_status": "verified_secondary", "last_reviewed": "2026-11-08",
+      "verification_note": "The 2026-27 schedule reflects the legislated cut of the second bracket from 16% to 15% from 1 July 2026 (Treasury Laws Amendment (Tax Incentives and Integrity) Act 2025). The ATO page could not be fetched during review.",
+      "source_reference": "ATO individual income tax rates (residents); Treasury 2025-26 Budget personal income tax cuts",
+      "source_url": "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-australian-residents",
+      "assumptions": ["Australian resident for tax purposes, employment income only.", "Medicare levy 2% (low-income reduction and Medicare levy surcharge not modelled).", "Low Income Tax Offset applied; superannuation is employer-paid and excluded."],
+      "rules": {
+        "brackets": {"rule_id": "au.pit.brackets", "description": "2026-27 resident rates: nil to AUD 18,200; 15% to 45,000; 30% to 135,000; 37% to 190,000; 45% above.", "review_status": "verified_secondary", "source_reference": "ATO; Treasury", "source_url": "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-australian-residents", "parameters": {"brackets": [[18200, 0.0], [45000, 0.15], [135000, 0.30], [190000, 0.37], [null, 0.45]]}},
+        "medicare_levy": {"rule_id": "au.pit.medicare_levy", "description": "Medicare levy 2% of taxable income.", "review_status": "verified", "source_reference": "ATO", "source_url": "https://www.ato.gov.au/individuals-and-families/medicare-and-private-health-insurance/medicare-levy", "parameters": {"rate": 0.02}},
+        "lito": {"rule_id": "au.pit.lito", "description": "Low Income Tax Offset: AUD 700 up to taxable income 37,500, reduced by 5 cents per dollar to 45,000, then 1.5 cents per dollar to 66,667.", "review_status": "verified", "source_reference": "ATO", "source_url": "https://www.ato.gov.au/individuals-and-families/income-deductions-offsets-and-records/tax-offsets/low-and-middle-income-earner-tax-offsets", "parameters": {"max": 700, "phase1_start": 37500, "phase1_rate": 0.05, "phase2_start": 45000, "phase2_rate": 0.015}}
+      },
+      "relocation_flags": [
+        "Australian tax residency uses the resides, domicile, 183-day and superannuation tests; a 'permanent place of abode' overseas is usually needed to break domicile.",
+        "Ceasing residency triggers CGT event I1 (deemed disposal of most non-taxable-Australian-property assets) unless you elect to defer.",
+        "HELP/HECS student loan repayment obligations continue for non-residents based on worldwide income; Australian rental income stays taxable at non-resident rates."
+      ]
+    },
+    "DE": {
+      "name": "Germany", "currency": "EUR", "flag": "🇩🇪", "enabled": true, "tax_year": "2026 (calendar year, tax class I)",
+      "review_status": "verified_secondary", "last_reviewed": "2026-11-08",
+      "verification_note": "Tariff formula and thresholds confirmed against section 32a EStG as amended for 2026. Social contribution rates and ceilings are 2026 published values from secondary sources; the deductibility of contributions is simplified.",
+      "source_reference": "Section 32a EStG (2026); BMF; Deutsche Rentenversicherung 2026 Rechengroessen",
+      "source_url": "https://www.gesetze-im-internet.de/estg/__32a.html",
+      "assumptions": ["Single, tax class I, no church tax, no children (childless care-insurance surcharge applied).", "Employee social contributions: pension 9.3% and unemployment 1.3% up to EUR 101,400; health 7.3% plus 1.45% average supplementary and long-term care 2.4% up to EUR 69,750.", "Pension contributions fully and health/care contributions largely deductible as special expenses (simplified: 100% pension, 96% health, 100% care).", "Solidarity surcharge 5.5% above the EUR 20,350 exemption with the sliding zone."],
+      "rules": {
+        "tariff": {"rule_id": "de.est.tariff_2026", "description": "Income tax tariff 2026: nil to EUR 12,348; (914.51y + 1,400)y to 17,799; (173.10z + 2,397)z + 1,034.87 to 69,878; 0.42x - 11,135.63 to 277,825; 0.45x - 19,470.38 above.", "review_status": "verified", "source_reference": "Section 32a EStG", "source_url": "https://www.gesetze-im-internet.de/estg/__32a.html", "parameters": {"gfb": 12348, "z2_end": 17799, "z3_end": 69878, "z4_end": 277825, "z2": [914.51, 1400], "z3": [173.10, 2397, 1034.87], "z4": [0.42, 11135.63], "z5": [0.45, 19470.38]}},
+        "soli": {"rule_id": "de.est.soli", "description": "Solidarity surcharge 5.5% of income tax, nil up to EUR 20,350 of income tax, then capped at 11.9% of the tax above the threshold (sliding zone).", "review_status": "verified_secondary", "source_reference": "SolZG 1995 (2026 values)", "source_url": "https://www.finanz-tools.de/einkommensteuer/berechnung-formeln/2026", "parameters": {"rate": 0.055, "exemption": 20350, "sliding_rate": 0.119}},
+        "social": {"rule_id": "de.sv.employee_2026", "description": "Employee social contributions 2026: pension 9.3% and unemployment 1.3% up to EUR 101,400; statutory health 7.3% + 1.45% supplementary and long-term care 1.8% (+0.6% childless) up to EUR 69,750.", "review_status": "verified_secondary", "source_reference": "Sozialversicherungs-Rechengroessenverordnung 2026", "source_url": "https://www.deutsche-rentenversicherung.de/", "parameters": {"pension_rate": 0.093, "unemployment_rate": 0.013, "pension_ceiling": 101400, "health_rate": 0.073, "health_supplement_rate": 0.0145, "care_rate": 0.018, "care_childless_surcharge": 0.006, "health_ceiling": 69750}}
+      },
+      "relocation_flags": [
+        "German unlimited tax liability ends when you give up your domicile and habitual abode; extended limited liability can apply for ten years to German-source income if you move to a low-tax country.",
+        "Exit taxation (section 6 AStG) applies to shareholdings of 1% or more in corporations on departure.",
+        "Germany and the UAE no longer have a double tax treaty in force (the 2010 treaty expired at the end of 2021)."
+      ]
+    },
+    "ZA": {
+      "name": "South Africa", "currency": "ZAR", "flag": "🇿🇦", "enabled": true, "tax_year": "2026/27 (1 March 2026 to 28 February 2027)",
+      "review_status": "verified_secondary", "last_reviewed": "2026-11-08",
+      "verification_note": "2026/27 brackets and rebates taken from the February 2026 Budget highlights as reported by payroll providers; confirm against the SARS tax tables.",
+      "source_reference": "National Treasury Budget 2026; SARS tax tables 2026/27",
+      "source_url": "https://www.sars.gov.za/paye-gen-01-g20-guide-for-employers-iro-employees-tax-for-2026-external-guide",
+      "assumptions": ["Resident individual under 65, employment income only, primary rebate only.", "UIF employee contribution 1% capped at ZAR 177.12 per month.", "Medical scheme credits and retirement fund deductions are not modelled."],
+      "rules": {
+        "brackets": {"rule_id": "za.pit.brackets", "description": "2026/27: 18% to ZAR 245,100; 26% to 383,100; 31% to 530,200; 36% to 695,800; 39% to 887,000; 41% to 1,878,600; 45% above.", "review_status": "verified_secondary", "source_reference": "Budget 2026", "source_url": "https://www.payspace.com/wp-content/uploads/2026/02/Budget-Speech-2026-Key-Highlights.pdf", "parameters": {"brackets": [[245100, 0.18], [383100, 0.26], [530200, 0.31], [695800, 0.36], [887000, 0.39], [1878600, 0.41], [null, 0.45]]}},
+        "rebate": {"rule_id": "za.pit.primary_rebate", "description": "Primary rebate ZAR 17,820 (2026/27).", "review_status": "verified_secondary", "source_reference": "Budget 2026", "source_url": "https://www.payspace.com/wp-content/uploads/2026/02/Budget-Speech-2026-Key-Highlights.pdf", "parameters": {"rebate": 17820}},
+        "uif": {"rule_id": "za.uif.employee", "description": "UIF employee contribution 1% of remuneration up to the ZAR 17,712 monthly ceiling (max ZAR 177.12 per month).", "review_status": "verified_secondary", "source_reference": "UIF contribution ceiling", "source_url": "https://www.sars.gov.za/paye-gen-01-g20-guide-for-employers-iro-employees-tax-for-2026-external-guide", "parameters": {"rate": 0.01, "monthly_ceiling": 17712}}
+      },
+      "relocation_flags": [
+        "South Africa taxes residents on worldwide income; ceasing residency requires breaking the ordinarily-resident and physical-presence tests and triggers a deemed capital gains disposal (exit charge) on most assets.",
+        "The section 10(1)(o)(ii) foreign employment exemption covers only the first ZAR 1.25 million of foreign earnings for those who remain resident.",
+        "Retirement fund withdrawals after emigration are restricted for three years; SARS 'Approval for International Transfer' is needed to move funds."
+      ]
+    },
+    "PK": {
+      "name": "Pakistan", "currency": "PKR", "flag": "🇵🇰", "enabled": false, "tax_year": "Tax year 2027 (1 July 2026 to 30 June 2027)",
+      "review_status": "pending_verification", "last_reviewed": "2026-11-08",
+      "verification_note": "The Finance Act 2026 restructured salaried slabs from 1 July 2026 (eight bands, 35% from PKR 7 million, 9% surcharge abolished) but the enacted per-band rates could not be confirmed from a primary source during review. Disabled until the FBR table is verified.",
+      "source_reference": "Finance Act 2026 (Gazette 26 June 2026); FBR",
+      "source_url": "https://www.fbr.gov.pk/",
+      "assumptions": ["Salaried individual (salary more than 75% of taxable income)."],
+      "rules": {},
+      "relocation_flags": [
+        "Pakistan taxes residents (183 days or more) on worldwide income; non-residents only on Pakistan-source income.",
+        "Foreign remittances through banking channels are generally exempt; declare foreign assets if you remain resident."
+      ]
+    }
+  }
+}

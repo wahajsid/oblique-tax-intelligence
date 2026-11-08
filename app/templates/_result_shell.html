@@ -1,0 +1,28 @@
+{# Shared result panel used by every calculator page. JS fills it. #}
+<section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="Results">
+  <div class="results-head">
+    <h2>Results <span class="outcome" id="outcome-label"></span></h2>
+    <span class="badge" id="status-badge"></span>
+  </div>
+  <div class="review-banner" id="review-banner" hidden></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="flags" id="flags"></div>
+  <details class="trace" open>
+    <summary>Working paper: how this was calculated</summary>
+    <table class="trace-table"><tbody id="trace"></tbody></table>
+  </details>
+  <details class="rules">
+    <summary>Rules applied, review status and sources</summary>
+    <ul id="rules"></ul>
+    <p class="small muted" id="assumptions"></p>
+  </details>
+  <div class="cta-row">
+    <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
+    <button class="btn btn-ghost" id="btn-download" type="button">Download result</button>
+    <button class="btn btn-ghost" id="btn-print" type="button">Print working paper</button>
+    <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
+    <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Get precise figures from Oblique</a>
+  </div>
+  <p class="desk-note"><b>Desktop calculator.</b> This is a quick, simplified estimate from the figures you entered. For more detail or precise figures for your circumstances, get in touch with Oblique Consult.</p>
+  <p class="small muted" id="disclaimer"></p>
+</section>

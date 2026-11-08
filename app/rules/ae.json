@@ -1,0 +1,115 @@
+{
+  "jurisdiction": "AE",
+  "name": "United Arab Emirates",
+  "currency": "AED",
+  "ruleset_version": "2026.1",
+  "last_reviewed": "2026-11-07",
+  "rules": {
+    "corporate_tax": {
+      "standard_rate": {
+        "rule_id": "ae.ct.standard_rate",
+        "description": "Corporate Tax at 0% on taxable income up to AED 375,000 and 9% on the excess.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 3; Cabinet Decision No. 116 of 2022",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
+        "parameters": {"zero_rate_threshold": 375000, "rate_above_threshold": 0.09}
+      },
+      "small_business_relief": {
+        "rule_id": "ae.ct.small_business_relief",
+        "description": "Resident Taxable Persons with revenue of AED 3,000,000 or less in the current and all prior tax periods may elect to be treated as having no taxable income. Revenue test, not profit test. Once exceeded, lost permanently.",
+        "effective_from": "2023-06-01",
+        "effective_to": "2026-12-31",
+        "review_status": "pending_verification",
+        "verification_note": "Original cut-off: tax periods ending on or before 31 Dec 2026 (Ministerial Decision No. 73 of 2023). Secondary sources report Ministerial Decision No. 131 of 2026 extending the cut-off to periods ending on or before 31 Dec 2029; confirm against the Ministry of Finance text before relying on the extension.",
+        "source_reference": "Ministerial Decision No. 73 of 2023; reported Ministerial Decision No. 131 of 2026",
+        "source_url": "https://www.khaleejtimes.com/business/uae-extends-corporate-tax-relief-for-small-businesses-until-2029",
+        "parameters": {"revenue_threshold": 3000000, "not_available_to": ["qualifying_free_zone_person", "mne_constituent_entity"]}
+      },
+      "qualifying_free_zone_person": {
+        "rule_id": "ae.ct.qfzp",
+        "description": "A Qualifying Free Zone Person pays 0% on Qualifying Income and 9% on non-qualifying taxable income. The AED 375,000 zero-rate band does not apply to a QFZP. Non-qualifying revenue must not exceed the lower of 5% of total revenue or AED 5,000,000 (de minimis); breaching it removes QFZP status for the period and the following four periods.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "De minimis figures confirmed across multiple advisory sources citing Ministerial Decision No. 265 of 2023, reported as replaced by Ministerial Decisions No. 229 and 230 of 2025 with the same test. Confirm current decision text.",
+        "source_reference": "Cabinet Decision No. 100 of 2023; Ministerial Decision No. 265 of 2023 (replaced 2025)",
+        "source_url": "https://www.pwc.com/m1/en/services/tax/me-tax-legal-news/2023/cabinet-ministerial-decisions-release-corporate-tax-rules-for-free-zones.html",
+        "parameters": {"qualifying_income_rate": 0.0, "non_qualifying_rate": 0.09, "de_minimis_pct": 0.05, "de_minimis_abs": 5000000, "disqualification_periods": 5}
+      },
+      "tax_loss_relief": {
+        "rule_id": "ae.ct.tax_losses",
+        "description": "Tax losses may be carried forward indefinitely and offset against up to 75% of taxable income in a later period.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 37",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
+        "parameters": {"max_offset_pct": 0.75}
+      },
+      "interest_deduction_limitation": {
+        "rule_id": "ae.ct.interest_limitation",
+        "description": "Net interest expenditure is deductible up to the greater of 30% of tax-EBITDA or AED 12,000,000 (safe harbour). Excess carried forward up to 10 periods.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 30; Ministerial Decision No. 126 of 2023",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
+        "parameters": {"ebitda_pct": 0.30, "safe_harbour": 12000000}
+      },
+      "entertainment_expenses": {
+        "rule_id": "ae.ct.entertainment",
+        "description": "Only 50% of entertainment, amusement and recreation expenditure incurred for customers, shareholders, suppliers or other business partners is deductible.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 32",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
+        "parameters": {"deductible_pct": 0.50}
+      },
+      "domestic_minimum_top_up_tax": {
+        "rule_id": "ae.ct.dmtt",
+        "description": "15% Domestic Minimum Top-up Tax on UAE constituent entities of MNE groups with consolidated revenue of EUR 750 million or more in at least two of the four preceding financial years.",
+        "effective_from": "2025-01-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Cabinet Decision No. 142 of 2024",
+        "source_url": "https://www.deloitte.com/content/dam/assets-shared/docs/services/tax/2025/dttl-tax-uaehighlights-2025.pdf",
+        "parameters": {"minimum_rate": 0.15, "revenue_threshold_eur": 750000000, "test_years": "2 of 4 preceding"}
+      },
+      "filing": {
+        "rule_id": "ae.ct.filing",
+        "description": "Corporate Tax return and payment due within 9 months of the end of the tax period.",
+        "effective_from": "2023-06-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 48 and 53",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
+        "parameters": {"months_after_period_end": 9}
+      }
+    },
+    "vat": {
+      "standard_rate": {
+        "rule_id": "ae.vat.standard_rate",
+        "description": "Standard VAT rate of 5%; zero-rated (0%) and exempt categories exist.",
+        "effective_from": "2018-01-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 8 of 2017, Art. 3",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate/other-taxes",
+        "parameters": {"standard_rate": 0.05, "zero_rate": 0.0}
+      },
+      "registration_thresholds": {
+        "rule_id": "ae.vat.registration",
+        "description": "Mandatory registration when taxable supplies and imports exceed AED 375,000 in the previous 12 months or expected in the next 30 days; voluntary registration above AED 187,500.",
+        "effective_from": "2018-01-01",
+        "effective_to": null,
+        "review_status": "verified",
+        "source_reference": "Federal Decree-Law No. 8 of 2017, Art. 13 and 17",
+        "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate/other-taxes",
+        "parameters": {"mandatory": 375000, "voluntary": 187500}
+      }
+    }
+  }
+}

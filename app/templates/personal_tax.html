@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ c.name }} income tax calculator {{ c.tax_year.split(' ')[0] }}: take-home pay{% endblock %}
+{% block description %}{{ c.name }} personal income tax and mandatory contributions calculator for {{ c.tax_year }} with a line-by-line working paper, effective and marginal rates, and sources.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">Personal income tax · {{ c.flag }} {{ c.name }} · {{ c.tax_year }}</span>
+  <h1>{{ c.name }} income tax calculator</h1>
+  <p>Income tax plus mandatory employee contributions on employment income, with the working paper behind every band. Thinking about the UAE? See the <a href="/move/{{ code|lower }}-to-uae">{{ c.name }} to UAE comparison</a>.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <input type="hidden" name="country" value="{{ code }}">
+    <fieldset>
+      <legend>Income ({{ c.currency }})</legend>
+      <div class="field"><label>Annual gross employment income</label><input type="number" name="gross_income" value="{{ {'GB':75000,'HK':600000,'SG':120000,'IN':2400000,'US':150000,'AU':120000,'DE':80000,'ZA':900000}.get(code, 100000) }}" min="0" step="1000" required></div>
+      {% if code == 'SG' %}<label class="check"><input type="checkbox" name="cpf_member"> Singapore citizen or PR (CPF applies)</label>{% endif %}
+      {% if code == 'US' %}<div class="field"><label>Flat state income tax rate % (optional)</label><input type="number" name="state_tax_rate_pct" value="0" min="0" max="15" step="0.1"></div>{% endif %}
+      {% if code == 'DE' %}<label class="check"><input type="checkbox" name="childless" checked> No children (care insurance surcharge)</label>{% endif %}
+    </fieldset>
+    <p class="small muted">Assumptions: {{ c.assumptions | join(' ') }}</p>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  {% include "_result_shell.html" %}
+</div>
+<section class="wrap section" style="padding-top:0">
+  <h2>Other countries</h2>
+  <div class="origin-grid">{% for cc, o in personal.countries.items() if o.enabled %}<a href="/personal-tax/{{ cc }}" {% if cc == code %}aria-current="true"{% endif %}>{{ o.flag }} {{ o.name }}</a>{% endfor %}</div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+initCalc({
+  form: 'f', endpoint: '/api/v1/personal-tax', contactUrl: '{{ site.contact_url }}', downloadName: 'oblique-personal-tax-{{ code|lower }}',
+  tiles: (o, c, d) => [
+    ['Net take-home per year', fmtMoney(o.net_income, c, d)], ['Income tax', fmtMoney(o.income_tax, c, d)],
+    ['Mandatory contributions', fmtMoney(o.total_contributions, c, d)], ['Effective rate', fmtPct(o.effective_rate)],
+    ['Marginal income tax rate', fmtPct(o.marginal_income_tax_rate)], ['Net per month', fmtMoney(o.monthly_net, c, d)],
+  ]
+});
+</script>
+{% endblock %}

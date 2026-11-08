@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}GCC Tax Guides 2026{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Guides</span><h1>GCC jurisdiction tax guides</h1><p>Corporate tax, zakat, VAT, withholding, Pillar Two and transfer pricing for each GCC state, with the review status of every figure.</p></div>
+<section class="wrap section" style="padding-top:10px">
+  <div class="grid">
+  {% for c, p in profiles.jurisdictions.items() %}
+    <div class="card"><h3><a href="/guides/{{ c }}">{{ p.flag }} {{ p.name }} tax guide</a></h3>
+      <p class="muted" style="margin:0">{{ p.corporate_tax.applies_to }}</p>
+      <a href="/guides/{{ c }}">Read →</a></div>
+  {% endfor %}
+  </div>
+  <h2 style="margin-top:40px">Moving to the UAE from</h2>
+  <div class="origin-grid">{% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae">{{ o.flag }} {{ o.name }} → UAE</a>{% endfor %}</div>
+  <h2 style="margin-top:40px">Head-to-head comparisons</h2>
+  <div class="grid">
+  {% set codes = profiles.jurisdictions.keys() | list %}
+  {% for a in codes %}{% for b in codes %}{% if codes.index(a) < codes.index(b) %}
+    <div class="card"><h3><a href="/compare/{{ a }}-vs-{{ b }}">{{ profiles.jurisdictions[a].name }} vs {{ profiles.jurisdictions[b].name }}</a></h3></div>
+  {% endif %}{% endfor %}{% endfor %}
+  </div>
+</section>
+{% endblock %}

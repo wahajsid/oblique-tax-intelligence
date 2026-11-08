@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ pa.name }} vs {{ pb.name }}: Corporate Tax, VAT and Withholding Compared{% endblock %}
+{% block content %}
+<div class="wrap page-head"><span class="eyebrow">Comparison</span><h1>{{ pa.flag }} {{ pa.name }} vs {{ pb.flag }} {{ pb.name }}</h1><p>Side-by-side regime comparison with an indicative calculation for a USD 1m profit, 100% foreign-owned operation. Adjust the scenario in the <a href="/gcc/compare">comparison engine</a>.</p></div>
+<section class="wrap narrow prose" style="padding-bottom:50px">
+  <table>
+    <tr><th>Dimension</th><th>{{ pa.name }}</th><th>{{ pb.name }}</th></tr>
+    <tr><td>Corporate income tax</td><td>{{ (pa.corporate_tax.headline_rate*100)|round(0)|int }}% · {{ pa.corporate_tax.applies_to }}</td><td>{{ (pb.corporate_tax.headline_rate*100)|round(0)|int }}% · {{ pb.corporate_tax.applies_to }}</td></tr>
+    <tr><td>Zakat</td><td>{{ pa.zakat.note }}</td><td>{{ pb.zakat.note }}</td></tr>
+    <tr><td>VAT</td><td>{{ ((pa.vat.rate*100)|round(0)|int ~ '%') if pa.vat.implemented else 'Not implemented' }}</td><td>{{ ((pb.vat.rate*100)|round(0)|int ~ '%') if pb.vat.implemented else 'Not implemented' }}</td></tr>
+    <tr><td>Withholding tax</td><td>{{ pa.withholding_tax.note }}</td><td>{{ pb.withholding_tax.note }}</td></tr>
+    <tr><td>DMTT</td><td>{{ ('15% from ' ~ pa.dmtt.since) if pa.dmtt.applies else pa.dmtt.note }}</td><td>{{ ('15% from ' ~ pb.dmtt.since) if pb.dmtt.applies else pb.dmtt.note }}</td></tr>
+    <tr><td>Transfer pricing</td><td>{{ pa.transfer_pricing.regime }}</td><td>{{ pb.transfer_pricing.regime }}</td></tr>
+    <tr><td>Personal income tax</td><td>{{ pa.personal_income_tax.note }}</td><td>{{ pb.personal_income_tax.note }}</td></tr>
+    <tr><th>Indicative direct tax on USD 1m profit</th>{% for r in result.rows|sort(attribute='code') %}<th>{{ '{:,.0f}'.format(r.total_direct_tax) }} ({{ '%.1f' % (r.effective_rate_on_profit*100) }}%)</th>{% endfor %}</tr>
+  </table>
+  <p class="small muted">{{ result.caveat }}</p>
+  <p><a href="/guides/{{ a }}">{{ pa.name }} guide</a> · <a href="/guides/{{ b }}">{{ pb.name }} guide</a> · <a href="/gcc/compare">Full GCC comparison</a></p>
+</section>
+{% endblock %}

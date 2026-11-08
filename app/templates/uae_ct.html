@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}UAE Corporate Tax Calculator 2026{% endblock %}
+{% block description %}Calculate UAE Corporate Tax with a full reconciliation from accounting profit to taxable income: 0%/9% bands, Small Business Relief, Qualifying Free Zone Person test, loss relief, interest cap and DMTT screen.{% endblock %}
+{% block content %}
+<div class="wrap page-head">
+  <span class="eyebrow">United Arab Emirates · Corporate Tax · Ruleset {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
+  <h1>UAE Corporate Tax calculator</h1>
+  <p>Goes beyond multiplying profit by 9%. Enter accounting profit and the reconciling items that matter and get taxable income, tax payable, the regime that applies and the unresolved questions a professional would ask.</p>
+</div>
+<div class="wrap calc">
+  <form class="panel" id="f" autocomplete="off">
+    <fieldset>
+      <legend>Core figures (AED)</legend>
+      <div class="field"><label>Accounting profit before tax <span class="hint" title="Net profit per IFRS financial statements before any Corporate Tax charge">?</span></label><input type="number" name="accounting_profit" value="1500000" step="1000"></div>
+      <div class="field"><label>Revenue for the period <span class="hint" title="Used for Small Business Relief (AED 3m) and the QFZP de minimis test">?</span></label><input type="number" name="revenue" value="12000000" step="1000" min="0"></div>
+      <div class="field"><label>Tax period end</label><input type="date" name="period_end" value="2026-12-31"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Reconciling items</legend>
+      <div class="two">
+        <div class="field"><label>Non-deductible expenses</label><input type="number" name="non_deductible_expenses" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Entertainment costs <span class="hint" title="50% is disallowed">?</span></label><input type="number" name="entertainment_expenses" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Exempt income</label><input type="number" name="exempt_income" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Unrealised capital gains</label><input type="number" name="unrealised_gains_capital" value="0" min="0" step="1000"></div>
+      </div>
+      <div class="field"><label>Other net adjustment (+ add back / − deduct)</label><input type="number" name="other_adjustments" value="0" step="1000"></div>
+    </fieldset>
+    <details class="adv"><summary>Losses, interest and credits</summary>
+      <div class="two">
+        <div class="field"><label>Brought-forward tax losses</label><input type="number" name="brought_forward_losses" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Foreign tax credit</label><input type="number" name="foreign_tax_credit" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Net interest expense</label><input type="number" name="net_interest_expense" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Tax-EBITDA <span class="hint" title="Leave blank to skip the 30% test">?</span></label><input type="number" name="tax_ebitda" value="" data-nullable="1" step="1000"></div>
+      </div>
+    </details>
+    <details class="adv" id="free-zone"><summary>Free Zone, Small Business Relief and group status</summary>
+      <label class="check"><input type="checkbox" name="elect_small_business_relief"> Elect Small Business Relief (revenue ≤ AED 3m)</label>
+      <label class="check"><input type="checkbox" name="is_free_zone_person"> Free Zone Person</label>
+      <label class="check"><input type="checkbox" name="elect_qfzp"> Meets Qualifying Free Zone Person conditions</label>
+      <div class="two">
+        <div class="field"><label>Qualifying income</label><input type="number" name="qualifying_income" value="0" min="0" step="1000"></div>
+        <div class="field"><label>Non-qualifying revenue</label><input type="number" name="non_qualifying_revenue" value="0" min="0" step="1000"></div>
+      </div>
+      <label class="check"><input type="checkbox" name="is_mne_constituent"> Part of a multinational group</label>
+      <div class="field"><label>Group consolidated revenue (EUR) <span class="hint" title="DMTT applies from EUR 750m">?</span></label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="1000000"></div>
+    </details>
+    {% include "_scope_gate.html" %}
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button><span class="small muted">Updates as you type</span></div>
+    <div class="error" id="form-error"></div>
+  </form>
+  {% include "_result_shell.html" %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+initCalc({
+  form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/uae/corporate-tax',
+  tiles: (o, c) => [
+    ['Corporate Tax payable', fmtMoney(o.corporate_tax_payable, c)],
+    ['Taxable income', fmtMoney(o.taxable_income, c)],
+    ['Effective rate on accounting profit', fmtPct(o.effective_tax_rate_on_accounting_profit)],
+    ['Regime', {standard:'Standard 0% / 9%', small_business_relief:'Small Business Relief', qfzp:'Qualifying Free Zone Person'}[o.regime] || o.regime],
+    ['Post-tax profit', fmtMoney(o.post_tax_profit, c)],
+    o.losses_carried_forward ? ['Losses carried forward', fmtMoney(o.losses_carried_forward, c)] : null,
+    o.dmtt_top_up_estimate !== null && o.dmtt_top_up_estimate !== undefined ? ['DMTT top-up (screen)', fmtMoney(o.dmtt_top_up_estimate, c)] : null,
+  ]
+});
+</script>
+{% endblock %}

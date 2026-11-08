@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}Privacy and data{% endblock %}
+{% block content %}
+<section class="wrap narrow prose">
+<h1>Privacy and data</h1>
+<p><b>Useful results, less data.</b> This site is built so you can get a full answer without handing over anything about yourself.</p>
+<ul>
+  <li>Calculator inputs are sent to the calculation service only to produce your result and are returned to you in the response. They are not written to a database, not logged by the application and not used to train AI.</li>
+  <li>No cookies, no browser storage, no analytics, no tracking pixels, no third-party scripts and no third-party fonts (fonts are served from this site).</li>
+  <li>"Copy link" puts your inputs in the page address so you can share or revisit a scenario. That link lives in your clipboard and browser history only.</li>
+  <li>"Download result" creates a file on your device only when you click it.</li>
+  <li>Links to sources and to obliqueconsult.com open other websites with their own privacy practices.</li>
+  <li>Hosting infrastructure may keep ordinary technical access logs (IP address, time, URL) outside this application's control.</li>
+</ul>
+<h2>Enquiries</h2>
+<p>Nothing on this site submits your details anywhere. To get precise figures, use the "Get in touch" links, which take you to Oblique Consult's own contact page. Before any enquiry form is added here, the controller identity, lawful basis, retention and rights process will be published on this page.</p>
+<h2>Security headers</h2>
+<p>Every response carries a Content Security Policy, frame denial, no-referrer, nosniff and permissions-policy headers; API responses are marked no-store; browser requests from other origins are rejected; validation errors never echo what you typed.</p>
+</section>
+{% endblock %}
