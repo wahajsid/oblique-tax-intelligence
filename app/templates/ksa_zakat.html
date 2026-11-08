@@ -3,48 +3,48 @@
 {% block description %}Saudi Arabia zakat base calculator under the 2024 Executive Regulations with the mixed-ownership split between 2.5% zakat and 20% corporate income tax.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
-  <span class="eyebrow">Kingdom of Saudi Arabia · Zakat and Income Tax · Tax rules {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
-  <h1>KSA Zakat &amp; Income Tax calculator</h1>
-  <p>The base is net funds, not profit. This builds it, applies the minimum, and splits the bill between zakat on the Saudi share and income tax on the rest.</p>
+  <span class="eyebrow">{{ t("Kingdom of Saudi Arabia") }} · {{ t("Zakat and Income Tax") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
+  <h1>{{ t("KSA Zakat & Income Tax calculator") }}</h1>
+  <p>{{ t("The base is net funds, not profit. This builds it, applies the minimum, and splits the bill between zakat on the Saudi share and income tax on the rest.") }}</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
     <fieldset>
-      <legend>Entity</legend>
+      <legend>{{ t("Entity") }}</legend>
       <div class="two">
-        <div class="field"><label>Saudi / GCC ownership %</label><input type="number" name="saudi_gcc_ownership_pct" value="100" min="0" max="100" step="any"></div>
-        <div class="field"><label>Financial year basis</label><select name="year_basis"><option value="gregorian">Gregorian (2.577683%)</option><option value="hijri">Hijri (2.5%)</option></select></div>
+        <div class="field"><label>{{ t("Saudi / GCC ownership %") }}</label><input type="number" name="saudi_gcc_ownership_pct" value="100" min="0" max="100" step="any"></div>
+        <div class="field"><label>{{ t("Financial year basis") }}</label><select name="year_basis"><option value="gregorian">{{ t("Gregorian (2.577683%)") }}</option><option value="hijri">{{ t("Hijri (2.5%)") }}</option></select></div>
       </div>
     </fieldset>
     <fieldset>
-      <legend>Sources of funds, year-end (SAR)</legend>
+      <legend>{{ t("Sources of funds, year-end (SAR)") }}</legend>
       <div class="two">
-        <div class="field"><label>Share capital</label><input type="number" name="share_capital" value="10000000" min="0" step="any"></div>
-        <div class="field"><label>Opening retained earnings</label><input type="number" name="retained_earnings_opening" value="2000000" step="any"></div>
-        <div class="field"><label>Reserves and provisions</label><input type="number" name="reserves_and_provisions" value="500000" min="0" step="any"></div>
-        <div class="field"><label>Long-term liabilities</label><input type="number" name="long_term_liabilities" value="1500000" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Share capital") }}</label><input type="number" name="share_capital" value="10000000" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Opening retained earnings") }}</label><input type="number" name="retained_earnings_opening" value="2000000" step="any"></div>
+        <div class="field"><label>{{ t("Reserves and provisions") }}</label><input type="number" name="reserves_and_provisions" value="500000" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Long-term liabilities") }}</label><input type="number" name="long_term_liabilities" value="1500000" min="0" step="any"></div>
       </div>
-      <div class="field"><label>Book net profit for the year</label><input type="number" name="book_net_profit" value="3000000" step="any"></div>
+      <div class="field"><label>{{ t("Book net profit for the year") }}</label><input type="number" name="book_net_profit" value="3000000" step="any"></div>
       <div class="two">
-        <div class="field"><label>Add: non-deductible expenses</label><input type="number" name="non_deductible_expenses" value="0" min="0" step="any"></div>
-        <div class="field"><label>Less: exempt / deductible income</label><input type="number" name="exempt_or_deductible_income" value="0" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Add: non-deductible expenses") }}</label><input type="number" name="non_deductible_expenses" value="0" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Less: exempt / deductible income") }}</label><input type="number" name="exempt_or_deductible_income" value="0" min="0" step="any"></div>
       </div>
     </fieldset>
     <fieldset>
-      <legend>Deductions: non-zakatable assets (SAR)</legend>
+      <legend>{{ t("Deductions: non-zakatable assets (SAR)") }}</legend>
       <div class="two">
-        <div class="field"><label>Net fixed assets</label><input type="number" name="net_fixed_assets" value="6000000" min="0" step="any"></div>
-        <div class="field"><label>Long-term investments</label><input type="number" name="long_term_investments" value="1000000" min="0" step="any"></div>
-        <div class="field"><label>Capital work in progress</label><input type="number" name="capital_work_in_progress" value="0" min="0" step="any"></div>
-        <div class="field"><label>Intangible assets</label><input type="number" name="intangible_assets" value="0" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Net fixed assets") }}</label><input type="number" name="net_fixed_assets" value="6000000" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Long-term investments") }}</label><input type="number" name="long_term_investments" value="1000000" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Capital work in progress") }}</label><input type="number" name="capital_work_in_progress" value="0" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Intangible assets") }}</label><input type="number" name="intangible_assets" value="0" min="0" step="any"></div>
       </div>
-      <div class="field"><label>Other deductible assets</label><input type="number" name="other_deductible_assets" value="0" min="0" step="any"></div>
+      <div class="field"><label>{{ t("Other deductible assets") }}</label><input type="number" name="other_deductible_assets" value="0" min="0" step="any"></div>
     </fieldset>
-    <details class="adv"><summary>Income tax (non-Saudi share)</summary>
-      <div class="field"><label>Brought-forward tax losses</label><input type="number" name="brought_forward_tax_losses" value="0" min="0" step="any"></div>
+    <details class="adv"><summary>{{ t("Income tax (non-Saudi share)") }}</summary>
+      <div class="field"><label>{{ t("Brought-forward tax losses") }}</label><input type="number" name="brought_forward_tax_losses" value="0" min="0" step="any"></div>
     </details>
     {% include "_scope_gate.html" %}
-    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Calculate") }}</button></div>
     <div class="error" id="form-error"></div>
   </form>
   {% include "_result_shell.html" %}

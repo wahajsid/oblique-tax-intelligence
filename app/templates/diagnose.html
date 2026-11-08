@@ -3,31 +3,31 @@
 {% block description %}Ten yes/no questions become a prioritised action list for UAE and KSA tax: deadlines first, then registration, VAT thresholds, free zone status, transfer pricing, residence and records. No contact details needed.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
-  <span class="eyebrow">Free diagnostic</span>
-  <h1>Where is your tax exposure?</h1>
-  <p>Ten questions. One ordered list of what to do next, deadlines first. Nothing to sign up for.</p>
+  <span class="eyebrow">{{ t("Free diagnostic") }}</span>
+  <h1>{{ t("Where is your tax exposure?") }}</h1>
+  <p>{{ t("Ten questions. One ordered list of what to do next, deadlines first. Nothing to sign up for.") }}</p>
 </div>
 <div class="wrap diag-layout">
   <form class="panel diag-form" id="f" autocomplete="off">
     <div class="diag-top">
-      <div class="field"><label for="profile">I am answering as</label><select name="profile" id="profile"><option value="business" {% if profile == "business" %}selected{% endif %}>A business</option><option value="gcc" {% if profile == "gcc" %}selected{% endif %}>A business trading across the GCC</option><option value="personal" {% if profile == "personal" %}selected{% endif %}>An individual</option></select></div>
-      <p class="small muted">Yes, no or not sure. Not sure is a fine answer.</p>
+      <div class="field"><label for="profile">{{ t("I am answering as") }}</label><select name="profile" id="profile"><option value="business" {% if profile == "business" %}selected{% endif %}>{{ t("A business") }}</option><option value="gcc" {% if profile == "gcc" %}selected{% endif %}>{{ t("A business trading across the GCC") }}</option><option value="personal" {% if profile == "personal" %}selected{% endif %}>{{ t("An individual") }}</option></select></div>
+      <p class="small muted">{{ t("Yes, no or not sure. Not sure is a fine answer.") }}</p>
     </div>
     <div id="questions" class="q-grid"></div>
-    <div class="form-actions"><button class="btn btn-dark" type="submit">Show my action list</button></div>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Show my action list") }}</button></div>
     <div class="error" id="form-error"></div>
   </form>
-  <section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="Checklist">
-    <div class="results-head"><h2>Your action list</h2><span class="badge verified" id="status-badge">Checklist</span></div>
+  <section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="{{ t("Checklist") }}">
+    <div class="results-head"><h2>{{ t("Your action list") }}</h2><span class="badge verified" id="status-badge">{{ t("Checklist") }}</span></div>
     <div id="priority"></div>
     <ol class="actions-list" id="actions"></ol>
     <div class="next-steps" id="next-steps" hidden></div>
     <p class="small muted" id="method"></p>
     <div class="cta-row">
-      <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
-      <button class="btn btn-ghost" id="btn-download" type="button">Download</button>
-      <button class="btn btn-ghost" id="btn-print" type="button">Print</button>
-      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Talk to Oblique</a>
+      <button class="btn btn-ghost" id="btn-copy" type="button">{{ t("Copy JSON") }}</button>
+      <button class="btn btn-ghost" id="btn-download" type="button">{{ t("Download") }}</button>
+      <button class="btn btn-ghost" id="btn-print" type="button">{{ t("Print") }}</button>
+      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">{{ t("Talk to Oblique") }}</a>
     </div>
     <p class="small muted" id="disclaimer"></p>
   </section>
@@ -43,8 +43,8 @@ function renderQuestions() {
   qbox.innerHTML = Q.filter(q => q.profiles.includes(profile)).map((q, i) => {
     const label = profile === 'personal' && q.label_personal ? q.label_personal : q.label;
     const help = profile === 'personal' && q.help_personal ? q.help_personal : (q.help || '');
-    return `<div class="q"><div class="q-text"><label for="q_${q.key}"><span class="q-n">${i + 1}</span>${escHtml(label)}</label>${help ? `<p class="q-help">${escHtml(help)}</p>` : ''}</div>
-      <select id="q_${q.key}" name="${q.key}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`;
+    return `<div class="q"><div class="q-text"><label for="q_${q.key}"><span class="q-n">${i + 1}</span>${escHtml(tr(label))}</label>${help ? `<p class="q-help">${escHtml(tr(help))}</p>` : ''}</div>
+      <select id="q_${q.key}" name="${q.key}"><option value="unknown">{{ t("Not sure") }}</option><option value="yes">{{ t("Yes") }}</option><option value="no">{{ t("No") }}</option></select></div>`;
   }).join('');
 }
 document.getElementById('profile').addEventListener('change', renderQuestions); renderQuestions();
@@ -55,12 +55,12 @@ initCalc({
   render: (r, cfg) => {
     const root = document.getElementById('results'); root.hidden = false;
     const cls = r.priority === 'CHECK DEADLINE NOW' ? 'now' : r.priority === 'KEEP RECORDS CURRENT' ? 'ok' : '';
-    document.getElementById('priority').innerHTML = `<span class="priority ${cls}">${escHtml(r.priority)}</span><p class="muted">${r.open_items} open item${r.open_items === 1 ? '' : 's'} from your answers.</p>`;
-    document.getElementById('actions').innerHTML = r.actions.map(a => `<li><span class="urg">${a.urgency === 'now' ? 'Act now' : a.urgency === 'soon' ? 'You said yes' : 'Clarify'}</span><b>${escHtml(a.label)}</b><p>${escHtml(a.action)}</p><span class="small"><em>${escHtml(a.advisory_hook)}</em>${a.link ? ` · <a href="${a.link}">Open the calculator →</a>` : ''}</span></li>`).join('')
-      || '<li>No open items. Keep supporting records current and confirm obligations independently.</li>';
-    document.getElementById('method').textContent = r.methodology + ' ' + r.warnings.join(' ');
+    document.getElementById('priority').innerHTML = `<span class="priority ${cls}">${escHtml(tr(r.priority))}</span><p class="muted">${r.open_items === 1 ? tr('{} open item from your answers.').replace('{}', 1) : tr('{} open items from your answers.').replace('{}', r.open_items)}</p>`;
+    document.getElementById('actions').innerHTML = r.actions.map(a => `<li><span class="urg">${tr(a.urgency === 'now' ? 'Act now' : a.urgency === 'soon' ? 'You said yes' : 'Clarify')}</span><b>${escHtml(tr(a.label))}</b><p>${escHtml(tr(a.action))}</p><span class="small"><em>${escHtml(tr(a.advisory_hook))}</em>${a.link ? ` · <a href="${a.link}">{{ t("Open the calculator →") }}</a>` : ''}</span></li>`).join('')
+      || `<li>${tr('No open items. Keep supporting records current and confirm obligations independently.')}</li>`;
+    document.getElementById('method').textContent = tr(r.methodology) + ' ' + r.warnings.map(tr).join(' ');
     window.renderNextSteps(r.next_steps || [], { calculator: 'tax_exposure_diagnostic', inputs: body_of(r) });
-    document.getElementById('disclaimer').textContent = r.disclaimer;
+    document.getElementById('disclaimer').textContent = tr(r.disclaimer);
     root.dataset.json = JSON.stringify(r, null, 2);
     if (cfg._explicit) root.focus({ preventScroll: window.innerWidth >= 960 });
     cfg._explicit = false;

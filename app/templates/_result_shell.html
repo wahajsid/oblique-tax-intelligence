@@ -1,30 +1,30 @@
 {# Shared result panel used by every calculator page. JS fills it. #}
-<section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="Results">
+<section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="{{ t("Results") }}">
   <div class="results-head">
-    <h2>Results <span class="outcome" id="outcome-label"></span></h2>
+    <h2>{{ t("Results") }} <span class="outcome" id="outcome-label"></span></h2>
     <span class="badge" id="status-badge"></span>
   </div>
   <div class="review-banner" id="review-banner" hidden></div>
   <div class="tiles" id="tiles"></div>
   <div class="flags" id="flags"></div>
   <details class="trace" open>
-    <summary>Working paper</summary>
+    <summary>{{ t("Working paper") }}</summary>
     <table class="trace-table"><tbody id="trace"></tbody></table>
   </details>
   <div class="next-steps" id="next-steps" hidden></div>
   <div class="confidence" id="confidence"></div>
   <details class="rules">
-    <summary>Rules and sources</summary>
+    <summary>{{ t("Rules and sources") }}</summary>
     <ul id="rules"></ul>
     <p class="small muted" id="assumptions"></p>
   </details>
   <div class="cta-row">
-    <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
-    <button class="btn btn-ghost" id="btn-download" type="button">Download JSON</button>
-      <button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button>
-    <button class="btn btn-ghost" id="btn-print" type="button">Print working paper</button>
-    <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
-    <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Talk to Oblique</a>
+    <button class="btn btn-ghost" id="btn-copy" type="button">{{ t("Copy JSON") }}</button>
+    <button class="btn btn-ghost" id="btn-download" type="button">{{ t("Download JSON") }}</button>
+      <button class="btn btn-dark" id="btn-pdf" type="button">{{ t("PDF working paper") }}</button>
+    <button class="btn btn-ghost" id="btn-print" type="button">{{ t("Print working paper") }}</button>
+    <button class="btn btn-ghost" id="btn-link" type="button">{{ t("Copy link") }}</button>
+    <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">{{ t("Talk to Oblique") }}</a>
   </div>
   <p class="small muted" id="disclaimer"></p>
 </section>

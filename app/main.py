@@ -17,13 +17,13 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app import __version__
 from app.api.routes import router as api_router
-from app import journeys, services
+from app import i18n, journeys, services
 from app.engine import diagnostic, gcc_compare, ksa_wht, personal_tax
 from app.engine.core import load_rules
 
@@ -45,6 +45,22 @@ templates = Jinja2Templates(directory=BASE / "templates")
 CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
        "font-src 'self'; connect-src 'self'; frame-src https://play.obliqueconsult.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
 # 'unsafe-inline' is needed for the small per-page <script> blocks and Swagger UI; move them to files before production.
+
+
+@app.middleware("http")
+async def language_prefix(request: Request, call_next):
+    """/ar/<path> serves the Arabic version of the pages that have one; anything else under /ar/ goes to English."""
+    path = request.scope["path"]
+    request.state.lang = "en"
+    if path == "/ar" or path.startswith("/ar/"):
+        inner = path[3:] or "/"
+        if inner.rstrip("/") == "" or inner in i18n.AR_PATHS or inner.rstrip("/") in i18n.AR_PATHS:
+            request.scope["path"] = inner if inner.startswith("/") else "/" + inner
+            request.scope["raw_path"] = request.scope["path"].encode()
+            request.state.lang = "ar"
+        else:
+            return RedirectResponse(url=inner + (("?" + request.scope["query_string"].decode()) if request.scope.get("query_string") else ""), status_code=302)
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -107,7 +123,14 @@ MODULES = [
 
 
 def ctx(request: Request, **kw) -> dict:
-    return {"request": request, "site": SITE, "modules": MODULES, **kw}
+    lang = getattr(request.state, "lang", "en")
+    path = request.scope["path"]
+    qs = request.scope.get("query_string", b"").decode()
+    page_path = path + ("?" + qs if qs else "")
+    return {"request": request, "site": SITE, "modules": MODULES, "lang": lang, "dir": i18n.LANGS[lang]["dir"],
+            "L": "/ar" if lang == "ar" else "", "t": (lambda s: i18n.t(s, lang)),
+            "has_ar": path in i18n.AR_PATHS, "alt_url": (page_path if lang == "ar" else "/ar" + ("" if path == "/" else page_path)),
+            "i18n_json": i18n.client_catalog(lang), "ar_paths": sorted(i18n.AR_PATHS), **kw}
 
 
 def page(request: Request, name: str, status_code: int = 200, **kw):
@@ -287,5 +310,11 @@ def sitemap(request: Request):
     urls += [f"/guides/{c}" for c in codes]
     urls += [f"/compare/{a}-vs-{b}" for i, a in enumerate(codes) for b in codes[i + 1:]]
     urls += [f"/move/{c.lower()}-to-uae" for c in origins] + [f"/personal-tax/{c}" for c in origins]
-    body = "".join(f"<url><loc>{base}{u}</loc></url>" for u in urls)
-    return HTMLResponse(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>', media_type="application/xml")
+    def entry(u: str) -> str:
+        if u in i18n.AR_PATHS:
+            ar = f"{base}/ar{'' if u == '/' else u}"
+            return (f'<url><loc>{base}{u}</loc><xhtml:link rel="alternate" hreflang="en" href="{base}{u}"/><xhtml:link rel="alternate" hreflang="ar" href="{ar}"/></url>'
+                    f'<url><loc>{ar}</loc><xhtml:link rel="alternate" hreflang="en" href="{base}{u}"/><xhtml:link rel="alternate" hreflang="ar" href="{ar}"/></url>')
+        return f"<url><loc>{base}{u}</loc></url>"
+    body = "".join(entry(u) for u in urls)
+    return HTMLResponse(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">{body}</urlset>', media_type="application/xml")

@@ -1,30 +1,30 @@
 {# Consent-led enquiry + PDF working paper dialog. Included once from base.html; opened by calc.js. #}
 <div class="modal-backdrop" id="lead-modal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="lead-title" aria-describedby="lead-desc">
-    <button class="modal-close" type="button" id="lead-close" aria-label="Close">×</button>
-    <span class="eyebrow">Working paper</span>
-    <h2 id="lead-title">Your working paper, as a PDF</h2>
-    <p id="lead-desc" class="muted small"><span id="lead-desc-business">The result on screen is free. The PDF adds the full reconciliation, rules and sources, recomputed on our server so it cannot be altered. An Oblique adviser may follow up.</span><span id="lead-desc-personal" hidden>The result on screen is free. The PDF sets out your comparison, the assumptions and the residence questions to settle. An adviser can walk you through it if you like.</span></p>
+    <button class="modal-close" type="button" id="lead-close" aria-label="{{ t("Close") }}">×</button>
+    <span class="eyebrow">{{ t("Working paper") }}</span>
+    <h2 id="lead-title">{{ t("Your working paper, as a PDF") }}</h2>
+    <p id="lead-desc" class="muted small"><span id="lead-desc-business">{{ t("The result on screen is free. The PDF adds the full reconciliation, rules and sources, recomputed on our server so it cannot be altered. An Oblique adviser may follow up.") }}</span><span id="lead-desc-personal" hidden>The result on screen is free. The PDF sets out your comparison, the assumptions and the residence questions to settle. An adviser can walk you through it if you like.</span></p>
     <form id="lead-form" autocomplete="on" novalidate>
-      <fieldset class="radio-row"><legend class="small muted">I am enquiring as</legend>
-        <label class="radio"><input type="radio" name="profile" value="business" checked> a business or finance team</label>
-        <label class="radio"><input type="radio" name="profile" value="personal"> an individual</label>
+      <fieldset class="radio-row"><legend class="small muted">{{ t("I am enquiring as") }}</legend>
+        <label class="radio"><input type="radio" name="profile" value="business" checked> {{ t("a business or finance team") }}</label>
+        <label class="radio"><input type="radio" name="profile" value="personal"> {{ t("an individual") }}</label>
       </fieldset>
       <div class="two">
-        <div class="field"><label for="lead-name">Name *</label><input id="lead-name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name"></div>
-        <div class="field"><label for="lead-email">Email *</label><input id="lead-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
-        <div class="field" id="lead-company-field"><label for="lead-company">Company</label><input id="lead-company" name="company" type="text" maxlength="120" autocomplete="organization"></div>
-        <div class="field"><label for="lead-phone">Phone (optional)</label><input id="lead-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
+        <div class="field"><label for="lead-name">{{ t("Name *") }}</label><input id="lead-name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name"></div>
+        <div class="field"><label for="lead-email">{{ t("Email *") }}</label><input id="lead-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+        <div class="field" id="lead-company-field"><label for="lead-company">{{ t("Company") }}</label><input id="lead-company" name="company" type="text" maxlength="120" autocomplete="organization"></div>
+        <div class="field"><label for="lead-phone">{{ t("Phone (optional)") }}</label><input id="lead-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
       </div>
-      <div class="field"><label for="lead-message">Your question</label><textarea id="lead-message" name="message" rows="2" maxlength="1000" placeholder="One or two lines is plenty."></textarea></div>
-      <label class="check consent" id="share-inputs-row"><input type="checkbox" name="share_inputs" checked> Attach my calculation inputs so the adviser sees the context <span class="small muted" id="share-inputs-note"></span></label>
+      <div class="field"><label for="lead-message">{{ t("Your question") }}</label><textarea id="lead-message" name="message" rows="2" maxlength="1000" placeholder="{{ t("One or two lines is plenty.") }}"></textarea></div>
+      <label class="check consent" id="share-inputs-row"><input type="checkbox" name="share_inputs" checked> {{ t("Attach my calculation inputs so the adviser sees the context") }} <span class="small muted" id="share-inputs-note"></span></label>
       <div class="hp" aria-hidden="true"><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
-      <label class="check consent"><input type="checkbox" name="consent_contact" required> <span id="consent-contact-text"></span> <b>(required)</b></label>
+      <label class="check consent"><input type="checkbox" name="consent_contact" required> <span id="consent-contact-text"></span> <b>{{ t("(required)") }}</b></label>
       <label class="check consent"><input type="checkbox" name="consent_marketing"> <span id="consent-marketing-text"></span></label>
       <p class="small muted" id="lead-privacy"></p>
       <div class="form-actions">
-        <button class="btn btn-primary" type="submit" id="lead-submit">Send my working paper</button>
-        <button class="btn btn-ghost" type="button" id="lead-cancel">Cancel</button>
+        <button class="btn btn-primary" type="submit" id="lead-submit">{{ t("Send my working paper") }}</button>
+        <button class="btn btn-ghost" type="button" id="lead-cancel">{{ t("Cancel") }}</button>
       </div>
       <p class="error" id="lead-error" role="alert"></p>
     </form>

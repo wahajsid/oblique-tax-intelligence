@@ -7,49 +7,49 @@
 <section class="hero">
   <div class="wrap">
     <div>
-      <span class="eyebrow">Oblique Tax Intelligence</span>
-      <h1>Tax clarity.<br>In seconds.</h1>
-      <p class="lead">UAE Corporate Tax, VAT, Saudi zakat, and what a move to the UAE really saves. Worked out line by line, every rule sourced. Free, no sign-up.</p>
+      <span class="eyebrow">{{ t("Oblique Tax Intelligence") }}</span>
+      <h1>{{ t("Tax clarity.") }}<br>{{ t("In seconds.") }}</h1>
+      <p class="lead">{{ t("UAE Corporate Tax, VAT, Saudi zakat, and what a move to the UAE really saves. Worked out line by line, every rule sourced. Free, no sign-up.") }}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/uae/corporate-tax">Start with UAE Corporate Tax</a>
-        <a class="btn btn-ghost" href="/move">Moving to the UAE?</a>
+        <a class="btn btn-primary" href="/uae/corporate-tax">{{ t("Start with UAE Corporate Tax") }}</a>
+        <a class="btn btn-ghost" href="/move">{{ t("Moving to the UAE?") }}</a>
       </div>
       <div class="stats">
-        <div class="stat"><b>6</b><span>GCC jurisdictions</span></div>
-        <div class="stat"><b>8</b><span>countries to move from</span></div>
-        <div class="stat"><b>Every rule</b><span>sourced and dated</span></div>
+        <div class="stat"><b>6</b><span>{{ t("GCC jurisdictions") }}</span></div>
+        <div class="stat"><b>8</b><span>{{ t("countries to move from") }}</span></div>
+        <div class="stat"><b>{{ t("Every rule") }}</b><span>{{ t("sourced and dated") }}</span></div>
       </div>
     </div>
     <div class="hero-card">
-      <h3>USD 1m profit, foreign-owned. Direct tax by country.</h3>
-      <table>{% for r in quick.rows %}<tr><td>{{ r.flag }} {{ r.name }}</td><td>{{ '{:,.0f}'.format(r.total_direct_tax) }} <span class="muted small">({{ '%.1f' % (r.effective_rate_on_profit*100) }}%)</span></td></tr>{% endfor %}</table>
-      <p class="small muted" style="margin-top:10px">A screen, not a verdict. UAE band converted at the 3.6725 peg. <a href="/gcc/compare">Full comparison →</a></p>
+      <h3>{{ t("USD 1m profit, foreign-owned. Direct tax by country.") }}</h3>
+      <table>{% for r in quick.rows %}<tr><td>{{ r.flag }} {{ t(r.name) }}</td><td>{{ '{:,.0f}'.format(r.total_direct_tax) }} <span class="muted small">({{ '%.1f' % (r.effective_rate_on_profit*100) }}%)</span></td></tr>{% endfor %}</table>
+      <p class="small muted" style="margin-top:10px">{{ t("A screen, not a verdict. UAE band converted at the 3.6725 peg.") }} <a href="/gcc/compare">{{ t("Full comparison →") }}</a></p>
     </div>
   </div>
 </section>
 
 <section class="section paths">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">Start here</span><h2>What are you deciding?</h2></div></div>
+    <div class="section-head"><div><span class="eyebrow">{{ t("Start here") }}</span><h2>{{ t("What are you deciding?") }}</h2></div></div>
     <div class="path-grid">
-      <a class="path-card" href="/start/business"><span class="path-n">01</span><h3>Check my business tax</h3><p>UAE Corporate Tax, VAT, Saudi zakat. The number, then what is still open.</p><span class="go">Start →</span></a>
-      <a class="path-card" href="/start/gcc"><span class="path-n">02</span><h3>Expand or trade across the GCC</h3><p>Compare six countries. Price a UAE–Saudi deal. Find the exposure.</p><span class="go">Start →</span></a>
-      <a class="path-card" href="/move"><span class="path-n">03</span><h3>Plan my move to the UAE</h3><p>Your tax at home against 0% here, and the residence questions to settle.</p><span class="go">Start →</span></a>
+      <a class="path-card" href="/start/business"><span class="path-n">01</span><h3>{{ t("Check my business tax") }}</h3><p>{{ t("UAE Corporate Tax, VAT, Saudi zakat. The number, then what is still open.") }}</p><span class="go">{{ t("Start →") }}</span></a>
+      <a class="path-card" href="/start/gcc"><span class="path-n">02</span><h3>{{ t("Expand or trade across the GCC") }}</h3><p>{{ t("Compare six countries. Price a UAE–Saudi deal. Find the exposure.") }}</p><span class="go">{{ t("Start →") }}</span></a>
+      <a class="path-card" href="/move"><span class="path-n">03</span><h3>{{ t("Plan my move to the UAE") }}</h3><p>{{ t("Your tax at home against 0% here, and the residence questions to settle.") }}</p><span class="go">{{ t("Start →") }}</span></a>
     </div>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">Calculators</span><h2>Every tool shows its working.</h2></div><a href="/journeys">Worked journeys →</a></div>
+    <div class="section-head"><div><span class="eyebrow">{{ t("Calculators") }}</span><h2>{{ t("Every tool shows its working.") }}</h2></div><a href="/journeys">{{ t("Worked journeys →") }}</a></div>
     <div class="grid">
       {% for m in modules %}
       <div class="card">
-        <div><span class="pill">{{ m.jur }}</span></div>
-        <h3><a href="/{{ m.slug }}">{{ m.title }}</a></h3>
-        <p class="muted" style="margin:0">{{ m.blurb }}</p>
-        <span class="meta">For: {{ m.audience }}</span>
-        <a href="/{{ m.slug }}">Open →</a>
+        <div><span class="pill">{{ t(m.jur) }}</span></div>
+        <h3><a href="/{{ m.slug }}">{{ t(m.title) }}</a></h3>
+        <p class="muted" style="margin:0">{{ t(m.blurb) }}</p>
+        <span class="meta">{{ t("For:") }} {{ t(m.audience) }}</span>
+        <a href="/{{ m.slug }}">{{ t("Open →") }}</a>
       </div>
       {% endfor %}
     </div>
@@ -58,25 +58,25 @@
 
 <section class="section" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">How it works</span><h2>Deterministic maths. Sources on every line.</h2></div></div>
+    <div class="section-head"><div><span class="eyebrow">{{ t("How it works") }}</span><h2>{{ t("Deterministic maths. Sources on every line.") }}</h2></div></div>
     <div class="steps">
-      <div class="step"><h3>Enter your facts</h3><p class="muted">Results update as you type. No sign-up to see a number.</p></div>
-      <div class="step"><h3>Dated rules apply</h3><p class="muted">Every rate, threshold and relief has an effective date, a source and a review status.</p></div>
-      <div class="step"><h3>Read the working paper</h3><p class="muted">Each step shows its formula and the rule behind it. Take it as JSON or PDF.</p></div>
-      <div class="step"><h3>See what is still open</h3><p class="muted">What the calculator could not decide from your inputs, and who can.</p></div>
+      <div class="step"><h3>{{ t("Enter your facts") }}</h3><p class="muted">{{ t("Results update as you type. No sign-up to see a number.") }}</p></div>
+      <div class="step"><h3>{{ t("Dated rules apply") }}</h3><p class="muted">{{ t("Every rate, threshold and relief has an effective date, a source and a review status.") }}</p></div>
+      <div class="step"><h3>{{ t("Read the working paper") }}</h3><p class="muted">{{ t("Each step shows its formula and the rule behind it. Take it as JSON or PDF.") }}</p></div>
+      <div class="step"><h3>{{ t("See what is still open") }}</h3><p class="muted">{{ t("What the calculator could not decide from your inputs, and who can.") }}</p></div>
     </div>
   </div>
 </section>
 
 <section class="section" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">Moving to the UAE?</span><h2>What 0% income tax really changes.</h2></div><a href="/move">Open the comparison →</a></div>
-    <p class="muted" style="max-width:70ch">Your tax at home this year against the UAE, with your costs and your exchange rate. And the residence questions to settle before the saving is real.</p>
-    <div class="origin-grid">{% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae">{{ o.flag }} {{ o.name }} → UAE</a>{% endfor %}</div>
+    <div class="section-head"><div><span class="eyebrow">{{ t("Moving to the UAE?") }}</span><h2>{{ t("What 0% income tax really changes.") }}</h2></div><a href="/move">{{ t("Open the comparison →") }}</a></div>
+    <p class="muted" style="max-width:70ch">{{ t("Your tax at home this year against the UAE, with your costs and your exchange rate. And the residence questions to settle before the saving is real.") }}</p>
+    <div class="origin-grid">{% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae">{{ o.flag }} {{ t(o.name) }} → {{ t("UAE") }}</a>{% endfor %}</div>
     <div class="grid" style="margin-top:10px">
-      <div class="card"><span class="pill">Free</span><h3><a href="/diagnose">Tax exposure diagnostic</a></h3><p class="muted" style="margin:0">Ten questions. One ordered action list. Deadlines first.</p><a href="/diagnose">Start →</a></div>
-      <div class="card"><span class="pill">Personal tax</span><h3><a href="/personal-tax">Income tax by country</a></h3><p class="muted" style="margin:0">UK, US, India, Singapore, Hong Kong, Australia, Germany, South Africa.</p><a href="/personal-tax">Open →</a></div>
-      <div class="card"><span class="pill">Then</span><h3>From estimate to answer</h3><p class="muted" style="margin:0">When the number has to hold up, talk to us.</p><a href="{{ site.contact_url }}" target="_blank" rel="noopener">Talk to Oblique →</a></div>
+      <div class="card"><span class="pill">{{ t("Free") }}</span><h3><a href="/diagnose">{{ t("Tax exposure diagnostic") }}</a></h3><p class="muted" style="margin:0">{{ t("Ten questions. One ordered action list. Deadlines first.") }}</p><a href="/diagnose">{{ t("Start →") }}</a></div>
+      <div class="card"><span class="pill">{{ t("Personal tax") }}</span><h3><a href="/personal-tax">{{ t("Income tax by country") }}</a></h3><p class="muted" style="margin:0">{{ t("UK, US, India, Singapore, Hong Kong, Australia, Germany, South Africa.") }}</p><a href="/personal-tax">{{ t("Open →") }}</a></div>
+      <div class="card"><span class="pill">{{ t("Then") }}</span><h3>{{ t("From estimate to answer") }}</h3><p class="muted" style="margin:0">{{ t("When the number has to hold up, talk to us.") }}</p><a href="{{ site.contact_url }}" target="_blank" rel="noopener">{{ t("Talk to Oblique →") }}</a></div>
     </div>
   </div>
 </section>
@@ -84,27 +84,27 @@
 <section class="section">
   <div class="wrap game-strip">
     <div>
-      <span class="eyebrow">After the numbers</span>
-      <h2>Think you know UAE tax? Prove it.</h2>
-      <p class="muted" style="max-width:56ch">A daily Corporate Tax and VAT quiz, a document with one deliberate error to find, and a monthly leaderboard. Two minutes a day.</p>
+      <span class="eyebrow">{{ t("After the numbers") }}</span>
+      <h2>{{ t("Think you know UAE tax? Prove it.") }}</h2>
+      <p class="muted" style="max-width:56ch">{{ t("A daily Corporate Tax and VAT quiz, a document with one deliberate error to find, and a monthly leaderboard. Two minutes a day.") }}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ site.game_url }}/quiz/ct{{ site.game_utm }}">Today's Corporate Tax quiz</a>
-        <a class="btn btn-ghost" href="{{ site.game_url }}/spot-the-error{{ site.game_utm }}">Spot the error</a>
+        <a class="btn btn-primary" href="{{ site.game_url }}/quiz/ct{{ site.game_utm }}">{{ t("Today's Corporate Tax quiz") }}</a>
+        <a class="btn btn-ghost" href="{{ site.game_url }}/spot-the-error{{ site.game_utm }}">{{ t("Spot the error") }}</a>
       </div>
     </div>
-    <div id="leaderboard-slot" class="leaderboard-slot" data-src="{{ site.game_url }}/embed/leaderboard" aria-label="Monthly leaderboard"></div>
+    <div id="leaderboard-slot" class="leaderboard-slot" data-src="{{ site.game_url }}/embed/leaderboard" aria-label="{{ t("Monthly leaderboard") }}"></div>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">Guides</span><h2>Six jurisdictions, one page each.</h2></div><a href="/guides">All guides →</a></div>
+    <div class="section-head"><div><span class="eyebrow">{{ t("Guides") }}</span><h2>{{ t("Six jurisdictions, one page each.") }}</h2></div><a href="/guides">{{ t("All guides →") }}</a></div>
     <div class="grid">
       {% for c, p in profiles.jurisdictions.items() %}
       <div class="card">
-        <h3><a href="/guides/{{ c }}">{{ p.flag }} {{ p.name }}</a></h3>
-        <p class="muted" style="margin:0">CIT {{ (p.corporate_tax.headline_rate*100)|round(0)|int }}% · VAT {{ ((p.vat.rate*100)|round(0)|int ~ '%') if p.vat.implemented else 'none' }} · DMTT {{ 'yes' if p.dmtt.applies else 'no' }} · Zakat {{ 'yes' if p.zakat.applies else 'no' }}</p>
-        <a href="/guides/{{ c }}">Read the guide →</a>
+        <h3><a href="/guides/{{ c }}">{{ p.flag }} {{ t(p.name) }}</a></h3>
+        <p class="muted" style="margin:0">{{ t("CIT") }} {{ (p.corporate_tax.headline_rate*100)|round(0)|int }}% · {{ t("VAT") }} {{ ((p.vat.rate*100)|round(0)|int ~ '%') if p.vat.implemented else t('none') }} · {{ t("DMTT") }} {{ t('yes') if p.dmtt.applies else t('no') }} · {{ t("Zakat") }} {{ t('yes') if p.zakat.applies else t('no') }}</p>
+        <a href="/guides/{{ c }}">{{ t("Read the guide →") }}</a>
       </div>
       {% endfor %}
     </div>
@@ -113,10 +113,10 @@
 
 <section class="section">
   <div class="wrap" style="text-align:center;max-width:760px">
-    <span class="eyebrow">When it matters</span>
-    <h2>An estimate gets you oriented. We get you an answer.</h2>
-    <p class="muted">150+ audits cleared in the UAE and KSA. Zero penalties.</p>
-    <a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">Work With Oblique</a>
+    <span class="eyebrow">{{ t("When it matters") }}</span>
+    <h2>{{ t("An estimate gets you oriented. We get you an answer.") }}</h2>
+    <p class="muted">{{ t("150+ audits cleared in the UAE and KSA. Zero penalties.") }}</p>
+    <a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">{{ t("Work With Oblique") }}</a>
   </div>
 </section>
 {% endblock %}

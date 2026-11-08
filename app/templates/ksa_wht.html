@@ -3,18 +3,18 @@
 {% block description %}Saudi Arabia withholding tax by payment category (5% to 20%), treaty rates and contractual gross-up. Links to the 15% KSA VAT calculator.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
-  <span class="eyebrow">Kingdom of Saudi Arabia · Withholding Tax · Tax rules {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
-  <h1>KSA Withholding Tax calculator</h1>
-  <p>Payments leaving Saudi Arabia, line by line. Treaty rates and gross-up included. For VAT, use the <a href="/vat?j=SA">KSA VAT calculator</a>.</p>
+  <span class="eyebrow">{{ t("Kingdom of Saudi Arabia") }} · {{ t("Withholding Tax") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
+  <h1>{{ t("KSA Withholding Tax calculator") }}</h1>
+  <p>{{ t("Payments leaving Saudi Arabia, line by line. Treaty rates and gross-up included. For VAT, use the") }} <a href="/vat?j=SA">{{ t("KSA VAT calculator") }}</a>.</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
-    <fieldset><legend>Payments to non-residents (SAR)</legend>
+    <fieldset><legend>{{ t("Payments to non-residents (SAR)") }}</legend>
       <div id="rows"></div>
-      <button type="button" class="btn btn-ghost btn-sm" id="add">+ Add payment</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="add">{{ t("+ Add payment") }}</button>
     </fieldset>
     {% include "_scope_gate.html" %}
-    <div class="form-actions"><button class="btn btn-dark" type="submit">Calculate</button></div>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Calculate") }}</button></div>
     <div class="error" id="form-error"></div>
   </form>
   {% include "_result_shell.html" %}
@@ -26,11 +26,11 @@ const CATS = {{ categories | tojson }};
 const rows = document.getElementById('rows');
 function addRow(cat='royalties', amount=100000) {
   const d = document.createElement('div'); d.className = 'wht-row';
-  d.innerHTML = `<div class="field"><label>Category</label><select data-k="category">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${k===cat?'selected':''}>${v.label} (${(v.rate*100).toFixed(0)}%)</option>`).join('')}</select></div>
-  <div class="two"><div class="field"><label>Gross amount</label><input type="number" data-k="amount" value="${amount}" min="0" step="any"></div>
-  <div class="field"><label>Treaty rate % <span class="hint" title="Leave blank for statutory rate">?</span></label><input type="number" data-k="treaty_rate" value="" min="0" max="100" step="any"></div></div>
-  <label class="check"><input type="checkbox" data-k="grossed_up"> Payer bears the tax (gross-up)</label>
-  <button type="button" class="btn btn-ghost btn-sm rm">Remove</button><hr>`;
+  d.innerHTML = `<div class="field"><label>{{ t("Category") }}</label><select data-k="category">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${k===cat?'selected':''}>${v.label} (${(v.rate*100).toFixed(0)}%)</option>`).join('')}</select></div>
+  <div class="two"><div class="field"><label>{{ t("Gross amount") }}</label><input type="number" data-k="amount" value="${amount}" min="0" step="any"></div>
+  <div class="field"><label>{{ t("Treaty rate %") }} <span class="hint" title="Leave blank for statutory rate">?</span></label><input type="number" data-k="treaty_rate" value="" min="0" max="100" step="any"></div></div>
+  <label class="check"><input type="checkbox" data-k="grossed_up"> {{ t("Payer bears the tax (gross-up)") }}</label>
+  <button type="button" class="btn btn-ghost btn-sm rm">{{ t("Remove") }}</button><hr>`;
   d.querySelector('.rm').onclick = () => { d.remove(); document.getElementById('f').dispatchEvent(new Event('input')); };
   rows.appendChild(d);
   if (window.associateLabels) window.associateLabels(d);
@@ -46,7 +46,7 @@ initCalc({
   body: (data) => ({ scope_confirmed: data.scope_confirmed, special_regime: data.special_regime, payments: readPayments() }),
   tiles: (o, c) => [
     ['Total withholding tax', fmtMoney(o.total_wht, c)], ['Total cost to payer', fmtMoney(o.total_cost_to_payer, c)],
-    ...o.lines.map(l => [l.label + ' @ ' + fmtPct(l.applied_rate), fmtMoney(l.wht, c)])
+    ...o.lines.map(l => [tr(l.label) + ' @ ' + fmtPct(l.applied_rate), fmtMoney(l.wht, c)])
   ]
 });
 </script>

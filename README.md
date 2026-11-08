@@ -22,6 +22,7 @@ unresolved questions that connect to Oblique's advisory services.
 | Tax exposure diagnostic (10 questions, deadline precedence, no score) | `/diagnose` | `POST /api/v1/diagnostic` |
 | PDF working papers (server recomputes the figures; branded; every calculator) | button on every result | `POST /api/v1/pdf` |
 | Consent-led lead capture (gates only the PDF; contact + separate marketing consent; honeypot; rate limit) | dialog on every result | `POST /api/v1/leads`, `GET /api/v1/leads/config` |
+| Arabic versions of the home page, UAE and KSA calculators, their guides and the diagnostic (right-to-left, `/ar/` prefix, catalogue in `app/i18n/ar.json`) | `/ar/...` | same API |
 | Three entry paths, journeys and services (decision-led lead journey) | `/start/business`, `/start/gcc`, `/journeys/*`, `/services` | `GET /api/v1/services` |
 | Privacy page | `/privacy` | — |
 | Jurisdiction guides and 15 head-to-head comparison pages | `/guides`, `/guides/{code}`, `/compare/{A}-vs-{B}` | `GET /api/v1/rules` |

@@ -79,5 +79,6 @@
 "test_confidence_block_separates_rules_calculation_and_fit",
 "test_diagnostic_gcc_profile_and_next_steps",
 "test_journeys_and_paths_render_with_live_examples",
-"test_test_name_snapshot_is_current"
+"test_test_name_snapshot_is_current",
+"test_arabic_routes_and_fallbacks"
 ]

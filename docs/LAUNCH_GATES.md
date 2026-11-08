@@ -23,7 +23,8 @@ The results badge shows the worst status among the rules a calculation used. `en
 5. **Privacy.** The enquiry form is built and documented on /privacy (controller Oblique Consult, consent-based, 24-month retention, hashed IP only). Before enabling a destination: counsel review of the consent and privacy wording, confirm the processor list (Resend / HubSpot / automation tool) and the data location, and name the person who handles access and deletion requests. Set `APP_SECRET` on the host.
 6. **Security.** Move inline scripts to files and drop `'unsafe-inline'` from the CSP; add rate limiting and a streaming body cap at the proxy; dependency lockfile and vulnerability scan; independent test.
 7. **Accessibility and browsers.** Screen-reader pass (NVDA/VoiceOver), keyboard-only run through every calculator, Safari and Firefox checks, 320 px width.
-8. **SEO switch.** Set `SITE_INDEXABLE=true`, verify robots.txt and sitemap, add per-page `dateModified`, register Search Console. Consider Arabic (/ar/).
+8. **SEO switch.** Set `SITE_INDEXABLE=true`, verify robots.txt and sitemap (which now carries hreflang pairs for the Arabic pages), add per-page `dateModified`, register Search Console.
+8a. **Arabic review.** An Arabic-speaking member of the tax team reads `app/i18n/ar.json` (about 590 strings) for terminology (ضريبة الشركات، الوعاء الزكوي، الاحتساب العكسي, etc.) and tone, then flips `_meta.reviewed_by`. Remaining English on Arabic pages: legal source references, rule descriptions and source citations in the rules panel, and the PDF working paper.
 9. **Analytics.** If added, first-party and cookieless, with calculator-level events; update the privacy page.
 10. **Hosting.** Behind obliqueconsult.com (`/tax-intelligence` path or subdomain) with HTTPS, HSTS and the headers above preserved by the proxy.
 

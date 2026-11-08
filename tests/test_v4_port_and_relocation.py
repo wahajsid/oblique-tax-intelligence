@@ -294,3 +294,23 @@ def test_test_name_snapshot_is_current():
     from app import quality
     assert json.loads(quality.SNAPSHOT.read_text()) == quality.scan_tests(), "run quality.write_snapshot()"
     assert quality.test_count("uae_corporate_tax") > 5
+
+
+# ------------------------------------------------------------------ Arabic ----
+def test_arabic_routes_and_fallbacks():
+    from app import i18n
+    r = client.get("/ar/uae/corporate-tax")
+    assert r.status_code == 200 and '<html lang="ar" dir="rtl">' in r.text and "حاسبة ضريبة الشركات" in r.text
+    assert 'hreflang="ar"' in r.text and 'class="lang-switch"' in r.text
+    assert client.get("/ar").status_code == 200 and client.get("/ar/diagnose").status_code == 200 and client.get("/ar/guides/SA").status_code == 200
+    # pages without an Arabic version redirect to English rather than showing a half-translated page
+    r = client.get("/ar/move", follow_redirects=False)
+    assert r.status_code == 302 and r.headers["location"] == "/move"
+    # English pages are untouched
+    en = client.get("/uae/corporate-tax").text
+    assert '<html lang="en" dir="ltr">' in en and "حاسبة" not in en
+    # translator: exact, template, fallback
+    assert i18n.t("Taxable income", "ar") == "الدخل الخاضع للضريبة"
+    assert i18n.t("Zakat at 2.577683% (gregorian year)", "ar").startswith("الزكاة بنسبة 2.577683%")
+    assert i18n.t("Something untranslated", "ar") == "Something untranslated"
+    assert "/ar/uae/corporate-tax" in client.get("/sitemap.xml").text

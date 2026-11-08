@@ -3,29 +3,29 @@
 {% block description %}{{ p.name }} business tax guide: corporate income tax {{ (p.corporate_tax.headline_rate*100)|round(0)|int }}%, VAT {{ ((p.vat.rate*100)|round(0)|int ~ '%') if p.vat.implemented else 'not implemented' }}, withholding tax, domestic minimum top-up tax and transfer pricing, with sources.{% endblock %}
 {% block head %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"{{ p.name }} business tax guide 2026","author":{"@type":"Organization","name":"{{ site.company }}"},"dateModified":"{{ profiles.last_reviewed }}"}</script>{% endblock %}
 {% block content %}
-<div class="wrap page-head"><span class="eyebrow">Guide · ruleset {{ profiles.ruleset_version }} · reviewed {{ profiles.last_reviewed }}</span><h1>{{ p.flag }} {{ p.name }} business tax guide</h1><p>{{ p.corporate_tax.applies_to }}</p></div>
+<div class="wrap page-head"><span class="eyebrow">{{ t("Guide") }} · {{ profiles.ruleset_version }} · {{ t("reviewed") }} {{ profiles.last_reviewed }}</span><h1>{{ p.flag }} {{ t(p.name) }} {{ t("business tax guide") }}</h1><p>{{ t(p.corporate_tax.applies_to) }}</p></div>
 <section class="wrap narrow prose" style="padding-bottom:50px">
   <table>
-    <tr><th>Tax</th><th>Position</th><th>Status</th><th>Source</th></tr>
-    <tr><td>Corporate income tax</td><td>{{ (p.corporate_tax.headline_rate*100)|round(0)|int }}%{% if p.corporate_tax.zero_band %} above {{ p.currency }} {{ '{:,.0f}'.format(p.corporate_tax.zero_band) }}{% endif %}. {{ p.corporate_tax.applies_to }}</td><td><span class="status-dot {{ p.corporate_tax.review_status }}"></span>{{ p.corporate_tax.review_status | replace('_',' ') }}</td><td class="small">{{ p.corporate_tax.source }}</td></tr>
-    <tr><td>Zakat</td><td>{{ p.zakat.note }}</td><td><span class="status-dot {{ p.zakat.review_status }}"></span>{{ p.zakat.review_status | replace('_',' ') }}</td><td class="small">{{ p.zakat.source if p.zakat.source else '' }}</td></tr>
-    <tr><td>VAT</td><td>{{ ((p.vat.rate*100)|round(0)|int ~ '% since ' ~ p.vat.since) if p.vat.implemented else p.vat.note }}</td><td><span class="status-dot {{ p.vat.review_status }}"></span>{{ p.vat.review_status | replace('_',' ') }}</td><td class="small">{{ p.vat.source }}</td></tr>
-    <tr><td>Withholding tax</td><td>{{ p.withholding_tax.note }}</td><td><span class="status-dot {{ p.withholding_tax.review_status }}"></span>{{ p.withholding_tax.review_status | replace('_',' ') }}</td><td class="small">{{ p.withholding_tax.source }}</td></tr>
-    <tr><td>Domestic minimum top-up tax</td><td>{{ ('15% for MNE groups with revenue of EUR 750m or more, from ' ~ p.dmtt.since) if p.dmtt.applies else p.dmtt.note }}</td><td><span class="status-dot {{ p.dmtt.review_status }}"></span>{{ p.dmtt.review_status | replace('_',' ') }}</td><td class="small">{{ p.dmtt.source }}</td></tr>
-    <tr><td>Transfer pricing</td><td>{{ p.transfer_pricing.regime }}</td><td><span class="status-dot {{ p.transfer_pricing.review_status }}"></span>{{ p.transfer_pricing.review_status | replace('_',' ') }}</td><td class="small">{{ p.transfer_pricing.source }}</td></tr>
-    <tr><td>Personal income tax</td><td>{{ p.personal_income_tax.note }}</td><td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ p.personal_income_tax.review_status | replace('_',' ') }}</td><td class="small">{{ p.personal_income_tax.source if p.personal_income_tax.source else '' }}</td></tr>
-    <tr><td>CIT filing deadline</td><td>{{ p.cit_filing_deadline }}</td><td></td><td></td></tr>
+    <tr><th>{{ t("Tax") }}</th><th>{{ t("Position") }}</th><th>{{ t("Status") }}</th><th>{{ t("Source") }}</th></tr>
+    <tr><td>{{ t("Corporate income tax") }}</td><td>{{ (p.corporate_tax.headline_rate*100)|round(0)|int }}%{% if p.corporate_tax.zero_band %} {{ t('above') }} {{ p.currency }} {{ '{:,.0f}'.format(p.corporate_tax.zero_band) }}{% endif %}. {{ t(p.corporate_tax.applies_to) }}</td><td><span class="status-dot {{ p.corporate_tax.review_status }}"></span>{{ t(p.corporate_tax.review_status | replace('_',' ')) }}</td><td class="small">{{ p.corporate_tax.source }}</td></tr>
+    <tr><td>{{ t("Zakat") }}</td><td>{{ t(p.zakat.note) }}</td><td><span class="status-dot {{ p.zakat.review_status }}"></span>{{ t(p.zakat.review_status | replace('_',' ')) }}</td><td class="small">{{ p.zakat.source if p.zakat.source else '' }}</td></tr>
+    <tr><td>{{ t("VAT") }}</td><td>{{ ((p.vat.rate*100)|round(0)|int ~ '% ' ~ t('since') ~ ' ' ~ p.vat.since) if p.vat.implemented else t(p.vat.note) }}</td><td><span class="status-dot {{ p.vat.review_status }}"></span>{{ t(p.vat.review_status | replace('_',' ')) }}</td><td class="small">{{ p.vat.source }}</td></tr>
+    <tr><td>{{ t("Withholding tax") }}</td><td>{{ t(p.withholding_tax.note) }}</td><td><span class="status-dot {{ p.withholding_tax.review_status }}"></span>{{ t(p.withholding_tax.review_status | replace('_',' ')) }}</td><td class="small">{{ p.withholding_tax.source }}</td></tr>
+    <tr><td>{{ t("Domestic minimum top-up tax") }}</td><td>{{ (t('15% for MNE groups with revenue of EUR 750m or more, from') ~ ' ' ~ p.dmtt.since) if p.dmtt.applies else t(p.dmtt.note) }}</td><td><span class="status-dot {{ p.dmtt.review_status }}"></span>{{ t(p.dmtt.review_status | replace('_',' ')) }}</td><td class="small">{{ p.dmtt.source }}</td></tr>
+    <tr><td>{{ t("Transfer pricing") }}</td><td>{{ t(p.transfer_pricing.regime) }}</td><td><span class="status-dot {{ p.transfer_pricing.review_status }}"></span>{{ t(p.transfer_pricing.review_status | replace('_',' ')) }}</td><td class="small">{{ p.transfer_pricing.source }}</td></tr>
+    <tr><td>{{ t("Personal income tax") }}</td><td>{{ t(p.personal_income_tax.note) }}</td><td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ t(p.personal_income_tax.review_status | replace('_',' ')) }}</td><td class="small">{{ p.personal_income_tax.source if p.personal_income_tax.source else '' }}</td></tr>
+    <tr><td>{{ t("CIT filing deadline") }}</td><td>{{ t(p.cit_filing_deadline) }}</td><td></td><td></td></tr>
   </table>
   {% if rules %}
-  <h2>Detailed rules in the engine</h2>
+  <h2>{{ t("Detailed rules in the engine") }}</h2>
   {% for group, items in rules.rules.items() %}
-    <h3>{{ group | replace('_',' ') | title }}</h3>
+    <h3>{{ t(group | replace('_',' ') | title) }}</h3>
     <ul>{% for k, r in items.items() %}<li><span class="status-dot {{ r.review_status }}"></span><b>{{ r.rule_id }}</b>: {{ r.description }} <span class="small muted">Source: {% if r.source_url %}<a href="{{ r.source_url }}" target="_blank" rel="noopener">{{ r.source_reference }}</a>{% else %}{{ r.source_reference }}{% endif %}{% if r.effective_from %} · effective {{ r.effective_from }}{% if r.effective_to %} to {{ r.effective_to }}{% endif %}{% endif %}.</span>{% if r.verification_note %}<br><em class="small">{{ r.verification_note }}</em>{% endif %}</li>{% endfor %}</ul>
   {% endfor %}
   {% endif %}
-  <h2>Calculate</h2>
-  <p>{% if code == 'AE' %}<a class="btn btn-primary" href="/uae/corporate-tax">UAE Corporate Tax calculator</a> <a class="btn btn-ghost" href="/vat?j=AE">UAE VAT</a>{% elif code == 'SA' %}<a class="btn btn-primary" href="/ksa/zakat-income-tax">KSA Zakat &amp; Income Tax</a> <a class="btn btn-ghost" href="/ksa/withholding-tax">KSA WHT</a> <a class="btn btn-ghost" href="/vat?j=SA">KSA VAT</a>{% else %}<a class="btn btn-primary" href="/gcc/compare">Model {{ p.name }} in the GCC comparison</a>{% endif %}</p>
-  <h2>Compare</h2>
-  <p>{% for c2, p2 in profiles.jurisdictions.items() if c2 != code %}<a href="/compare/{{ [code, c2]|sort|join('-vs-') }}">{{ p.name }} vs {{ p2.name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+  <h2>{{ t("Calculate") }}</h2>
+  <p>{% if code == 'AE' %}<a class="btn btn-primary" href="/uae/corporate-tax">{{ t("UAE Corporate Tax calculator") }}</a> <a class="btn btn-ghost" href="/vat?j=AE">{{ t("UAE VAT") }}</a>{% elif code == 'SA' %}<a class="btn btn-primary" href="/ksa/zakat-income-tax">{{ t("KSA Zakat & Income Tax") }}</a> <a class="btn btn-ghost" href="/ksa/withholding-tax">{{ t("KSA WHT") }}</a> <a class="btn btn-ghost" href="/vat?j=SA">{{ t("KSA VAT") }}</a>{% else %}<a class="btn btn-primary" href="/gcc/compare">{{ t("Compare") }}: {{ t(p.name) }}</a>{% endif %}</p>
+  <h2>{{ t("Compare") }}</h2>
+  <p>{% for c2, p2 in profiles.jurisdictions.items() if c2 != code %}<a href="/compare/{{ [code, c2]|sort|join('-vs-') }}">{{ t(p.name) }} {{ t("vs") }} {{ t(p2.name) }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
 </section>
 {% endblock %}
