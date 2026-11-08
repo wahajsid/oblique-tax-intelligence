@@ -44,6 +44,17 @@ def test_uae_ct_small_business_relief():
     assert r.outputs["corporate_tax_payable"] == 0.0
 
 
+def test_uae_ct_small_business_relief_available_for_2027_to_2029_periods():
+    from datetime import date
+    for end in (date(2027, 12, 31), date(2028, 6, 30), date(2029, 12, 31)):
+        r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=900_000, revenue=2_500_000, elect_small_business_relief=True, period_end=end))
+        assert r.outputs["regime"] == "small_business_relief", end
+        assert r.outputs["corporate_tax_payable"] == 0.0
+        assert not any(f.code == "sbr_not_available" for f in r.flags)
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=900_000, revenue=2_500_000, elect_small_business_relief=True, period_end=date(2030, 12, 31)))
+    assert r.outputs["regime"] == "standard" and any(f.code == "sbr_not_available" for f in r.flags)
+
+
 def test_uae_ct_small_business_relief_refused_over_revenue():
     r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(accounting_profit=900_000, revenue=3_000_001, elect_small_business_relief=True))
     assert r.outputs["regime"] == "standard"

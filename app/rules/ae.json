@@ -2,8 +2,8 @@
   "jurisdiction": "AE",
   "name": "United Arab Emirates",
   "currency": "AED",
-  "ruleset_version": "2026.1",
-  "last_reviewed": "2026-11-07",
+  "ruleset_version": "2026.2",
+  "last_reviewed": "2026-11-08",
   "rules": {
     "corporate_tax": {
       "standard_rate": {
@@ -14,18 +14,27 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 3; Cabinet Decision No. 116 of 2022",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
-        "parameters": {"zero_rate_threshold": 375000, "rate_above_threshold": 0.09}
+        "parameters": {
+          "zero_rate_threshold": 375000,
+          "rate_above_threshold": 0.09
+        }
       },
       "small_business_relief": {
         "rule_id": "ae.ct.small_business_relief",
-        "description": "Resident Taxable Persons with revenue of AED 3,000,000 or less in the current and all prior tax periods may elect to be treated as having no taxable income. Revenue test, not profit test. Once exceeded, lost permanently.",
+        "description": "Resident Taxable Persons with revenue of AED 3,000,000 or less in the current and all prior tax periods may elect to be treated as having no taxable income, for tax periods ending on or before 31 December 2029 (extended from 31 December 2026 by Ministerial Decision No. 131 of 2026). Revenue test, not profit test. Once exceeded, lost permanently. Not available to Qualifying Free Zone Persons or constituent entities of MNE groups.",
         "effective_from": "2023-06-01",
-        "effective_to": "2026-12-31",
-        "review_status": "pending_verification",
-        "verification_note": "Original cut-off: tax periods ending on or before 31 Dec 2026 (Ministerial Decision No. 73 of 2023). Secondary sources report Ministerial Decision No. 131 of 2026 extending the cut-off to periods ending on or before 31 Dec 2029; confirm against the Ministry of Finance text before relying on the extension.",
-        "source_reference": "Ministerial Decision No. 73 of 2023; reported Ministerial Decision No. 131 of 2026",
-        "source_url": "https://www.khaleejtimes.com/business/uae-extends-corporate-tax-relief-for-small-businesses-until-2029",
-        "parameters": {"revenue_threshold": 3000000, "not_available_to": ["qualifying_free_zone_person", "mne_constituent_entity"]}
+        "effective_to": "2029-12-31",
+        "review_status": "verified",
+        "verification_note": "Cut-off extended to tax periods ending on or before 31 December 2029 by Ministerial Decision No. 131 of 2026 (issued 29 July 2026), amending Ministerial Decision No. 73 of 2023. Reviewer to confirm the amended article wording against the MoF PDF; threshold unchanged at AED 3,000,000.",
+        "source_reference": "Ministerial Decision No. 73 of 2023 as amended by Ministerial Decision No. 131 of 2026 (UAE Ministry of Finance)",
+        "source_url": "https://mof.gov.ae/wp-content/uploads/2026/08/Ministerial-Decision-No.-131-of-2026-Amending-Certain-Provisions-of-Ministerial-Decision-No.-73-of-2023-on-Small-Business-Relief-for-the-Purposes-of-Federal-Decree-Law-No.-47-of-2022-EN.pdf",
+        "parameters": {
+          "revenue_threshold": 3000000,
+          "not_available_to": [
+            "qualifying_free_zone_person",
+            "mne_constituent_entity"
+          ]
+        }
       },
       "qualifying_free_zone_person": {
         "rule_id": "ae.ct.qfzp",
@@ -36,7 +45,13 @@
         "verification_note": "De minimis figures confirmed across multiple advisory sources citing Ministerial Decision No. 265 of 2023, reported as replaced by Ministerial Decisions No. 229 and 230 of 2025 with the same test. Confirm current decision text.",
         "source_reference": "Cabinet Decision No. 100 of 2023; Ministerial Decision No. 265 of 2023 (replaced 2025)",
         "source_url": "https://www.pwc.com/m1/en/services/tax/me-tax-legal-news/2023/cabinet-ministerial-decisions-release-corporate-tax-rules-for-free-zones.html",
-        "parameters": {"qualifying_income_rate": 0.0, "non_qualifying_rate": 0.09, "de_minimis_pct": 0.05, "de_minimis_abs": 5000000, "disqualification_periods": 5}
+        "parameters": {
+          "qualifying_income_rate": 0.0,
+          "non_qualifying_rate": 0.09,
+          "de_minimis_pct": 0.05,
+          "de_minimis_abs": 5000000,
+          "disqualification_periods": 5
+        }
       },
       "tax_loss_relief": {
         "rule_id": "ae.ct.tax_losses",
@@ -46,7 +61,9 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 37",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
-        "parameters": {"max_offset_pct": 0.75}
+        "parameters": {
+          "max_offset_pct": 0.75
+        }
       },
       "interest_deduction_limitation": {
         "rule_id": "ae.ct.interest_limitation",
@@ -56,7 +73,10 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 30; Ministerial Decision No. 126 of 2023",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
-        "parameters": {"ebitda_pct": 0.30, "safe_harbour": 12000000}
+        "parameters": {
+          "ebitda_pct": 0.3,
+          "safe_harbour": 12000000
+        }
       },
       "entertainment_expenses": {
         "rule_id": "ae.ct.entertainment",
@@ -66,7 +86,9 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 32",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
-        "parameters": {"deductible_pct": 0.50}
+        "parameters": {
+          "deductible_pct": 0.5
+        }
       },
       "domestic_minimum_top_up_tax": {
         "rule_id": "ae.ct.dmtt",
@@ -76,7 +98,11 @@
         "review_status": "verified",
         "source_reference": "Cabinet Decision No. 142 of 2024",
         "source_url": "https://www.deloitte.com/content/dam/assets-shared/docs/services/tax/2025/dttl-tax-uaehighlights-2025.pdf",
-        "parameters": {"minimum_rate": 0.15, "revenue_threshold_eur": 750000000, "test_years": "2 of 4 preceding"}
+        "parameters": {
+          "minimum_rate": 0.15,
+          "revenue_threshold_eur": 750000000,
+          "test_years": "2 of 4 preceding"
+        }
       },
       "filing": {
         "rule_id": "ae.ct.filing",
@@ -86,7 +112,9 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 47 of 2022, Art. 48 and 53",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate",
-        "parameters": {"months_after_period_end": 9}
+        "parameters": {
+          "months_after_period_end": 9
+        }
       }
     },
     "vat": {
@@ -98,7 +126,10 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 8 of 2017, Art. 3",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate/other-taxes",
-        "parameters": {"standard_rate": 0.05, "zero_rate": 0.0}
+        "parameters": {
+          "standard_rate": 0.05,
+          "zero_rate": 0.0
+        }
       },
       "registration_thresholds": {
         "rule_id": "ae.vat.registration",
@@ -108,7 +139,10 @@
         "review_status": "verified",
         "source_reference": "Federal Decree-Law No. 8 of 2017, Art. 13 and 17",
         "source_url": "https://taxsummaries.pwc.com/united-arab-emirates/corporate/other-taxes",
-        "parameters": {"mandatory": 375000, "voluntary": 187500}
+        "parameters": {
+          "mandatory": 375000,
+          "voluntary": 187500
+        }
       }
     }
   }
