@@ -25,6 +25,27 @@ def sqlite_sink(tmp_path, monkeypatch):
 
 
 @pytest.fixture
+def m365_sink(monkeypatch):
+    for var in ("RESEND_API_KEY", "LEAD_WEBHOOK_URL", "HUBSPOT_PORTAL_ID", "HUBSPOT_FORM_GUID", "LEADS_SQLITE_PATH"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("MS_TENANT_ID", "tenant-id"); monkeypatch.setenv("MS_CLIENT_ID", "client-id"); monkeypatch.setenv("MS_CLIENT_SECRET", "secret")
+    monkeypatch.setenv("MS_SENDER", "tax@obliqueconsult.com"); monkeypatch.setenv("LEAD_EMAIL_TO", "info@obliqueconsult.com, wahaj@obliqueconsult.com")
+    calls = []
+
+    class FakeResp:
+        def __init__(self, payload): self._p = payload
+        def raise_for_status(self): return None
+        def json(self): return self._p
+
+    def fake_post(url, **kw):
+        calls.append((url, kw))
+        return FakeResp({"access_token": "tok"} if "oauth2" in url else {})
+    monkeypatch.setattr(leads.httpx, "post", fake_post)
+    leads._hits.clear()
+    return calls
+
+
+@pytest.fixture
 def no_sink(monkeypatch):
     for var in ("RESEND_API_KEY", "LEAD_EMAIL_TO", "LEAD_WEBHOOK_URL", "HUBSPOT_PORTAL_ID", "HUBSPOT_FORM_GUID", "LEADS_SQLITE_PATH"):
         monkeypatch.delenv(var, raising=False)
@@ -141,3 +162,19 @@ def test_lead_profile_recorded(sqlite_sink):
     con = sqlite3.connect(sqlite_sink)
     rec = json.loads(con.execute("SELECT record FROM leads ORDER BY received_at DESC").fetchone()[0]); con.close()
     assert rec["profile"] == "personal" and rec["interest"] == "relocation"
+
+
+def test_m365_sink_sends_via_graph_with_pdf(m365_sink):
+    assert client.get("/api/v1/leads/config").json()["processors"] == ["m365"]
+    r = client.post("/api/v1/leads", json=LEAD)
+    assert r.status_code == 200 and r.json()["delivery"] == {"m365": "ok"}
+    token_call, send_call = m365_sink
+    assert token_call[0] == "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token"
+    assert token_call[1]["data"]["grant_type"] == "client_credentials"
+    assert send_call[0] == "https://graph.microsoft.com/v1.0/users/tax@obliqueconsult.com/sendMail"
+    assert send_call[1]["headers"]["Authorization"] == "Bearer tok"
+    msg = send_call[1]["json"]["message"]
+    assert [x["emailAddress"]["address"] for x in msg["toRecipients"]] == ["info@obliqueconsult.com", "wahaj@obliqueconsult.com"]
+    assert msg["replyTo"][0]["emailAddress"]["address"] == "test@example.com"
+    assert msg["attachments"][0]["name"] == "oblique-working-paper-uae-corporate-tax.pdf" and msg["attachments"][0]["contentType"] == "application/pdf"
+    assert "SECRET" not in str(send_call[1]) and "secret" not in send_call[1]["headers"]["Authorization"]

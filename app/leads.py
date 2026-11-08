@@ -10,7 +10,9 @@ Principles:
 - Spam controls: honeypot field, per-IP rate limit, payload size limits.
 
 Sinks (any combination):
-  RESEND_API_KEY + LEAD_EMAIL_TO [+ LEAD_EMAIL_FROM]   email notification with the PDF attached
+  MS_TENANT_ID + MS_CLIENT_ID + MS_CLIENT_SECRET + MS_SENDER + LEAD_EMAIL_TO
+                                                        Microsoft 365 (Graph sendMail) from your own @obliqueconsult.com mailbox, PDF attached
+  RESEND_API_KEY + LEAD_EMAIL_TO [+ LEAD_EMAIL_FROM]   email via Resend with the PDF attached (needs domain DNS records)
   LEAD_WEBHOOK_URL [+ LEAD_WEBHOOK_SECRET]              JSON POST (Zapier, Make, Slack, n8n...)
   HUBSPOT_PORTAL_ID + HUBSPOT_FORM_GUID                 HubSpot Forms submission (legal consent included)
   LEADS_SQLITE_PATH                                     append to a SQLite file (mount a volume)
@@ -91,6 +93,7 @@ class LeadInput(BaseModel):
 def sinks_configured() -> dict[str, bool]:
     e = os.environ.get
     return {
+        "m365": bool(e("MS_TENANT_ID") and e("MS_CLIENT_ID") and e("MS_CLIENT_SECRET") and e("MS_SENDER") and e("LEAD_EMAIL_TO")),
         "email": bool(e("RESEND_API_KEY") and e("LEAD_EMAIL_TO")),
         "webhook": bool(e("LEAD_WEBHOOK_URL")),
         "hubspot": bool(e("HUBSPOT_PORTAL_ID") and e("HUBSPOT_FORM_GUID")),
@@ -189,6 +192,35 @@ def _send_email(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: 
     r.raise_for_status()
 
 
+def _graph_token() -> str:
+    tenant = os.environ["MS_TENANT_ID"]
+    r = httpx.post(f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", data={
+        "client_id": os.environ["MS_CLIENT_ID"], "client_secret": os.environ["MS_CLIENT_SECRET"],
+        "scope": "https://graph.microsoft.com/.default", "grant_type": "client_credentials"}, timeout=15)
+    r.raise_for_status()
+    return r.json()["access_token"]
+
+
+def _send_m365(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> None:
+    """Send from an Exchange Online mailbox via Microsoft Graph (application permission Mail.Send,
+    ideally restricted to MS_SENDER with an ApplicationAccessPolicy)."""
+    token = _graph_token()
+    sender = os.environ["MS_SENDER"]
+    recipients = [{"emailAddress": {"address": a.strip()}} for a in os.environ["LEAD_EMAIL_TO"].split(",") if a.strip()]
+    message: dict[str, Any] = {
+        "subject": f"Tax Intelligence enquiry: {rec['name']} · {rec['context']['calculator']}",
+        "body": {"contentType": "HTML", "content": _email_html(rec, summary)},
+        "toRecipients": recipients,
+        "replyTo": [{"emailAddress": {"address": rec["email"], "name": rec["name"]}}],
+    }
+    if pdf:
+        message["attachments"] = [{"@odata.type": "#microsoft.graph.fileAttachment", "name": filename, "contentType": "application/pdf",
+                                   "contentBytes": base64.b64encode(pdf).decode()}]
+    r = httpx.post(f"https://graph.microsoft.com/v1.0/users/{sender}/sendMail", json={"message": message, "saveToSentItems": True},
+                   headers={"Authorization": f"Bearer {token}"}, timeout=20)
+    r.raise_for_status()
+
+
 def _send_webhook(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> None:
     body = dict(rec, summary=summary)
     if pdf and os.environ.get("LEAD_WEBHOOK_INCLUDE_PDF", "false").lower() in ("1", "true", "yes"):
@@ -227,7 +259,7 @@ def _store_sqlite(rec: dict[str, Any], summary: str, pdf: bytes | None, filename
         con.close()
 
 
-SINKS = {"email": _send_email, "webhook": _send_webhook, "hubspot": _send_hubspot, "sqlite": _store_sqlite}
+SINKS = {"m365": _send_m365, "email": _send_email, "webhook": _send_webhook, "hubspot": _send_hubspot, "sqlite": _store_sqlite}
 
 
 def deliver(rec: dict[str, Any], summary: str, pdf: bytes | None, filename: str) -> dict[str, str]:
