@@ -81,7 +81,7 @@ initCalc({
     const root = document.getElementById('results'); root.hidden = false;
     const o = r.origin, u = r.uae, c = r.comparison, cur = o.currency;
     const labels = { verified: 'Verified', verified_secondary: 'Verified (secondary sources)', pending_verification: 'Pending verification', draft_law: 'Includes draft law' };
-    const badge = document.getElementById('status-badge'); badge.className = 'badge ' + r.review_status; badge.textContent = labels[r.review_status] || r.review_status;
+    const badge = document.getElementById('status-badge'); badge.className = 'badge ' + r.review_status; badge.textContent = 'Rules: ' + (labels[r.review_status] || r.review_status); badge.title = 'Review status of the origin-country tax rules used.';
     const neg = c.annual_net_gain_aed < 0;
     document.getElementById('gain').innerHTML = `<div class="gain ${neg ? 'negative' : ''}"><div class="k">${neg ? 'Estimated annual net cost of moving' : 'Estimated annual net gain from moving'}</div>
       <div class="v">${fmtMoney(Math.abs(c.annual_net_gain_aed), 'AED')}</div><div class="sub">≈ ${fmtMoney(Math.abs(c.annual_net_gain_local), cur)} a year · tax saved ${fmtMoney(c.annual_tax_saved_aed, 'AED')} · after extra UAE living costs${c.fx_overridden ? '' : ' · indicative FX ' + c.fx_aed_per_unit + ' AED/' + cur + ' as of ' + c.fx_as_of}</div></div>`;

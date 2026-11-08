@@ -46,6 +46,7 @@ class UAECorporateTaxInput(BaseModel):
     qualifying_income: Decimal = Field(ZERO, ge=0)
     non_qualifying_revenue: Decimal = Field(ZERO, ge=0)
     elect_small_business_relief: bool = False
+    prior_periods_within_threshold: Answer = Field("unknown", description="Was revenue AED 3,000,000 or less in EVERY previous tax period since 1 June 2023? Once exceeded, the relief is lost for all later periods.")
     is_mne_constituent: bool = False
     mne_group_revenue_eur: Decimal = Field(ZERO, ge=0)
 
@@ -147,9 +148,16 @@ def calculate(inp: UAECorporateTaxInput) -> CalculationResult:
                     and not (inp.is_free_zone_person and inp.elect_qfzp) and not inp.is_mne_constituent)
     period_ok = inp.period_end is None or r_sbr["effective_to"] is None or inp.period_end.isoformat() <= r_sbr["effective_to"]
 
+    if inp.elect_small_business_relief and inp.prior_periods_within_threshold == "no":
+        sbr_eligible = False
     if inp.elect_small_business_relief:
         if sbr_eligible and period_ok:
             regime = "small_business_relief"
+            if inp.prior_periods_within_threshold == "unknown":
+                res.flag(Flag("sbr_prior_periods_unconfirmed", "high", "Small Business Relief: prior-period revenue not confirmed",
+                              "The relief requires revenue of AED 3,000,000 or less in the current AND every previous tax period. Confirm no earlier period exceeded the threshold; if one did, the relief is not available for this or any later period.",
+                              "Oblique checks prior returns and the election history."))
+                res.review_reasons.append("Small Business Relief was applied without confirming that revenue stayed within AED 3,000,000 in every previous tax period.")
             res.add(TraceStep("Small Business Relief elected: treated as having no taxable income", 0.0, rule_id=r_sbr["rule_id"], kind="tax",
                               note=f"Revenue AED {inp.revenue:,.0f} is within the AED 3,000,000 threshold."))
             if r_sbr["review_status"] != "verified":
@@ -163,6 +171,8 @@ def calculate(inp: UAECorporateTaxInput) -> CalculationResult:
                 reason.append("Qualifying Free Zone Persons cannot elect")
             if inp.is_mne_constituent:
                 reason.append("MNE constituent entities cannot elect")
+            if inp.prior_periods_within_threshold == "no":
+                reason.append("revenue exceeded AED 3,000,000 in a previous tax period, so the relief is lost permanently")
             if not period_ok:
                 reason.append(f"period ends after {r_sbr['effective_to']}")
             res.flag(Flag("sbr_not_available", "attention", "Small Business Relief not available", "; ".join(reason).capitalize() + ".",

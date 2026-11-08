@@ -176,11 +176,12 @@ class CalculationResult:
             reasons.append("You indicated that a special regime, exemption or relief may apply. Those change the answer and are not fully modelled here.")
         elif special_regime == "unknown":
             reasons.append("You are not sure whether a special regime, exemption or relief applies. Eligibility must be established before the figure is relied on.")
-        if reasons:
+        if reasons or self.review_reasons:
             self.outcome = "REVIEW_REQUIRED"
-            self.review_reasons = reasons + [f"Outside the scope of this calculator: {excluded}"]
-            self.flag(Flag("review_required", "high", "Review required before relying on this figure",
-                           " ".join(reasons), "Oblique will confirm scope, eligibility and the applicable regime for your facts."))
+            self.review_reasons = self.review_reasons + reasons + [f"Outside the scope of this calculator: {excluded}"]
+            if reasons:
+                self.flag(Flag("review_required", "high", "Review required before relying on this figure",
+                               " ".join(reasons), "Oblique will confirm scope, eligibility and the applicable regime for your facts."))
 
     # ---- metadata ------------------------------------------------------------------
     def rule_metadata(self) -> list[dict[str, Any]]:

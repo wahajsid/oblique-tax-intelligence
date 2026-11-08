@@ -235,3 +235,11 @@ form[aria-busy=true]{opacity:.7;pointer-events:none}
 
 /* The hidden attribute must always win over component display rules */
 [hidden]{display:none!important}
+
+/* Stale results after a failed recalculation */
+.results.stale .tiles,.results.stale .trace,.results.stale .flags,.results.stale #gain,.results.stale .versus{opacity:.4;filter:grayscale(.8)}
+.stale-note{border-left:4px solid var(--danger);background:rgba(255,138,122,.1);border-radius:8px;padding:10px 14px;margin:0 0 12px;font-size:.9rem}
+.radio-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.radio-row legend{padding:0;margin:0 4px 0 0}
+.radio{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:var(--ink)}
+.field input:invalid:not(:placeholder-shown){border-color:rgba(255,138,122,.7)}

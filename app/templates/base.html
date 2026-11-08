@@ -44,7 +44,7 @@
     <div>
       <img src="/static/img/logo-wordmark.svg" alt="{{ site.company }}" height="26" class="footer-logo">
       <p class="muted">Independent tax, accounting and advisory for businesses in the UAE, Saudi Arabia and the wider GCC.</p>
-      <p class="muted small">Ruleset {{ site.version }} · Deterministic rules engine · No cookies, no tracking, no third-party scripts; your inputs are not stored.</p>
+      <p class="muted small">App v{{ site.version }} · Tax rules: {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · Deterministic rules engine · No cookies, no tracking, no third-party scripts; calculator inputs are not stored.</p>
     </div>
     <div>
       <h4>Calculators</h4>

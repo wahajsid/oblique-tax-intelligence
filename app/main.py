@@ -79,7 +79,9 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
-        "version": __version__, "indexable": INDEXABLE}
+        "version": __version__, "indexable": INDEXABLE,
+        "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
+                           "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}
 
 MODULES = [
     {"slug": "uae/corporate-tax", "title": "UAE Corporate Tax", "audience": "CFO, finance manager, business owner",

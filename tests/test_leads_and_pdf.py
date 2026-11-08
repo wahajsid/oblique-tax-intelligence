@@ -133,3 +133,11 @@ def test_old_enquiries_endpoint_gone():
 def test_pages_include_dialog_and_pdf_button(no_sink):
     html = client.get("/uae/corporate-tax").text
     assert 'id="lead-modal"' in html and 'id="btn-pdf"' in html and 'name="consent_marketing"' in html
+
+
+def test_lead_profile_recorded(sqlite_sink):
+    r = client.post("/api/v1/leads", json=dict(LEAD, profile="personal", interest="relocation", company=""))
+    assert r.status_code == 200
+    con = sqlite3.connect(sqlite_sink)
+    rec = json.loads(con.execute("SELECT record FROM leads ORDER BY received_at DESC").fetchone()[0]); con.close()
+    assert rec["profile"] == "personal" and rec["interest"] == "relocation"

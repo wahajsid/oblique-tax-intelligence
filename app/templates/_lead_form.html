@@ -4,19 +4,24 @@
     <button class="modal-close" type="button" id="lead-close" aria-label="Close">×</button>
     <span class="eyebrow">Working paper</span>
     <h2 id="lead-title">Get the PDF working paper</h2>
-    <p id="lead-desc" class="muted small">Your on-screen result stays free. The branded PDF (reconciliation, rules, sources and caveats) is prepared by Oblique Consult and sent to you here; the figures are recomputed on our server from your inputs, so the document is tamper-proof. An Oblique adviser may follow up on the questions it raises.</p>
+    <p id="lead-desc" class="muted small"><span id="lead-desc-business">Your on-screen result stays free. The branded PDF (reconciliation, rules, sources and caveats) is recomputed on our server from your inputs, so it is tamper-proof, and sent to you here. An Oblique adviser may follow up on the questions it raises.</span><span id="lead-desc-personal" hidden>Your on-screen result stays free. The PDF summarises your comparison, the assumptions and the residence questions to settle, and is sent to you here. An Oblique adviser can walk you through the next steps if you want.</span></p>
     <form id="lead-form" autocomplete="on" novalidate>
+      <fieldset class="radio-row"><legend class="small muted">I am enquiring as</legend>
+        <label class="radio"><input type="radio" name="profile" value="business" checked> a business or finance team</label>
+        <label class="radio"><input type="radio" name="profile" value="personal"> an individual</label>
+      </fieldset>
       <div class="two">
         <div class="field"><label for="lead-name">Name *</label><input id="lead-name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name"></div>
-        <div class="field"><label for="lead-email">Work email *</label><input id="lead-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
-        <div class="field"><label for="lead-company">Company</label><input id="lead-company" name="company" type="text" maxlength="120" autocomplete="organization"></div>
-        <div class="field"><label for="lead-phone">Phone</label><input id="lead-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
+        <div class="field"><label for="lead-email">Email *</label><input id="lead-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+        <div class="field" id="lead-company-field"><label for="lead-company">Company</label><input id="lead-company" name="company" type="text" maxlength="120" autocomplete="organization"></div>
+        <div class="field"><label for="lead-phone">Phone (optional)</label><input id="lead-phone" name="phone" type="tel" maxlength="40" autocomplete="tel"></div>
       </div>
       <div class="field"><label for="lead-message">Anything we should know? (optional)</label><textarea id="lead-message" name="message" rows="2" maxlength="1000"></textarea></div>
       <div class="hp" aria-hidden="true"><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
       <label class="check consent"><input type="checkbox" name="consent_contact" required> <span id="consent-contact-text"></span> <b>(required)</b></label>
       <label class="check consent"><input type="checkbox" name="consent_marketing"> <span id="consent-marketing-text"></span></label>
       <p class="small muted" id="lead-privacy"></p>
+      <p class="small muted">Your calculation inputs are attached to the enquiry only because you are asking about them; untick nothing here if you would rather not share them, just close this dialog and use the on-screen result.</p>
       <div class="form-actions">
         <button class="btn btn-primary" type="submit" id="lead-submit">Send me the working paper</button>
         <button class="btn btn-ghost" type="button" id="lead-cancel">Cancel</button>

@@ -64,6 +64,7 @@ class LeadInput(BaseModel):
     company: str = Field("", max_length=120)
     message: str = Field("", max_length=1000)
     interest: Literal["working_paper", "expert_review", "relocation", "diagnostic", "other"] = "working_paper"
+    profile: Literal["business", "personal"] = "business"
     consent_contact: bool
     consent_marketing: bool = False
     consent_version: str = Field(CONSENT_VERSION, max_length=20)
@@ -152,7 +153,7 @@ def make_record(lead: LeadInput, ip: str) -> dict[str, Any]:
     return {
         "id": str(uuid.uuid4()), "received_at": now, "source": "oblique-tax-intelligence",
         "name": lead.name.strip(), "email": lead.email, "phone": lead.phone.strip(), "company": lead.company.strip(),
-        "message": lead.message.strip(), "interest": lead.interest,
+        "message": lead.message.strip(), "interest": lead.interest, "profile": lead.profile,
         "consents": {
             "contact": {"given": True, "version": lead.consent_version, "text": CONSENT_TEXT["contact"], "at": now},
             "marketing": {"given": bool(lead.consent_marketing), "version": lead.consent_version, "text": CONSENT_TEXT["marketing"], "at": now if lead.consent_marketing else None},
@@ -166,7 +167,7 @@ def _email_html(rec: dict[str, Any], summary: str) -> str:
     c = rec["context"]
     rows = "".join(f"<tr><td style='padding:4px 10px 4px 0;color:#666'>{k}</td><td style='padding:4px 0'>{v}</td></tr>" for k, v in [
         ("Name", rec["name"]), ("Email", rec["email"]), ("Phone", rec["phone"] or "—"), ("Company", rec["company"] or "—"),
-        ("Interest", rec["interest"]), ("Message", rec["message"] or "—"), ("Calculator", c["calculator"]), ("Page", c["page_url"] or "—"),
+        ("Interest", rec["interest"]), ("Enquiring as", rec.get("profile", "business")), ("Message", rec["message"] or "—"), ("Calculator", c["calculator"]), ("Page", c["page_url"] or "—"),
         ("Contact consent", f"yes · {rec['consents']['contact']['version']} · {rec['consents']['contact']['at']}"),
         ("Marketing consent", "yes" if rec["consents"]["marketing"]["given"] else "no"), ("Lead id", rec["id"])])
     return (f"<h2 style='font-family:sans-serif'>New enquiry from Oblique Tax Intelligence</h2><p style='font-family:sans-serif'>{summary}</p>"

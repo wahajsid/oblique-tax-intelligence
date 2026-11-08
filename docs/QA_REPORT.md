@@ -61,3 +61,23 @@ New automated coverage: `tests/test_leads_and_pdf.py` (PDF renders for all eight
 Browser run (headless Chromium, SQLite sink enabled): PDF button opens the dialog with consent texts loaded and focus on the name field; submitting without the required consent keeps the dialog open; with consent, the lead is stored and a PDF download starts (`oblique-working-paper-uae-corporate-tax.pdf`, `%PDF-` header); success message shown; Escape closes and returns focus; a direct PDF request without a token returns 403; the Move page button opens the same dialog. Two defects found and fixed during the run: the hidden dialog overlay intercepted clicks (CSS `display` overriding `hidden`), and the success message was inside the hidden form.
 
 PDF content checked by eye for the UAE Corporate Tax working paper: logo header, generated-at and ruleset line, headline tiles, working-paper table with formulas and rule ids, inputs, rules with status and source, assumptions, desktop-calculator disclaimer and Oblique contact details, page footer. Not yet checked by eye: the other seven layouts beyond byte-level rendering.
+
+
+## Update: owner's live-site review (8 November 2026, evening)
+
+All "fix first" items and all "improve next" items from the owner's review are implemented. Suite: **88 passed**. Browser run (headless Chromium, SQLite sink enabled):
+
+| Review item | Verification |
+|---|---|
+| Currency band in USD comparison | fixed earlier (`eff299c`); home table shows USD 80,810.07 |
+| SBR 2029 cut-off and prior-period revenue condition | 2027 period accepted when prior periods confirmed; "No" refuses with the permanent-loss reason; "not sure" applies the relief but marks the outcome review-required |
+| Shared links change the facts | KSA WHT link reopened with the same four payments and SAR 71,173.80 total; US relocation link reopened with citizenship unchecked and the same AED 132,977.55 gain; links now live in the URL fragment (never sent to servers); legacy `?query` links still prefill |
+| Privacy wording on share links | corrected on /privacy (fragment behaviour, browser history, older query links) |
+| E-invoicing dates | question and action state pilot 1 July 2026, Phase 1 (AED 50m+) live 1 January 2027, Phase 2 live 1 July 2027, government 1 October 2027 (MD 243/244 of 2025); Phase 1 ASP date 31 July 2026 flagged for confirmation |
+| Old results after invalid input | result panel greys with "Showing the previous result" and the validation message; clears on the next valid calculation |
+| Labels for assistive technology | zero unlabelled controls on the UAE CT form; hints exposed through aria-describedby |
+| Personal diagnostics | personal profile uses personal labels and actions (no corporate tax, trial balance or QFZP wording); e-invoicing excluded |
+| Enquiry journey | "Get precise figures" opens the in-site dialog when a destination is configured; business / individual paths; individuals skip the company field; scenario attached only via the consent form |
+| Verified vs review required; internal labels; versions | badge reads "Rules: Verified" with a tooltip, outcome label reads "Outcome: review required"; P0/P1 pills removed; footer shows "App v0.1.0 · Tax rules: AE 2026.2, SA 2026.1, GCC 2026.1, Personal 2026.1" |
+
+Not covered: mobile rendering on real devices (desktop and 390 px headless only), screen-reader run, tax-law certification.

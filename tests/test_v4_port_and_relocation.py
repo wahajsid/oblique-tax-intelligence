@@ -206,3 +206,38 @@ def test_diagnostic_requires_all_questions():
         diagnostic.run(diagnostic.DiagnosticInput(profile="business", answers={"deadline": "yes"}))
     assert client.post("/api/v1/diagnostic", json={"profile": "business", "answers": {"deadline": "yes"}}).status_code == 422
     assert client.post("/api/v1/enquiries", json={}).status_code == 410
+
+
+# ------------------------------------------------ owner review, 8 Nov 2026 ----
+def test_sbr_prior_period_revenue_condition():
+    from datetime import date
+    base = dict(accounting_profit=900_000, revenue=2_500_000, elect_small_business_relief=True, period_end=date(2027, 12, 31), scope_confirmed=True, special_regime="no")
+    # a previous period above AED 3m loses the relief permanently
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(**base, prior_periods_within_threshold="no"))
+    assert r.outputs["regime"] == "standard" and any(f.code == "sbr_not_available" and "previous tax period" in f.detail for f in r.flags)
+    # unknown: relief applied provisionally but the result needs review
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(**base, prior_periods_within_threshold="unknown"))
+    assert r.outputs["regime"] == "small_business_relief" and r.outcome == "REVIEW_REQUIRED"
+    assert any("every previous tax period" in x for x in r.review_reasons)
+    # confirmed: clean estimate
+    r = uae_ct.calculate(uae_ct.UAECorporateTaxInput(**base, prior_periods_within_threshold="yes"))
+    assert r.outputs["regime"] == "small_business_relief" and r.outcome == "ILLUSTRATIVE_ESTIMATE"
+
+
+def test_diagnostic_personal_profile_uses_personal_wording():
+    qs = diagnostic.questions("personal")
+    assert "corporate" not in qs["records"]["label"].lower() and "travel" in qs["records"]["label"].lower()
+    answers = {k: "yes" for k in qs}
+    d = diagnostic.run(diagnostic.DiagnosticInput(profile="personal", answers=answers))
+    text = " ".join(a["action"] for a in d["actions"]).lower()
+    assert "corporate tax" not in text and "trial balance" not in text and "qfzp" not in text
+    assert "einvoicing" not in [a["key"] for a in d["actions"]]
+    biz = diagnostic.run(diagnostic.DiagnosticInput(profile="business", answers={k: "yes" for k in diagnostic.questions("business")}))
+    ein = next(a for a in biz["actions"] if a["key"] == "einvoicing")
+    assert "1 January 2027" in ein["action"] and "1 July 2027" in ein["action"] and "AED 50m" in ein["action"]
+
+
+def test_footer_shows_app_and_rule_versions_separately():
+    html = client.get("/").text
+    assert "App v" in html and "Tax rules: AE 2026.2" in html
+    assert "P0</span>" not in html

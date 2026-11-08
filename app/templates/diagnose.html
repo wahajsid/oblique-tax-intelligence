@@ -40,7 +40,7 @@ const qbox = document.getElementById('questions');
 function renderQuestions() {
   const profile = document.getElementById('profile').value;
   qbox.innerHTML = Object.entries(Q).filter(([k, q]) => q.profiles.includes(profile)).map(([k, q], i) =>
-    `<div class="q"><label for="q_${k}">${i + 1}. ${escHtml(q.label)}</label><select id="q_${k}" name="${k}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`).join('');
+    `<div class="q"><label for="q_${k}">${i + 1}. ${escHtml(profile === 'personal' && q.label_personal ? q.label_personal : q.label)}</label><select id="q_${k}" name="${k}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`).join('');
 }
 document.getElementById('profile').addEventListener('change', renderQuestions); renderQuestions();
 initCalc({

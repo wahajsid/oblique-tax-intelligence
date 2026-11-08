@@ -34,7 +34,7 @@
     <div class="grid">
       {% for m in modules %}
       <div class="card">
-        <div><span class="pill {{ 'p0' if m.priority == 'P0' else '' }}">{{ m.priority }}</span> <span class="pill">{{ m.jur }}</span></div>
+        <div><span class="pill">{{ m.jur }}</span></div>
         <h3><a href="/{{ m.slug }}">{{ m.title }}</a></h3>
         <p class="muted" style="margin:0">{{ m.blurb }}</p>
         <span class="meta">For: {{ m.audience }}</span>

@@ -3,7 +3,7 @@
 {% block description %}Saudi Arabia withholding tax by payment category (5% to 20%), treaty rates and contractual gross-up. Links to the 15% KSA VAT calculator.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
-  <span class="eyebrow">Kingdom of Saudi Arabia · Withholding Tax · Ruleset {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
+  <span class="eyebrow">Kingdom of Saudi Arabia · Withholding Tax · Tax rules {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
   <h1>KSA Withholding Tax calculator</h1>
   <p>Withholding on payments from KSA to non-residents. Add each payment, choose its category and optionally a treaty rate. For the 15% VAT return use the <a href="/vat?j=SA">KSA VAT calculator</a>.</p>
 </div>
@@ -35,14 +35,14 @@ function addRow(cat='royalties', amount=100000) {
   rows.appendChild(d);
 }
 document.getElementById('add').onclick = () => { addRow('technical_consulting', 50000); document.getElementById('f').dispatchEvent(new Event('input')); };
-addRow('royalties', 100000); addRow('management_fees', 250000); addRow('dividends', 1000000);
+const sharedPayments = (() => { try { const h = location.hash.slice(1) || location.search.slice(1); const q = new URLSearchParams(h); return q.get('payments') ? JSON.parse(q.get('payments')) : null; } catch (e) { return null; } })();
+if (sharedPayments && sharedPayments.length) { sharedPayments.forEach(p => { addRow(p.category, p.amount); const r = rows.lastElementChild; if (p.treaty_rate !== null && p.treaty_rate !== undefined) r.querySelector('[data-k=treaty_rate]').value = (p.treaty_rate * 100); r.querySelector('[data-k=grossed_up]').checked = !!p.grossed_up; }); }
+else { addRow('royalties', 100000); addRow('management_fees', 250000); addRow('dividends', 1000000); }
+const readPayments = () => [...rows.querySelectorAll('.wht-row')].map(r => { const g = k => r.querySelector(`[data-k=${k}]`); const tr = g('treaty_rate').value; return { category: g('category').value, amount: Number(g('amount').value || 0), treaty_rate: tr === '' ? null : Number(tr) / 100, grossed_up: g('grossed_up').checked }; });
 initCalc({
   form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/ksa/withholding-tax',
-  body: (data) => ({ scope_confirmed: data.scope_confirmed, special_regime: data.special_regime, payments: [...rows.querySelectorAll('.wht-row')].map(r => {
-    const g = k => r.querySelector(`[data-k=${k}]`);
-    const tr = g('treaty_rate').value;
-    return { category: g('category').value, amount: Number(g('amount').value || 0), treaty_rate: tr === '' ? null : Number(tr) / 100, grossed_up: g('grossed_up').checked };
-  }) }),
+  toShared: (q) => q.set('payments', JSON.stringify(readPayments())),
+  body: (data) => ({ scope_confirmed: data.scope_confirmed, special_regime: data.special_regime, payments: readPayments() }),
   tiles: (o, c) => [
     ['Total withholding tax', fmtMoney(o.total_wht, c)], ['Total cost to payer', fmtMoney(o.total_cost_to_payer, c)],
     ...o.lines.map(l => [l.label + ' @ ' + fmtPct(l.applied_rate), fmtMoney(l.wht, c)])

@@ -3,7 +3,7 @@
 {% block description %}Calculate UAE Corporate Tax with a full reconciliation from accounting profit to taxable income: 0%/9% bands, Small Business Relief, Qualifying Free Zone Person test, loss relief, interest cap and DMTT screen.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
-  <span class="eyebrow">United Arab Emirates · Corporate Tax · Ruleset {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
+  <span class="eyebrow">United Arab Emirates · Corporate Tax · Tax rules {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
   <h1>UAE Corporate Tax calculator</h1>
   <p>Goes beyond multiplying profit by 9%. Enter accounting profit and the reconciling items that matter and get taxable income, tax payable, the regime that applies and the unresolved questions a professional would ask.</p>
 </div>
@@ -34,7 +34,9 @@
       </div>
     </details>
     <details class="adv" id="free-zone"><summary>Free Zone, Small Business Relief and group status</summary>
-      <label class="check"><input type="checkbox" name="elect_small_business_relief"> Elect Small Business Relief (revenue ≤ AED 3m)</label>
+      <label class="check"><input type="checkbox" name="elect_small_business_relief"> Elect Small Business Relief (revenue ≤ AED 3m, periods ending by 31 Dec 2029)</label>
+      <div class="field"><label>Was revenue AED 3m or less in every previous tax period? <span class="hint" title="The relief is lost permanently once any period exceeds AED 3,000,000">?</span></label>
+        <select name="prior_periods_within_threshold"><option value="unknown">Not sure / first period</option><option value="yes">Yes, always within AED 3m</option><option value="no">No, a previous period exceeded AED 3m</option></select></div>
       <label class="check"><input type="checkbox" name="is_free_zone_person"> Free Zone Person</label>
       <label class="check"><input type="checkbox" name="elect_qfzp"> Meets Qualifying Free Zone Person conditions</label>
       <div class="two">
