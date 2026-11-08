@@ -4,5 +4,7 @@ WORKDIR /srv
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
+COPY scripts/uvicorn-wrapper.sh /usr/local/bin/uvicorn
+RUN chmod +x /usr/local/bin/uvicorn
 EXPOSE 8000
 CMD ["python", "-m", "app"]
