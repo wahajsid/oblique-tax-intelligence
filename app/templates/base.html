@@ -6,6 +6,7 @@
 <title>{% block title %}{{ site.name }}{% endblock %} | {{ site.company }}</title>
 <meta name="description" content="{% block description %}GCC business tax calculators and a move-to-UAE comparison with a full working-paper trace: UAE Corporate Tax, VAT, KSA Zakat, withholding tax and cross-border comparison by Oblique Consult.{% endblock %}">
 {% if not site.indexable %}<meta name="robots" content="noindex,nofollow">{% endif %}
+<script>(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})();</script>
 <link rel="stylesheet" href="/static/css/fonts.css">
 <link rel="stylesheet" href="/static/css/site.css">
 <link rel="icon" href="/static/img/favicon.png" type="image/png">
@@ -33,6 +34,7 @@
       <a class="nav-link" href="/api">API</a>
       <a class="nav-link" href="{{ site.game_url }}/{{ site.game_utm }}">Tax Game</a>
       <a class="btn btn-primary btn-sm" href="{{ site.company_url }}" target="_blank" rel="noopener">Work With Oblique</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Light / dark">☾</button>
     </nav>
   </div>
 </header>
@@ -45,7 +47,7 @@
     <div>
       <img src="/static/img/logo-wordmark.svg" alt="{{ site.company }}" height="26" class="footer-logo">
       <p class="muted">Tax. Accounting. Advisory. UAE, Saudi Arabia and the GCC.</p>
-      <p class="muted small">App v{{ site.version }} · Tax rules: {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · No cookies, no tracking, nothing stored.</p>
+      <p class="muted small">App v{{ site.version }} · Tax rules: {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · No cookies, no tracking.</p>
     </div>
     <div>
       <h4>Calculators</h4>

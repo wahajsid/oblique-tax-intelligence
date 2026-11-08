@@ -276,7 +276,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const slot = document.getElementById('leaderboard-slot'); if (!slot) return;
   if (/(^|\.)obliqueconsult\.com$/.test(location.hostname)) {
-    const f = document.createElement('iframe'); f.src = slot.dataset.src; f.title = 'Monthly leaderboard'; f.loading = 'lazy'; f.width = '320'; f.height = '340'; f.style.border = '0'; f.style.background = 'transparent';
+    const f = document.createElement('iframe'); f.src = slot.dataset.src + (document.documentElement.getAttribute('data-theme') === 'light' ? '?theme=light' : ''); f.title = 'Monthly leaderboard'; f.loading = 'lazy'; f.width = '320'; f.height = '340'; f.style.border = '0'; f.style.background = 'transparent';
     slot.appendChild(f);
   } else {
     slot.innerHTML = `<a class="card" href="${slot.dataset.src.replace('/embed/leaderboard', '/?utm_source=tax-tools')}"><h3 style="margin:0">Monthly leaderboard</h3><p class="muted" style="margin:6px 0 0">Shown here once the tools run on tax.obliqueconsult.com. Open the game →</p></a>`;
@@ -310,5 +310,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const last = window._lastCalc || {};
     window.requestWorkingPaper({ calculator: last.calculator || 'tax_exposure_diagnostic', inputs: last.inputs || {}, interest: 'expert_review',
       service: b.dataset.service, serviceTitle: b.dataset.title, audience: b.dataset.audience, downloadName: last.downloadName });
+  });
+})();
+
+/* ---- Light / dark toggle (preference kept in this browser only) ---- */
+(function () {
+  const root = document.documentElement;
+  function apply(theme, persist) {
+    root.setAttribute('data-theme', theme);
+    const b = document.getElementById('theme-toggle');
+    if (b) { b.textContent = theme === 'light' ? '☀' : '☾'; b.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'); }
+    const f = document.querySelector('#leaderboard-slot iframe');
+    if (f) { const base = f.src.split('?')[0]; f.src = theme === 'light' ? base + '?theme=light' : base; }
+    if (persist) { try { localStorage.setItem('theme', theme); } catch (e) {} }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    apply(root.getAttribute('data-theme') || 'dark', false);
+    document.getElementById('theme-toggle')?.addEventListener('click', () => apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light', true));
+    try { window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => { if (!localStorage.getItem('theme')) apply(e.matches ? 'light' : 'dark', false); }); } catch (e) {}
   });
 })();
