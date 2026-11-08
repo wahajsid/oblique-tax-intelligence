@@ -230,8 +230,6 @@ class CalculationResult:
 
 
 DISCLAIMER = (
-    "This is a desktop estimate: a quick, simplified calculation from the figures you entered and the "
-    "versioned rules listed, produced by a deterministic rules engine. It is not tax advice and must not be "
-    "relied on for filing, provisioning or structuring. For precise figures based on your circumstances, "
-    "get in touch with Oblique Consult. Your inputs are not stored."
+    "A desktop estimate from your inputs and the rules shown. Not advice. "
+    "For your numbers, talk to Oblique Consult. Your inputs are not stored."
 )

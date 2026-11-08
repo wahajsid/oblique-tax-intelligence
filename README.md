@@ -93,7 +93,7 @@ Each rule in `app/rules/*.json` looks like this. The engine reads `parameters`; 
 }
 ```
 
-Review statuses: `verified` (primary or Big-4 source), `verified_secondary` (consistent advisory sources),
+Review statuses: `verified` (legal text checked; Oblique's interpretation where needed, in line with the prevailing practitioner view), `verified_secondary` (consistent practitioner sources),
 `pending_verification` (reported, unconfirmed, or sources conflict), `draft_law` (not in force).
 The results badge shows the *worst* status among the rules a calculation used.
 

@@ -7,7 +7,7 @@
 <div class="wrap page-head">
   <span class="eyebrow">Move to the UAE · {{ c.flag }} {{ c.name }} → 🇦🇪 UAE · {{ c.tax_year }}</span>
   <h1>Moving from {{ c.name }} to the UAE: what changes in your take-home pay</h1>
-  <p>A desktop comparison of your current income tax and mandatory contributions in {{ c.name }} against the UAE's 0% personal income tax, with your relocation costs and the residence questions you must settle before the saving is real. Perspective first, precision from Oblique.</p>
+  <p>Your tax at home today against 0% in the UAE. Your costs, your exchange rate, and the residence questions to settle before the saving is real.</p>
   <div class="origin-grid" aria-label="Choose origin country">
     {% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae" {% if code == selected %}aria-current="true"{% endif %}>{{ o.flag }} {{ o.name }}</a>{% endfor %}
   </div>
@@ -57,19 +57,18 @@
       <button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button>
       <button class="btn btn-ghost" id="btn-print" type="button">Print</button>
       <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
-      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Plan the move with Oblique</a>
+      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Plan it with Oblique</a>
     </div>
-    <p class="desk-note"><b>Desktop calculator.</b> This is a quick, simplified estimate. Residence, exit taxes, split-year rules, benefits and your real UAE package all change the answer. For precise figures, get in touch with Oblique Consult.</p>
     <p class="small muted" id="disclaimer"></p>
   </section>
 </div>
 <section class="wrap section" style="padding-top:0">
-  <h2>What you need to settle before the saving is real</h2>
+  <h2>Settle these first</h2>
   <div class="grid">
     {% for f in c.relocation_flags %}<div class="card"><p style="margin:0">{{ f }}</p></div>{% endfor %}
-    <div class="card"><h3>UAE side</h3><p class="muted" style="margin:0">0% personal income tax, no social security for expatriates, 5% VAT, employer health cover and end-of-service gratuity. Tax residency certificates are available after 183 days (or 90 days with a home and ties). Corporate tax may apply to a business you bring with you.</p><a href="/uae/corporate-tax">UAE Corporate Tax calculator →</a></div>
+    <div class="card"><h3>On the UAE side</h3><p class="muted" style="margin:0">0% income tax. No social security for expatriates. 5% VAT. A tax residency certificate after 183 days, or 90 with a home and ties. A business you bring may owe Corporate Tax.</p><a href="/uae/corporate-tax">UAE Corporate Tax →</a></div>
   </div>
-  <p class="small muted" style="margin-top:14px">Other origins: {% for code, o in origins.items() if code != selected %}<a href="/move/{{ code|lower }}-to-uae">{{ o.name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}. Want another country added? <a href="{{ site.contact_url }}" target="_blank" rel="noopener">Tell us</a>.</p>
+  <p class="small muted" style="margin-top:14px">Also from {% for code, o in origins.items() if code != selected %}<a href="/move/{{ code|lower }}-to-uae">{{ o.name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}. Another country? <a href="{{ site.contact_url }}" target="_blank" rel="noopener">Ask</a>.</p>
 </section>
 {% endblock %}
 {% block scripts %}

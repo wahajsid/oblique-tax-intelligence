@@ -1,13 +1,13 @@
 {% extends "base.html" %}{% block title %}Methodology, data sources and review status{% endblock %}
 {% block content %}
-<div class="wrap page-head"><span class="eyebrow">Methodology</span><h1>How the engine calculates, and how sure we are</h1><p>Every figure in every calculator comes from a versioned rule with an effective date, a source reference and a review status. The engine is deterministic: the same inputs always give the same output and the same trace.</p></div>
+<div class="wrap page-head"><span class="eyebrow">Methodology</span><h1>How we calculate, and how sure we are</h1><p>Every figure comes from a versioned rule with a date, a source and a review status. Same inputs, same answer, same trace, every time.</p></div>
 <section class="wrap narrow prose" style="padding-bottom:50px">
   <h2>Review statuses</h2>
   <table>
-    <tr><td><span class="status-dot verified"></span><b>Verified</b></td><td>Confirmed against the primary legal text or a Big-4 jurisdiction summary during the review dated below.</td></tr>
-    <tr><td><span class="status-dot verified_secondary"></span><b>Verified (secondary)</b></td><td>Consistent across several advisory-firm sources; primary text not yet checked line by line.</td></tr>
-    <tr><td><span class="status-dot pending_verification"></span><b>Pending verification</b></td><td>Reported in credible sources but unconfirmed, or sources conflict. Treat as provisional.</td></tr>
-    <tr><td><span class="status-dot draft_law"></span><b>Draft law</b></td><td>Announced or in the legislative process; not in force.</td></tr>
+    <tr><td><span class="status-dot verified"></span><b>Verified</b></td><td>Checked against the legal text. Where the law needs interpreting, we state Oblique's reading, which is in line with the prevailing view among practitioners.</td></tr>
+    <tr><td><span class="status-dot verified_secondary"></span><b>Verified (secondary)</b></td><td>Consistent across the main practitioner sources; the legal text has not yet been checked line by line.</td></tr>
+    <tr><td><span class="status-dot pending_verification"></span><b>Pending verification</b></td><td>Reported but not yet confirmed, or sources disagree. Provisional.</td></tr>
+    <tr><td><span class="status-dot draft_law"></span><b>Draft law</b></td><td>Announced or in draft. Not in force.</td></tr>
   </table>
   <h2>Simplifications you should know about</h2>
   <ul>
@@ -32,6 +32,6 @@
   <table><tr><th>Country</th><th>Tax year</th><th>Status</th><th>Note / source</th></tr>
   {% for cc, c in personal.countries.items() %}<tr><td>{{ c.flag }} {{ c.name }}{% if not c.enabled %} <span class="pill">disabled</span>{% endif %}</td><td class="small">{{ c.tax_year }}</td><td><span class="status-dot {{ c.review_status }}"></span>{{ c.review_status | replace('_',' ') }}</td><td class="small">{% if c.verification_note %}<em>{{ c.verification_note }}</em><br>{% endif %}<a href="{{ c.source_url }}" target="_blank" rel="noopener">{{ c.source_reference }}</a></td></tr>{% endfor %}</table>
   <h2>Governance</h2>
-  <p>Rules are stored as JSON under version control. A change to any rate, threshold or date bumps the ruleset version and records the reviewer. Results keep the ruleset version so a calculation can be reproduced later. AI is used only to explain results, never to produce rates or liabilities.</p>
+  <p>Rules live in version control. Any change to a rate, threshold or date bumps the ruleset version and names the reviewer. Every result records the version it used, so it can be reproduced. AI never produces a rate or a liability here; it only explains.</p>
 </section>
 {% endblock %}

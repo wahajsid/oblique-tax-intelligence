@@ -147,7 +147,7 @@ def create_lead(body: leads.LeadInput, request: Request) -> dict:
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail="We could not record your enquiry right now. Please email info@obliqueconsult.com.") from exc
     return {"status": "received", "lead_id": record["id"], "pdf_token": leads.pdf_token(record["id"]), "delivery": delivery,
-            "message": f"Thank you, {record['name'].split(' ')[0]}. Oblique Consult will be in touch at {record['email']}."}
+            "message": f"Thanks, {record['name'].split(' ')[0]}. We will be in touch at {record['email']}."}
 
 
 class PdfRequest(BaseModel):

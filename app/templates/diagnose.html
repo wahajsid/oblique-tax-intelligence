@@ -4,17 +4,17 @@
 {% block content %}
 <div class="wrap page-head">
   <span class="eyebrow">Free diagnostic</span>
-  <h1>Where is your tax exposure? Ten questions, one action list.</h1>
-  <p>Answer yes, no or not sure. Deadlines take priority. You get the full checklist on screen with no email gate; it is not a risk score and not a tax opinion.</p>
+  <h1>Where is your tax exposure?</h1>
+  <p>Ten questions. One ordered list of what to do next, deadlines first. Nothing to sign up for.</p>
 </div>
-<div class="wrap calc">
-  <form class="panel" id="f" autocomplete="off">
-    <fieldset>
-      <legend>Your focus</legend>
-      <div class="field"><label>Profile</label><select name="profile" id="profile"><option value="business">Business / founder / finance team</option><option value="personal">Personal / expatriate</option></select></div>
-    </fieldset>
-    <div id="questions"></div>
-    <div class="form-actions"><button class="btn btn-dark" type="submit">Build my checklist</button></div>
+<div class="wrap diag-layout">
+  <form class="panel diag-form" id="f" autocomplete="off">
+    <div class="diag-top">
+      <div class="field"><label for="profile">I am answering as</label><select name="profile" id="profile"><option value="business">A business</option><option value="personal">An individual</option></select></div>
+      <p class="small muted">Yes, no or not sure. Not sure is a fine answer.</p>
+    </div>
+    <div id="questions" class="q-grid"></div>
+    <div class="form-actions"><button class="btn btn-dark" type="submit">Show my action list</button></div>
     <div class="error" id="form-error"></div>
   </form>
   <section class="results" id="results" hidden aria-live="polite" tabindex="-1" aria-label="Checklist">
@@ -26,9 +26,8 @@
       <button class="btn btn-ghost" id="btn-copy" type="button">Copy JSON</button>
       <button class="btn btn-ghost" id="btn-download" type="button">Download</button>
       <button class="btn btn-ghost" id="btn-print" type="button">Print</button>
-      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Book a review with Oblique</a>
+      <a class="btn btn-primary" href="{{ site.contact_url }}" target="_blank" rel="noopener">Talk to Oblique</a>
     </div>
-    <p class="desk-note"><b>Desktop checklist.</b> Built from your answers only. For a review of your actual position, get in touch with Oblique Consult.</p>
     <p class="small muted" id="disclaimer"></p>
   </section>
 </div>
@@ -39,8 +38,12 @@ const Q = {{ questions | tojson }};
 const qbox = document.getElementById('questions');
 function renderQuestions() {
   const profile = document.getElementById('profile').value;
-  qbox.innerHTML = Object.entries(Q).filter(([k, q]) => q.profiles.includes(profile)).map(([k, q], i) =>
-    `<div class="q"><label for="q_${k}">${i + 1}. ${escHtml(profile === 'personal' && q.label_personal ? q.label_personal : q.label)}</label><select id="q_${k}" name="${k}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`).join('');
+  qbox.innerHTML = Q.filter(q => q.profiles.includes(profile)).map((q, i) => {
+    const label = profile === 'personal' && q.label_personal ? q.label_personal : q.label;
+    const help = profile === 'personal' && q.help_personal ? q.help_personal : (q.help || '');
+    return `<div class="q"><div class="q-text"><label for="q_${q.key}"><span class="q-n">${i + 1}</span>${escHtml(label)}</label>${help ? `<p class="q-help">${escHtml(help)}</p>` : ''}</div>
+      <select id="q_${q.key}" name="${q.key}"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>`;
+  }).join('');
 }
 document.getElementById('profile').addEventListener('change', renderQuestions); renderQuestions();
 initCalc({

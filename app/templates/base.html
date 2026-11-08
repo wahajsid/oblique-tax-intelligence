@@ -35,7 +35,7 @@
     </nav>
   </div>
 </header>
-<noscript><p class="noscript">JavaScript is needed for the interactive calculators. Nothing is submitted or stored. You can still read the guides, methodology and rules.</p></noscript>
+<noscript><p class="noscript">The calculators need JavaScript. The guides and methodology work without it.</p></noscript>
 <main id="main" tabindex="-1">
 {% block content %}{% endblock %}
 </main>
@@ -43,8 +43,8 @@
   <div class="wrap footer-grid">
     <div>
       <img src="/static/img/logo-wordmark.svg" alt="{{ site.company }}" height="26" class="footer-logo">
-      <p class="muted">Independent tax, accounting and advisory for businesses in the UAE, Saudi Arabia and the wider GCC.</p>
-      <p class="muted small">App v{{ site.version }} · Tax rules: {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · Deterministic rules engine · No cookies, no tracking, no third-party scripts; calculator inputs are not stored.</p>
+      <p class="muted">Tax. Accounting. Advisory. UAE, Saudi Arabia and the GCC.</p>
+      <p class="muted small">App v{{ site.version }} · Tax rules: {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · No cookies, no tracking, nothing stored.</p>
     </div>
     <div>
       <h4>Calculators</h4>
@@ -62,11 +62,11 @@
     <div>
       <h4>Oblique Consult</h4>
       <a href="{{ site.company_url }}" target="_blank" rel="noopener">obliqueconsult.com</a>
-      <a href="{{ site.contact_url }}" target="_blank" rel="noopener">Get in touch for precise figures</a>
+      <a href="{{ site.contact_url }}" target="_blank" rel="noopener">Talk to us</a>
     </div>
   </div>
   <div class="wrap legal">
-    <p class="small muted">Desktop estimates, not tax advice. For precise figures based on your circumstances, get in touch with {{ site.company }}. &copy; {{ site.company }}.</p>
+    <p class="small muted">Desktop estimates, not advice. For your numbers, talk to {{ site.company }}. &copy; {{ site.company }}.</p>
   </div>
 </footer>
 {% include "_lead_form.html" %}

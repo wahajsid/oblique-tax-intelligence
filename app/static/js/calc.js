@@ -7,7 +7,7 @@
     : (cur ? cur + ' ' : '') + Number(n).toLocaleString('en', { minimumFractionDigits: dec ?? (Number.isInteger(n) ? 0 : 2), maximumFractionDigits: dec ?? 2 });
   const pct = (x) => (x === null || x === undefined) ? '—' : (x * 100).toFixed(2) + '%';
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const labels = { verified: 'Verified', verified_secondary: 'Verified (secondary sources)', pending_verification: 'Pending verification', draft_law: 'Includes draft law' };
+  const labels = { verified: 'Verified', verified_secondary: 'Verified against practitioner sources', pending_verification: 'Pending verification', draft_law: 'Includes draft law' };
 
   function serialise(form) {
     const data = {};
@@ -30,16 +30,16 @@
     const badge = document.getElementById('status-badge');
     badge.className = 'badge ' + res.review_status;
     badge.textContent = 'Rules: ' + (labels[res.review_status] || res.review_status);
-    badge.title = 'Review status of the tax rules used (worst of the rules applied). Independent of whether YOUR facts fit: see the outcome label.';
+    badge.title = 'How well the rules used are confirmed. Separate from whether your facts fit; see the outcome label.';
 
     const banner = document.getElementById('review-banner');
     if (banner) {
       banner.hidden = !review;
-      banner.innerHTML = review ? `<b>Review required before relying on this figure.</b><ul>${(res.review_reasons || []).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
-        <span class="small">The figure below is shown greyed out so you can see the order of magnitude. Confirm the scope in the form, or <a href="${esc(cfg.contactUrl || '#')}" target="_blank" rel="noopener">ask Oblique to confirm it for you</a>.</span>` : '';
+      banner.innerHTML = review ? `<b>Review required.</b><ul>${(res.review_reasons || []).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+        <span class="small">The figure is greyed so you still see the scale. Confirm the scope in the form, or <a href="${esc(cfg.contactUrl || '#')}" target="_blank" rel="noopener">ask Oblique</a>.</span>` : '';
     }
     const outcome = document.getElementById('outcome-label');
-    if (outcome) { outcome.textContent = review ? 'Outcome: review required' : 'Outcome: illustrative estimate'; outcome.title = review ? 'Your facts have not been confirmed to fit the calculator scope, or a condition is unconfirmed.' : 'Scope confirmed; still a desktop estimate, not advice.'; }
+    if (outcome) { outcome.textContent = review ? 'Outcome: review required' : 'Outcome: illustrative estimate'; outcome.title = review ? 'Your facts are not yet confirmed to fit this calculator.' : 'Scope confirmed. Still an estimate, not advice.'; }
 
     const tiles = cfg.tiles(res.outputs, cur, dec).filter(Boolean);
     document.getElementById('tiles').innerHTML = tiles.map((t, i) =>
@@ -184,12 +184,12 @@
     lastFocus = document.activeElement; m.hidden = false; document.body.style.overflow = 'hidden';
     $('consent-contact-text').textContent = config.consent_text.contact;
     $('consent-marketing-text').textContent = config.consent_text.marketing;
-    $('lead-privacy').textContent = `Controller: ${config.controller}. ${config.retention} Your calculation inputs travel with the enquiry so the adviser can see the context. Full details on the privacy page.`;
+    $('lead-privacy').textContent = `${config.controller}. ${config.retention} Your inputs go with the enquiry so the adviser has context. Details on the privacy page.`;
     $('lead-error').textContent = ''; $('lead-success').hidden = true; $('lead-form').hidden = false;
     const personalDefault = ['move_to_uae', 'personal_income_tax'].includes(pending.calculator) || (pending.calculator === 'tax_exposure_diagnostic' && (pending.inputs || {}).profile === 'personal');
     const radio = document.querySelector(`#lead-form input[name=profile][value=${personalDefault ? 'personal' : 'business'}]`); if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change', { bubbles: true })); }
-    $('lead-title').textContent = pending.interest === 'expert_review' ? 'Ask Oblique for precise figures' : 'Get the PDF working paper';
-    $('lead-submit').textContent = pending.interest === 'expert_review' ? 'Send my enquiry and working paper' : 'Send me the working paper';
+    $('lead-title').textContent = pending.interest === 'expert_review' ? 'Talk to Oblique about this' : 'Your working paper, as a PDF';
+    $('lead-submit').textContent = pending.interest === 'expert_review' ? 'Send' : 'Send my working paper';
     setTimeout(() => $('lead-name').focus(), 50);
   }
   function closeModal() {
@@ -227,7 +227,7 @@
         const j = await r.json();
         if (!r.ok) { err.textContent = typeof j.detail === 'string' ? j.detail : (j.detail || []).map(d => `${d.field}: ${d.message}`).join('; '); return; }
         await fetchPdf(pending, j.pdf_token);
-        form.hidden = true; const ok = $('lead-success'); ok.hidden = false; ok.textContent = (j.message || 'Thank you.') + ' Your working paper is downloading.';
+        form.hidden = true; const ok = $('lead-success'); ok.hidden = false; ok.textContent = (j.message || 'Thank you.') + ' Your PDF is downloading.';
         setTimeout(closeModal, 4000);
       } catch (ex) { err.textContent = ex.message || 'Something went wrong. Nothing was saved.'; }
       finally { btn.disabled = false; btn.textContent = label; form.removeAttribute('aria-busy'); }

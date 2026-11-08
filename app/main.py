@@ -85,21 +85,21 @@ SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagli
 
 MODULES = [
     {"slug": "uae/corporate-tax", "title": "UAE Corporate Tax", "audience": "CFO, finance manager, business owner",
-     "blurb": "Reconcile accounting profit to taxable income, apply Small Business Relief, Free Zone and loss rules, screen for DMTT.", "priority": "P0", "jur": "AE"},
+     "blurb": "From accounting profit to tax due. Reliefs, Free Zone status, losses, Pillar Two screen.", "priority": "P0", "jur": "AE"},
     {"slug": "vat?j=AE", "title": "UAE VAT", "audience": "Finance, tax, operations",
-     "blurb": "Add or extract 5% VAT, prepare a period return with reverse charge and partial exemption, check registration.", "priority": "P0", "jur": "AE"},
+     "blurb": "Add it, strip it, or run a full return with reverse charge and partial exemption.", "priority": "P0", "jur": "AE"},
     {"slug": "ksa/zakat-income-tax", "title": "KSA Zakat & Income Tax", "audience": "CFO, tax director",
-     "blurb": "Zakat base under the 2024 Regulations with mixed-ownership split between zakat and 20% income tax.", "priority": "P0", "jur": "SA"},
+     "blurb": "The zakat base under the 2024 Regulations, split between zakat and 20% income tax by ownership.", "priority": "P0", "jur": "SA"},
     {"slug": "ksa/withholding-tax", "title": "KSA VAT & Withholding Tax", "audience": "Tax, procurement, treasury",
-     "blurb": "Withholding on payments abroad by category, with treaty rates and gross-up; 15% VAT return.", "priority": "P0", "jur": "SA"},
+     "blurb": "Withholding on payments abroad, by category, with treaty rates and gross-up.", "priority": "P0", "jur": "SA"},
     {"slug": "gcc/compare", "title": "GCC Tax Comparison", "audience": "Regional CFO, MNC",
-     "blurb": "Model one operation across UAE, KSA, Bahrain, Oman, Qatar and Kuwait, with scope and DMTT shown separately.", "priority": "P0", "jur": "GCC"},
+     "blurb": "One operation, six countries. Scope and Pillar Two shown separately, not blended.", "priority": "P0", "jur": "GCC"},
     {"slug": "move", "title": "Move to the UAE", "audience": "Founders, executives, expatriates",
-     "blurb": "Compare your current income tax in the UK, US, India, Singapore, Hong Kong, Australia, Germany or South Africa with the UAE's 0%.", "priority": "P0", "jur": "Relocation"},
+     "blurb": "Your tax at home against the UAE. Eight countries to move from.", "priority": "P0", "jur": "Relocation"},
     {"slug": "diagnose", "title": "Tax Exposure Diagnostic", "audience": "Anyone unsure where to start",
-     "blurb": "Ten yes/no questions become a prioritised action list. Deadlines first. No contact details needed.", "priority": "P0", "jur": "GCC"},
+     "blurb": "Ten questions. One ordered action list.", "priority": "P0", "jur": "GCC"},
     {"slug": "uae/corporate-tax#free-zone", "title": "UAE Free Zone Eligibility", "audience": "Tax director, business owner",
-     "blurb": "De minimis test and QFZP outcome inside the Corporate Tax calculator.", "priority": "P1", "jur": "AE"},
+     "blurb": "The de minimis test, inside the Corporate Tax calculator.", "priority": "P1", "jur": "AE"},
 ]
 
 
@@ -176,7 +176,7 @@ def page_personal(request: Request, code: str):
 
 @app.get("/diagnose", response_class=HTMLResponse)
 def page_diagnose(request: Request):
-    return page(request, "diagnose.html", questions=diagnostic.QUESTIONS)
+    return page(request, "diagnose.html", questions=diagnostic.question_list())
 
 
 @app.get("/guides", response_class=HTMLResponse)

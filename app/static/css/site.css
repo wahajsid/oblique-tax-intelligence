@@ -208,10 +208,18 @@ form[aria-busy=true]{opacity:.7;pointer-events:none}
 @media(max-width:700px){.versus{grid-template-columns:1fr}.versus .mid{display:none}}
 
 /* Diagnostic */
-.q{border-bottom:1px solid var(--line);padding:12px 0;display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:center}
-.q label{font-size:.95rem;color:var(--ink)}
-.q select{padding:9px 11px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:#0b0d12;color:var(--ink);font:inherit}
-@media(max-width:600px){.q{grid-template-columns:1fr}}
+.diag-layout{padding:24px 0 64px;display:grid;gap:24px}
+.diag-form{position:static;max-width:none}
+.diag-top{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin-bottom:6px}
+.diag-top .field{min-width:260px;margin:0}
+.q-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:10px 0 6px}
+.q{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:1fr 128px;gap:14px;align-items:center;background:rgba(255,255,255,.02)}
+.q label{font-size:1rem;color:var(--ink);line-height:1.35;display:block}
+.q-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(173,235,242,.14);color:var(--accent);font-size:.75rem;font-weight:700;margin-right:8px;vertical-align:middle}
+.q-help{margin:6px 0 0;font-size:.82rem;color:var(--muted);line-height:1.45}
+.q select{padding:9px 11px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:#0b0d12;color:var(--ink);font:inherit;width:100%}
+@media(max-width:900px){.q-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.q{grid-template-columns:1fr}}
 .priority{display:inline-block;font-family:var(--font-label);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(247,210,104,.12);color:#f7d268;border:1px solid rgba(247,210,104,.4);margin-bottom:10px}
 .priority.now{background:rgba(255,138,122,.12);color:#ff8a7a;border-color:rgba(255,138,122,.4)}
 .priority.ok{background:rgba(151,242,100,.1);color:#97f264;border-color:rgba(151,242,100,.4)}

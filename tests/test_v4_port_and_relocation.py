@@ -226,7 +226,8 @@ def test_sbr_prior_period_revenue_condition():
 
 def test_diagnostic_personal_profile_uses_personal_wording():
     qs = diagnostic.questions("personal")
-    assert "corporate" not in qs["records"]["label"].lower() and "travel" in qs["records"]["label"].lower()
+    rec = (qs["records"]["label"] + " " + qs["records"]["help"]).lower()
+    assert "corporate" not in rec and "travel" in rec
     answers = {k: "yes" for k in qs}
     d = diagnostic.run(diagnostic.DiagnosticInput(profile="personal", answers=answers))
     text = " ".join(a["action"] for a in d["actions"]).lower()

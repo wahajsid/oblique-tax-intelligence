@@ -5,7 +5,7 @@
 <div class="wrap page-head">
   <span class="eyebrow">{{ rules.name }} · VAT · Tax rules {{ rules.ruleset_version }} · Reviewed {{ rules.last_reviewed }} by Oblique Consult tax team</span>
   <h1>{{ 'UAE' if jur == 'AE' else 'KSA' }} VAT calculator</h1>
-  <p>Standard rate {{ (rules.rules.vat.standard_rate.parameters.standard_rate * 100) | int }}%. Switch jurisdiction: <a href="/vat?j=AE">UAE</a> · <a href="/vat?j=SA">Saudi Arabia</a>.</p>
+  <p>Standard rate {{ (rules.rules.vat.standard_rate.parameters.standard_rate * 100) | int }}%. Add it, strip it, or run the period return. <a href="/vat?j=AE">UAE</a> · <a href="/vat?j=SA">Saudi Arabia</a></p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">

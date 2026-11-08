@@ -8,8 +8,8 @@ Nothing in this repository is expert-approved. The site ships with `noindex` and
 |---|---|---|
 | `draft_law` | Announced or in the legislative process; not in force | Anyone, with the source |
 | `pending_verification` | Reported in credible sources but unconfirmed, or sources conflict | Anyone, with a `verification_note` |
-| `verified_secondary` | Consistent across several advisory-firm sources; primary text not checked line by line | Reviewer, with sources |
-| `verified` | Confirmed against the primary legal text or a Big-4 jurisdiction summary | Named qualified reviewer only, with date and source URL |
+| `verified_secondary` | Consistent across the main practitioner sources; legal text not yet checked line by line | Reviewer, with sources |
+| `verified` | Checked against the legal text; where interpretation is needed, Oblique's reading, in line with the prevailing practitioner view | Named qualified reviewer only, with date and source URL |
 
 The results badge shows the worst status among the rules a calculation used. `enabled: false` on a personal-tax country hides it from visitors.
 
