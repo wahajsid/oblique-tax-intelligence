@@ -225,3 +225,46 @@ def test_gcc_compare_dmtt_top_up():
     ae = next(r for r in c["rows"] if r["code"] == "AE")
     band = 375_000 / 3.6725
     assert ae["dmtt_top_up"] == pytest.approx(1_500_000 - (10_000_000 - band) * 0.09, abs=0.01)
+
+
+# ------------------------------------------------ zakat: Articles 27 and 28 (MR 1007 text) ----
+def test_zakat_article_28_maximum_caps_base_at_equity_plus_difference():
+    # sources 1,000,000 + LTL 5,000,000 + profit 500,000 = 6,500,000; deductions 1,000,000 -> 5,500,000
+    # equity derived 1,000,000 + 0 + 0 + 500,000 = 1,500,000; diff 0 -> ceiling 1,500,000; hijri 2.5% -> 37,500
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, long_term_liabilities=5_000_000,
+                                                     book_net_profit=500_000, net_fixed_assets=1_000_000))
+    assert r.outputs["maximum_base"] == 1_500_000.0 and r.outputs["maximum_base_applied"] is True
+    assert r.outputs["zakat_base"] == 1_500_000.0 and r.outputs["zakat_due"] == 37_500.0
+    assert any(f.code == "zakat_maximum_base" for f in r.flags) and "sa.zakat.max_base" in r.rules_used
+    # entering balance-sheet equity overrides the derivation: equity 2,200,000 -> ceiling 2,200,000 -> 55,000
+    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, long_term_liabilities=5_000_000,
+                                                      book_net_profit=500_000, net_fixed_assets=1_000_000, equity_year_end=2_200_000))
+    assert r2.outputs["zakat_base"] == 2_200_000.0 and r2.outputs["zakat_due"] == 55_000.0 and r2.outputs["equity_derived"] is False
+
+
+def test_zakat_article_27_minimum_uses_lower_of_alternative_base_and_adjusted_profit():
+    # sources 2,000,000 - 1,500,000 + adjusted 500,000 = 1,000,000; deductions 900,000 -> 100,000 < adjusted 500,000
+    # equity 2,000,000 - 1,500,000 + 300,000 = 800,000; diff 200,000 -> ceiling 1,000,000 (not binding)
+    # total assets 1,100,000: undeducted 200,000 + diff 200,000 = 400,000 < 500,000 -> base 400,000 -> hijri 10,000
+    base = dict(year_basis="hijri", share_capital=2_000_000, retained_earnings_opening=-1_500_000, book_net_profit=300_000,
+                non_deductible_expenses=200_000, net_fixed_assets=900_000)
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base, total_assets=1_100_000))
+    assert r.outputs["article_27_alternative_base"] == 400_000.0 and r.outputs["zakat_base"] == 400_000.0 and r.outputs["zakat_due"] == 10_000.0
+    assert r.outputs["minimum_base_applied"] is True and r.outputs["maximum_base_applied"] is False
+    # with more undeducted assets the alternative exceeds adjusted profit, so adjusted profit is the floor: 500,000 -> 12,500
+    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base, total_assets=1_500_000))
+    assert r2.outputs["article_27_alternative_base"] == 800_000.0 and r2.outputs["zakat_base"] == 500_000.0 and r2.outputs["zakat_due"] == 12_500.0
+    # without total assets the calculator takes adjusted profit (the higher outcome) and says so
+    r3 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base))
+    assert r3.outputs["zakat_base"] == 500_000.0 and any("enter total assets" in f.detail for f in r3.flags if f.code == "zakat_minimum_base")
+
+
+def test_zakat_article_27_negative_base_without_profit_gives_no_base():
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=100_000, retained_earnings_opening=-400_000, book_net_profit=-50_000))
+    assert r.outputs["zakat_base"] == 0.0 and r.outputs["zakat_due"] == 0.0 and r.outputs["minimum_base_applied"] is False
+
+
+def test_zakat_result_stays_review_required_until_sign_off():
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(share_capital=4_000_000, book_net_profit=100_000, scope_confirmed=True, special_regime="no"))
+    assert ksa_zakat.ARTICLES_27_28_SIGNED_OFF is False
+    assert r.outcome == "REVIEW_REQUIRED" and any(f.code == "zakat_art27_28_signoff" for f in r.flags)

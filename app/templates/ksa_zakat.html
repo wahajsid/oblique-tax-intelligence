@@ -41,6 +41,12 @@
       </div>
       <div class="field"><label>{{ t("Other deductible assets") }}</label><input type="number" name="other_deductible_assets" value="0" min="0" step="any"></div>
     </fieldset>
+    <details class="adv"><summary>{{ t("Articles 27 and 28: balance-sheet figures (optional)") }}</summary>
+      <div class="two">
+        <div class="field"><label>{{ t("Equity and equivalents at year end") }} <span class="hint" title="{{ t("Per the statement of financial position, including profits declared but unpaid, partners' loans treated as equity and provisions treated as equity. Left blank, it is derived from the figures above.") }}">?</span></label><input type="number" name="equity_year_end" value="" data-nullable="1" step="any" placeholder="{{ t('derived') }}"></div>
+        <div class="field"><label>{{ t("Total assets at year end") }} <span class="hint" title="{{ t("Needed only when the base falls below adjusted net profit: Article 27 compares adjusted net profit with undeducted assets plus the adjustment difference.") }}">?</span></label><input type="number" name="total_assets" value="" data-nullable="1" min="0" step="any" placeholder="{{ t('optional') }}"></div>
+      </div>
+    </details>
     <details class="adv"><summary>{{ t("Income tax (non-Saudi share)") }}</summary>
       <div class="field"><label>{{ t("Brought-forward tax losses") }}</label><input type="number" name="brought_forward_tax_losses" value="0" min="0" step="any"></div>
     </details>
@@ -60,6 +66,7 @@ initCalc({
     ['Zakat due', fmtMoney(o.zakat_due, c)], ['Income tax due', fmtMoney(o.income_tax_due, c)],
     ['Adjusted net profit', fmtMoney(o.adjusted_net_profit, c)],
     o.effective_rate_on_book_profit !== null ? ['Effective rate on book profit', fmtPct(o.effective_rate_on_book_profit)] : null,
+    o.maximum_base_applied ? ['Article 28 ceiling', fmtMoney(o.maximum_base, c)] : null,
   ]
 });
 </script>

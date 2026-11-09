@@ -110,10 +110,23 @@ An outside review (text-only crawl, no JavaScript) was received after the day's 
 
 | Finding | Status |
 |---|---|
-| Zakat Article 28 warning could disappear once scope was confirmed | Fixed: permanent flag and review reason; outcome stays review-required until `ARTICLE_28_IMPLEMENTED` is flipped after technical sign-off |
+| Zakat Article 28 warning could disappear once scope was confirmed | Fixed: permanent flag and review reason; outcome stays review-required until `ARTICLES_27_28_SIGNED_OFF` is flipped after technical sign-off |
 | WHT 7.5% shown as 8% in the working paper | Fixed: rates keep their decimals in trace labels, formulas and the PDF |
 | "Free call" went to the nine-field contact form, defaulted to Transfer Pricing, lost context | Fixed: with no destination configured it goes to Calendly with UTMs naming the calculator and service; with a destination the contextual dialog opens |
 | Personal diagnostic recommended a UAE–Saudi transaction review | Fixed: recommendations filtered by audience; personal profile maps to residency and relocation services |
 | ECB FX feed | Added (`app/fx.py`); verified with a fixture of the ECB XML; falls back to the dated table when offline, and says so |
 | Turnstile | Added behind two environment variables; verified the gate rejects without a token and calls siteverify with one |
+
+## Zakat Articles 27 and 28, 9 November 2026
+
+Implemented from the English text of the Implementing Regulations for Zakat Collection 1445H (MR 1007 as amended by MR 1248), downloaded from zatca.gov.sa. Hand-worked cases, each checked twice:
+
+| Case | Working | Result |
+|---|---|---|
+| Article 28 cap | Sources 1,000,000 capital + 5,000,000 non-current liabilities + 500,000 profit = 6,500,000; less 1,000,000 fixed assets = 5,500,000. Equity 1,500,000; adjusted − book = 0; ceiling 1,500,000. Base capped at 1,500,000; Hijri 2.5% = 37,500 | match |
+| Article 27 alternative base | Sources 2,000,000 − 1,500,000 losses + 500,000 adjusted = 1,000,000; less 900,000 = 100,000, below adjusted 500,000. Total assets 1,100,000 − 900,000 = 200,000 undeducted + 200,000 difference = 400,000 < 500,000 → base 400,000; 2.5% = 10,000 | match |
+| Article 27 with larger assets | Same, total assets 1,500,000: alternative 800,000 > adjusted 500,000 → base 500,000; 2.5% = 12,500 | match |
+| Article 27(3) | Capital 100,000, losses 400,000, loss 50,000: base negative, no adjusted profit → no base | match |
+
+Open for the reviewer: whether derived equity (capital + opening retained earnings + reserves and provisions + book profit) is an acceptable default when the visitor leaves the balance-sheet figure blank; the treatment of dividends paid during the year; Article 25 proportional placement of current liabilities (not modelled).
 

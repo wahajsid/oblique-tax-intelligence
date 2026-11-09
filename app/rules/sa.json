@@ -2,8 +2,8 @@
   "jurisdiction": "SA",
   "name": "Kingdom of Saudi Arabia",
   "currency": "SAR",
-  "ruleset_version": "2026.1",
-  "last_reviewed": "2026-11-07",
+  "ruleset_version": "2026.2",
+  "last_reviewed": "2026-11-09",
   "rules": {
     "zakat": {
       "rate": {
@@ -23,16 +23,16 @@
       },
       "base": {
         "rule_id": "sa.zakat.base",
-        "description": "Zakat base = sources of funds (equity, retained earnings, provisions and reserves, long-term and other non-current liabilities, adjusted net profit for the year) less deductions for assets not subject to zakat (net fixed assets, long-term investments, capital work in progress, intangible assets and other deductible items). Minimum base: the base cannot be lower than adjusted net profit. Alternative bases with upper and lower limits apply under Articles 27 and 28.",
+        "description": "Zakat base = added items (equity and equivalents, provisions treated as equity, non-current liabilities under Article 29, and the difference between adjusted and book net profit) less deducted items under Article 26 (investments, net fixed assets, intangibles, materials not for sale, statutory deposits, deferred tax assets). Subject to the Article 27 minimum and the Article 28 maximum.",
         "effective_from": "2024-01-01",
         "effective_to": null,
         "review_status": "verified_secondary",
-        "verification_note": "Structure confirmed via EY, KPMG and Andersen summaries of MR 1007 (Articles 23 to 28). The exact upper-limit formula under Article 28 was not confirmed from the regulation text and is NOT applied by this engine.",
-        "source_reference": "Ministerial Resolution No. 1007 (29 Feb 2024), Articles 23 to 28; amended by MR 947 (2025) and MR 1248",
-        "source_url": "https://www.ey.com/en_gl/technical/tax-alerts/saudi-arabia-issues-new-executive-regulations-for-zakat-collecti",
+        "verification_note": "Structure read from ZATCA's English text of the Implementing Regulations for Zakat Collection 1445H (MR 1007 as amended by MR 1248), Articles 21 to 29. Article 25 proportional placement of current liabilities is not applied. Awaiting sign-off by the Oblique tax team against worked cases.",
+        "source_reference": "Implementing Regulations for Zakat Collection 1445H (MR 1007 dated 19/08/1445H, amended by MR 1248 dated 11/10/1446H), Articles 21, 23, 24, 26, 29",
+        "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
         "parameters": {
           "minimum_base_is_adjusted_net_profit": true,
-          "upper_limit_applied": false
+          "upper_limit_applied": true
         }
       },
       "mixed_ownership": {
@@ -43,6 +43,28 @@
         "review_status": "verified",
         "source_reference": "Income Tax Law (Royal Decree M/1 of 1425H), Art. 2; Zakat Regulations",
         "source_url": "https://www2.deloitte.com/content/dam/Deloitte/global/Documents/Tax/dttl-tax-saudiarabiahighlights-2024.pdf",
+        "parameters": {}
+      },
+      "min_base": {
+        "rule_id": "sa.zakat.min_base",
+        "description": "Article 27: if the zakat base falls below adjusted net profit, the base becomes the lower of (a) undeducted assets plus the difference between adjusted and book net profit and (b) adjusted net profit. A negative base with no adjusted net profit gives no base; a positive base with no adjusted net profit stands.",
+        "effective_from": "2024-01-01",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "Read from the regulation text (Article 27 paragraphs 1 to 4). Awaiting technical sign-off.",
+        "source_reference": "Implementing Regulations for Zakat Collection 1445H, Article 27",
+        "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
+        "parameters": {}
+      },
+      "max_base": {
+        "rule_id": "sa.zakat.max_base",
+        "description": "Article 28: the zakat base cannot exceed equity and equivalents per the year-end statement of financial position plus the difference between adjusted and book net profit (or loss). Equity includes items reclassified to equity: profits declared but undistributed (Article 36), partners' loans treated as equity (Article 30) and provisions treated as equity (Article 24).",
+        "effective_from": "2024-01-01",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "Read from the regulation text (Article 28 paragraphs 1 and 2). Awaiting technical sign-off.",
+        "source_reference": "Implementing Regulations for Zakat Collection 1445H, Article 28",
+        "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
         "parameters": {}
       }
     },
@@ -175,6 +197,12 @@
   },
   "reviewed_by": "Oblique Consult tax team",
   "changelog": [
+    {
+      "date": "2026-11-09",
+      "version": "2026.2",
+      "summary": "Zakat base now applies the Article 28 maximum (equity and equivalents at year end plus the adjusted-less-book profit difference) and the full Article 27 minimum (lower of undeducted assets plus that difference, and adjusted net profit), read from ZATCA's English text of the Implementing Regulations for Zakat Collection 1445H. Two optional inputs added: year-end equity and total assets. Awaiting sign-off by the Oblique tax team.",
+      "source": "ZATCA, Implementing Regulations for Zakat Collection 1445H (MR 1007 as amended by MR 1248), Articles 27 and 28"
+    },
     {
       "date": "2026-11-07",
       "version": "2026.1",
