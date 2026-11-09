@@ -229,17 +229,79 @@ def test_gcc_compare_dmtt_top_up():
 
 # ------------------------------------------------ zakat: Articles 27 and 28 (MR 1007 text) ----
 def test_zakat_article_28_maximum_caps_base_at_equity_plus_difference():
-    # sources 1,000,000 + LTL 5,000,000 + profit 500,000 = 6,500,000; deductions 1,000,000 -> 5,500,000
-    # equity derived 1,000,000 + 0 + 0 + 500,000 = 1,500,000; diff 0 -> ceiling 1,500,000; hijri 2.5% -> 37,500
+    # Dividends of 1,500,000 were paid in the year, so year-end equity is 2,000,000 although the components entered sum to 3,500,000.
+    # sources 1,000,000 + 2,000,000 + 500,000 = 3,500,000; no deductions; ceiling = equity 2,000,000 + (500,000 - 500,000) = 2,000,000
+    # base capped at 2,000,000; hijri 2.5% -> 50,000
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, retained_earnings_opening=2_000_000,
+                                                     book_net_profit=500_000, equity_year_end=2_000_000))
+    assert r.outputs["maximum_base"] == 2_000_000.0 and r.outputs["maximum_base_applied"] is True
+    assert r.outputs["zakat_base"] == 2_000_000.0 and r.outputs["zakat_due"] == 50_000.0 and r.outputs["equity_derived"] is False
+    assert any(f.code == "zakat_maximum_base" for f in r.flags) and "sa.zakat.max_base" in r.rules_used
+    # the adjusted-less-book difference lifts the ceiling: non-deductible 100,000 -> ceiling 2,100,000 -> 52,500
+    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, retained_earnings_opening=2_000_000,
+                                                      book_net_profit=500_000, non_deductible_expenses=100_000, equity_year_end=2_000_000))
+    assert r2.outputs["maximum_base"] == 2_100_000.0 and r2.outputs["zakat_due"] == 52_500.0
+
+
+def test_zakat_liabilities_limited_to_assets_deducted_article_23_2():
+    # NCL 5,000,000 but only 1,000,000 of assets deducted -> liabilities added 1,000,000
+    # sources 1,000,000 + 500,000 + 1,000,000 = 2,500,000; less 1,000,000 = 1,500,000; ceiling 1,500,000 (not exceeded); 2.5% -> 37,500
     r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, long_term_liabilities=5_000_000,
                                                      book_net_profit=500_000, net_fixed_assets=1_000_000))
-    assert r.outputs["maximum_base"] == 1_500_000.0 and r.outputs["maximum_base_applied"] is True
-    assert r.outputs["zakat_base"] == 1_500_000.0 and r.outputs["zakat_due"] == 37_500.0
-    assert any(f.code == "zakat_maximum_base" for f in r.flags) and "sa.zakat.max_base" in r.rules_used
-    # entering balance-sheet equity overrides the derivation: equity 2,200,000 -> ceiling 2,200,000 -> 55,000
-    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=1_000_000, long_term_liabilities=5_000_000,
-                                                      book_net_profit=500_000, net_fixed_assets=1_000_000, equity_year_end=2_200_000))
-    assert r2.outputs["zakat_base"] == 2_200_000.0 and r2.outputs["zakat_due"] == 55_000.0 and r2.outputs["equity_derived"] is False
+    assert r.outputs["liabilities_added"] == 1_000_000.0 and r.outputs["liabilities_capped_at_deductions"] is True
+    assert r.outputs["zakat_base"] == 1_500_000.0 and r.outputs["zakat_due"] == 37_500.0 and r.outputs["maximum_base_applied"] is False
+    assert "sa.zakat.liabilities" in r.rules_used
+
+
+def test_zakat_article_25_2_excludes_liabilities_financing_undeducted_non_current_assets():
+    # total NCA 8,000,000, deducted 6,000,000 -> undeducted 2,000,000; excluded = 2/8 x 4,000,000 = 1,000,000; added 3,000,000
+    # sources 5,000,000 + 1,000,000 + 3,000,000 = 9,000,000; less 6,000,000 = 3,000,000; 2.5% -> 75,000
+    base = dict(year_basis="hijri", share_capital=5_000_000, book_net_profit=1_000_000, long_term_liabilities=4_000_000, net_fixed_assets=6_000_000)
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base, total_non_current_assets=8_000_000))
+    assert r.outputs["non_current_liabilities_excluded"] == 1_000_000.0 and r.outputs["liabilities_added"] == 3_000_000.0
+    assert r.outputs["zakat_base"] == 3_000_000.0 and r.outputs["zakat_due"] == 75_000.0
+    # without total non-current assets the full 4,000,000 is added -> base 4,000,000 -> 100,000, with a flag
+    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base))
+    assert r2.outputs["zakat_base"] == 4_000_000.0 and r2.outputs["zakat_due"] == 100_000.0
+    assert any(f.code == "zakat_art25_ncl_untested" for f in r2.flags)
+    # the exclusion can never exceed the undeducted asset: total NCA 6,100,000 -> undeducted 100,000; ratio gives 65,573.77 (< 100,000)
+    r3 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base, total_non_current_assets=6_100_000))
+    assert r3.outputs["non_current_liabilities_excluded"] == 65_573.77
+
+
+def test_zakat_article_25_3_adds_current_liabilities_in_proportion():
+    # deducted current assets 1,200,000 of 6,000,000 -> 20% x current liabilities 3,000,000 = 600,000 (< 1,200,000)
+    # sources 2,000,000 + 500,000 + 600,000 = 3,100,000; deductions 1,000,000 + 1,200,000 = 2,200,000; base 900,000; 2.5% -> 22,500
+    base = dict(year_basis="hijri", share_capital=2_000_000, book_net_profit=500_000, current_liabilities=3_000_000,
+                deducted_current_assets=1_200_000, net_fixed_assets=1_000_000)
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base, total_current_assets=6_000_000))
+    assert r.outputs["current_liabilities_added"] == 600_000.0 and r.outputs["total_deductions"] == 2_200_000.0
+    assert r.outputs["zakat_base"] == 900_000.0 and r.outputs["zakat_due"] == 22_500.0
+    # without total current assets: upper bound = lower of 3,000,000 and 1,200,000 = 1,200,000 -> base 1,500,000 -> 37,500, flagged
+    r2 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(**base))
+    assert r2.outputs["current_liabilities_added"] == 1_200_000.0 and r2.outputs["zakat_due"] == 37_500.0
+    assert any(f.code == "zakat_art25_cl_upper_bound" for f in r2.flags)
+    # no current asset deducted -> no current liabilities added at all
+    r3 = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=2_000_000, book_net_profit=500_000,
+                                                      current_liabilities=3_000_000, total_current_assets=6_000_000, net_fixed_assets=1_000_000))
+    assert r3.outputs["current_liabilities_added"] == 0.0 and r3.outputs["zakat_base"] == 1_500_000.0
+
+
+def test_zakat_article_29_2_b_adds_excess_of_current_liabilities_over_current_assets():
+    # current liabilities 2,000,000 against current assets 1,500,000 -> 500,000 added (within deductions 3,000,000)
+    # sources 4,000,000 + 500,000 = 4,500,000; less 3,000,000 = 1,500,000; ceiling 4,000,000; 2.5% -> 37,500
+    r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(year_basis="hijri", share_capital=4_000_000, current_liabilities=2_000_000,
+                                                     total_current_assets=1_500_000, net_fixed_assets=3_000_000))
+    assert r.outputs["current_liabilities_added"] == 500_000.0 and r.outputs["zakat_base"] == 1_500_000.0 and r.outputs["zakat_due"] == 37_500.0
+    assert any(f.code == "zakat_cl_exceeds_ca" for f in r.flags)
+
+
+def test_zakat_rejects_inconsistent_balance_sheet():
+    import pytest
+    with pytest.raises(ValueError):
+        ksa_zakat.KSAZakatInput(net_fixed_assets=6_000_000, total_non_current_assets=5_000_000)
+    with pytest.raises(ValueError):
+        ksa_zakat.KSAZakatInput(deducted_current_assets=2_000_000, total_current_assets=1_000_000)
 
 
 def test_zakat_article_27_minimum_uses_lower_of_alternative_base_and_adjusted_profit():
@@ -266,5 +328,5 @@ def test_zakat_article_27_negative_base_without_profit_gives_no_base():
 
 def test_zakat_result_stays_review_required_until_sign_off():
     r = ksa_zakat.calculate(ksa_zakat.KSAZakatInput(share_capital=4_000_000, book_net_profit=100_000, scope_confirmed=True, special_regime="no"))
-    assert ksa_zakat.ARTICLES_27_28_SIGNED_OFF is False
-    assert r.outcome == "REVIEW_REQUIRED" and any(f.code == "zakat_art27_28_signoff" for f in r.flags)
+    assert ksa_zakat.ZAKAT_BASE_SIGNED_OFF is False
+    assert r.outcome == "REVIEW_REQUIRED" and any(f.code == "zakat_base_signoff" for f in r.flags)

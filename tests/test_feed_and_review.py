@@ -53,8 +53,8 @@ def test_zakat_article_28_warning_is_mandatory():
     inp = ksa_zakat.KSAZakatInput(book_net_profit=Decimal(1_000_000), share_capital=Decimal(5_000_000), scope_confirmed=True, special_regime="no")
     r = ksa_zakat.calculate(inp).as_dict()
     assert r["outcome"] == "REVIEW_REQUIRED"
-    assert any(f["code"] == "zakat_art27_28_signoff" for f in r["flags"])
-    assert any("Article 27 and 28" in x for x in r["review_reasons"])
+    assert any(f["code"] == "zakat_base_signoff" for f in r["flags"])
+    assert any("Articles 25, 27 and 28" in x for x in r["review_reasons"])
     assert r["confidence"]["fit"]["confirmed"] is False
 
 

@@ -2,7 +2,7 @@
   "jurisdiction": "SA",
   "name": "Kingdom of Saudi Arabia",
   "currency": "SAR",
-  "ruleset_version": "2026.2",
+  "ruleset_version": "2026.3",
   "last_reviewed": "2026-11-09",
   "rules": {
     "zakat": {
@@ -23,11 +23,11 @@
       },
       "base": {
         "rule_id": "sa.zakat.base",
-        "description": "Zakat base = added items (equity and equivalents, provisions treated as equity, non-current liabilities under Article 29, and the difference between adjusted and book net profit) less deducted items under Article 26 (investments, net fixed assets, intangibles, materials not for sale, statutory deposits, deferred tax assets). Subject to the Article 27 minimum and the Article 28 maximum.",
+        "description": "Zakat base = added items (equity and equivalents, provisions treated as equity, liabilities placed under Articles 25 and 29 within the limit of assets deducted, and the difference between adjusted and book net profit) less deducted items under Article 26 (investments, net fixed assets, intangibles, materials not for sale, statutory deposits, deferred tax assets). Subject to the Article 27 minimum and the Article 28 maximum.",
         "effective_from": "2024-01-01",
         "effective_to": null,
         "review_status": "verified_secondary",
-        "verification_note": "Structure read from ZATCA's English text of the Implementing Regulations for Zakat Collection 1445H (MR 1007 as amended by MR 1248), Articles 21 to 29. Article 25 proportional placement of current liabilities is not applied. Awaiting sign-off by the Oblique tax team against worked cases.",
+        "verification_note": "Structure read from ZATCA's English text of the Implementing Regulations for Zakat Collection 1445H (MR 1007 as amended by MR 1248), Articles 20 to 29. Awaiting sign-off by the Oblique tax team against worked cases.",
         "source_reference": "Implementing Regulations for Zakat Collection 1445H (MR 1007 dated 19/08/1445H, amended by MR 1248 dated 11/10/1446H), Articles 21, 23, 24, 26, 29",
         "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
         "parameters": {
@@ -64,6 +64,17 @@
         "review_status": "verified_secondary",
         "verification_note": "Read from the regulation text (Article 28 paragraphs 1 and 2). Awaiting technical sign-off.",
         "source_reference": "Implementing Regulations for Zakat Collection 1445H, Article 28",
+        "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
+        "parameters": {}
+      },
+      "liabilities": {
+        "rule_id": "sa.zakat.liabilities",
+        "description": "Liabilities are added to the zakat base only within the limits of the assets deducted (Article 23(2)). Non-current liabilities are added less the share that financed non-current assets not deducted: (undeducted non-current assets ÷ total non-current assets) × non-current liabilities, capped at the undeducted assets (Article 25(2)). Current liabilities are added in the ratio of deducted current assets to total current assets, capped at the deducted current assets (Article 25(3)), plus any excess of current liabilities over current assets (Article 29(2)(b)). Total liabilities added cannot exceed total deductions (Article 25(4)).",
+        "effective_from": "2024-01-01",
+        "effective_to": null,
+        "review_status": "verified_secondary",
+        "verification_note": "Read from the regulation text (Articles 20, 23(2), 25 and 29). Current liabilities equivalent to non-current under Article 29(2)(c) are not modelled. Awaiting technical sign-off.",
+        "source_reference": "Implementing Regulations for Zakat Collection 1445H, Articles 20, 23(2), 25 and 29",
         "source_url": "https://zatca.gov.sa/en/RulesRegulations/Documents/ZAKAT%20COLLECTION.pdf",
         "parameters": {}
       }
@@ -197,6 +208,12 @@
   },
   "reviewed_by": "Oblique Consult tax team",
   "changelog": [
+    {
+      "date": "2026-11-09",
+      "version": "2026.3",
+      "summary": "Liabilities are now placed under Articles 23(2), 25 and 29: non-current liabilities net of the share financing undeducted non-current assets; current liabilities in proportion to deducted current assets, plus any excess over current assets; and total liabilities added limited to total assets deducted. Four optional inputs added (current liabilities, total and deducted current assets, total non-current assets). Awaiting sign-off by the Oblique tax team.",
+      "source": "ZATCA, Implementing Regulations for Zakat Collection 1445H, Articles 20, 23(2), 25 and 29"
+    },
     {
       "date": "2026-11-09",
       "version": "2026.2",

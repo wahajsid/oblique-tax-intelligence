@@ -41,6 +41,15 @@
       </div>
       <div class="field"><label>{{ t("Other deductible assets") }}</label><input type="number" name="other_deductible_assets" value="0" min="0" step="any"></div>
     </fieldset>
+    <details class="adv"><summary>{{ t("Article 25: liabilities and current assets (optional)") }}</summary>
+      <p class="small muted">{{ t("Liabilities count only up to the assets you deduct. These figures let the calculator place them in proportion.") }}</p>
+      <div class="two">
+        <div class="field"><label>{{ t("Total non-current assets") }} <span class="hint" title="{{ t("Used to remove the share of long-term liabilities that financed non-current assets you did not deduct.") }}">?</span></label><input type="number" name="total_non_current_assets" value="" data-nullable="1" min="0" step="any" placeholder="{{ t('optional') }}"></div>
+        <div class="field"><label>{{ t("Current liabilities") }}</label><input type="number" name="current_liabilities" value="0" min="0" step="any"></div>
+        <div class="field"><label>{{ t("Total current assets") }}</label><input type="number" name="total_current_assets" value="" data-nullable="1" min="0" step="any" placeholder="{{ t('optional') }}"></div>
+        <div class="field"><label>{{ t("Deductible current assets") }} <span class="hint" title="{{ t("For example raw materials that are not part of the final product, or delayed government dues that meet the conditions.") }}">?</span></label><input type="number" name="deducted_current_assets" value="0" min="0" step="any"></div>
+      </div>
+    </details>
     <details class="adv"><summary>{{ t("Articles 27 and 28: balance-sheet figures (optional)") }}</summary>
       <div class="two">
         <div class="field"><label>{{ t("Equity and equivalents at year end") }} <span class="hint" title="{{ t("Per the statement of financial position, including profits declared but unpaid, partners' loans treated as equity and provisions treated as equity. Left blank, it is derived from the figures above.") }}">?</span></label><input type="number" name="equity_year_end" value="" data-nullable="1" step="any" placeholder="{{ t('derived') }}"></div>

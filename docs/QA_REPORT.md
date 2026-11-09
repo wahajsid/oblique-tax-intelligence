@@ -110,7 +110,7 @@ An outside review (text-only crawl, no JavaScript) was received after the day's 
 
 | Finding | Status |
 |---|---|
-| Zakat Article 28 warning could disappear once scope was confirmed | Fixed: permanent flag and review reason; outcome stays review-required until `ARTICLES_27_28_SIGNED_OFF` is flipped after technical sign-off |
+| Zakat Article 28 warning could disappear once scope was confirmed | Fixed: permanent flag and review reason; outcome stays review-required until `ZAKAT_BASE_SIGNED_OFF` is flipped after technical sign-off |
 | WHT 7.5% shown as 8% in the working paper | Fixed: rates keep their decimals in trace labels, formulas and the PDF |
 | "Free call" went to the nine-field contact form, defaulted to Transfer Pricing, lost context | Fixed: with no destination configured it goes to Calendly with UTMs naming the calculator and service; with a destination the contextual dialog opens |
 | Personal diagnostic recommended a UAE–Saudi transaction review | Fixed: recommendations filtered by audience; personal profile maps to residency and relocation services |
@@ -123,10 +123,22 @@ Implemented from the English text of the Implementing Regulations for Zakat Coll
 
 | Case | Working | Result |
 |---|---|---|
-| Article 28 cap | Sources 1,000,000 capital + 5,000,000 non-current liabilities + 500,000 profit = 6,500,000; less 1,000,000 fixed assets = 5,500,000. Equity 1,500,000; adjusted − book = 0; ceiling 1,500,000. Base capped at 1,500,000; Hijri 2.5% = 37,500 | match |
+| Article 28 cap | Capital 1,000,000 + opening retained earnings 2,000,000 + profit 500,000 = 3,500,000; dividends paid in the year leave balance-sheet equity at 2,000,000; ceiling 2,000,000. Base capped at 2,000,000; Hijri 2.5% = 50,000 | match |
 | Article 27 alternative base | Sources 2,000,000 − 1,500,000 losses + 500,000 adjusted = 1,000,000; less 900,000 = 100,000, below adjusted 500,000. Total assets 1,100,000 − 900,000 = 200,000 undeducted + 200,000 difference = 400,000 < 500,000 → base 400,000; 2.5% = 10,000 | match |
 | Article 27 with larger assets | Same, total assets 1,500,000: alternative 800,000 > adjusted 500,000 → base 500,000; 2.5% = 12,500 | match |
 | Article 27(3) | Capital 100,000, losses 400,000, loss 50,000: base negative, no adjusted profit → no base | match |
 
 Open for the reviewer: whether derived equity (capital + opening retained earnings + reserves and provisions + book profit) is an acceptable default when the visitor leaves the balance-sheet figure blank; the treatment of dividends paid during the year; Article 25 proportional placement of current liabilities (not modelled).
+
+## Zakat Articles 23(2), 25 and 29 (liabilities), 9 November 2026
+
+| Case | Working | Result |
+|---|---|---|
+| Article 23(2) limit | Non-current liabilities 5,000,000; assets deducted 1,000,000 → liabilities added 1,000,000. Sources 1,000,000 + 500,000 + 1,000,000 = 2,500,000; less 1,000,000 = 1,500,000; 2.5% = 37,500 | match |
+| Article 25(2) | Total non-current assets 8,000,000, deducted 6,000,000, undeducted 2,000,000. Excluded = 2/8 × 4,000,000 = 1,000,000; added 3,000,000. Sources 5,000,000 + 1,000,000 + 3,000,000 = 9,000,000; less 6,000,000 = 3,000,000; 2.5% = 75,000 | match |
+| Article 25(2) cap | Total non-current assets 6,100,000 → undeducted 100,000; 100,000/6,100,000 × 4,000,000 = 65,573.77, below the 100,000 cap | match |
+| Article 25(3) | Deducted current assets 1,200,000 of 6,000,000 = 20% × current liabilities 3,000,000 = 600,000. Sources 2,000,000 + 500,000 + 600,000 = 3,100,000; deductions 2,200,000; base 900,000; 2.5% = 22,500 | match |
+| Article 29(2)(b) | Current liabilities 2,000,000 − current assets 1,500,000 = 500,000 added. Sources 4,500,000; less 3,000,000 = 1,500,000; 2.5% = 37,500 | match |
+
+Further questions for the reviewer: whether the Article 29(2)(b) excess stacks with the Article 25(3) proportion (the calculator adds both, capped at total current liabilities and at assets deducted); and Article 29(2)(c), current liabilities that are in substance non-current, which is not modelled.
 
