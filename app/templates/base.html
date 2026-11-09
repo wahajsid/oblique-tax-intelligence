@@ -21,7 +21,7 @@
 <link rel="icon" href="/static/img/favicon.png" type="image/png">
 {% block head %}{% endblock %}
 </head>
-<body data-contact="{{ site.contact_url }}" data-booking="{{ site.booking_url }}"{% if site.turnstile_site_key %} data-turnstile="{{ site.turnstile_site_key }}"{% endif %}>
+<body data-contact="{{ site.contact_url }}" data-booking="{{ site.booking_url }}"{% if site.whatsapp %} data-whatsapp="{{ site.whatsapp }}"{% endif %}{% if site.turnstile_site_key %} data-turnstile="{{ site.turnstile_site_key }}"{% endif %}>
 <a class="skip" href="#main">{{ t("Skip to content") }}</a>
 <header class="topbar">
   <div class="wrap">
@@ -57,6 +57,7 @@
       <a href="/changes">{{ t("What changed") }}</a>
       <a href="{{ site.game_url }}/{{ site.game_utm }}">{{ t("Tax Game") }}</a>
       <a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=menu" target="_blank" rel="noopener">{{ t("Book a free 30-minute call") }}</a>
+      {% if site.whatsapp %}<a class="btn btn-wa wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}
       <a class="mm-site" href="{{ site.company_url }}" target="_blank" rel="noopener">obliqueconsult.com →</a>
     </div>
   </div>
@@ -70,7 +71,7 @@
     <div>
       <img src="/static/img/logo-wordmark.svg" alt="{{ site.company }}" height="26" class="footer-logo">
       <p class="muted">{{ t("Tax. Accounting. Advisory. UAE, Saudi Arabia and the GCC.") }}</p>
-      <p class="muted small">{{ t("App v") }}{{ site.version }} · {{ t("Tax rules:") }} {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · {{ t("No cookies, no tracking.") }}</p>
+      <p class="muted small">{{ t("App v") }}{{ site.version }} · {{ t("Tax rules:") }} {% for k, v in site.rules_versions.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} · {{ t("No cookies, no tracking of people.") }}</p>
     </div>
     <div>
       <h4>{{ t("Calculators") }}</h4>
@@ -90,7 +91,8 @@
       <h4>{{ t("Oblique Consult") }}</h4>
       <a href="{{ site.company_url }}" target="_blank" rel="noopener">obliqueconsult.com</a>
       <a href="{{ site.game_url }}/{{ site.game_utm }}">{{ t("UAE Tax Game") }}</a>
-      <a href="{{ site.contact_url }}" target="_blank" rel="noopener">{{ t("Talk to us") }}</a>
+      <a href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=footer" target="_blank" rel="noopener">{{ t("Book a free 30-minute call") }}</a>
+      {% if site.whatsapp %}<a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener">{{ t("WhatsApp us") }}</a>{% endif %}
     </div>
   </div>
   <div class="wrap legal">

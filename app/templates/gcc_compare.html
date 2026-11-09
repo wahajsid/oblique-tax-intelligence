@@ -6,15 +6,23 @@
   <span class="eyebrow">GCC · Cross-border comparison</span>
   <h1>GCC tax comparison engine</h1>
   <p>One operation, six countries. Tax, scope, VAT and Pillar Two kept apart, because a single score would hide what matters.</p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
+    <div class="presets" role="group" aria-label="Examples"><span class="presets-label">Try an example</span>
+      <button type="button" class="chip" data-preset="usd1m" data-values='{"currency": "USD", "taxable_profit": 1000000, "revenue": 8000000, "foreign_ownership_pct": 100}'>USD 1m profit, foreign-owned</button>
+      <button type="button" class="chip" data-preset="saudi" data-values='{"currency": "AED", "taxable_profit": 20000000, "revenue": 150000000, "foreign_ownership_pct": 0}'>Gulf-owned group, AED 20m</button>
+      <button type="button" class="chip" data-preset="licensing" data-values='{"currency": "USD", "taxable_profit": 2000000, "revenue": 15000000, "annual_royalties_paid_abroad": 500000, "annual_management_fees_paid_abroad": 300000}'>Royalties and fees abroad</button>
+    </div>
     <fieldset><legend>Scenario</legend>
       <div class="field"><label>Currency of the figures below <span class="hint" title="AED thresholds such as the UAE 375,000 band are converted at the indicative FX table (USD and SAR are pegged)">?</span></label>
         <select name="currency"><option value="USD" selected>USD</option><option value="AED">AED</option><option value="SAR">SAR</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></div>
       <div class="field"><label>Profit for the year</label><input type="number" name="taxable_profit" value="2000000" min="0" step="any"></div>
       <div class="field"><label>Revenue</label><input type="number" name="revenue" value="15000000" min="0" step="any"></div>
+    </fieldset>
+    <details class="refine" id="refine"><summary><span>Refine</span> <span class="refine-sub">ownership, payments abroad, group size</span></summary>
+    <fieldset><legend>Ownership</legend>
       <div class="field"><label>Non-GCC ownership %</label><input type="number" name="foreign_ownership_pct" value="100" min="0" max="100"></div>
     </fieldset>
     <fieldset><legend>Outbound payments per year</legend>
@@ -28,6 +36,7 @@
       <label class="check"><input type="checkbox" name="is_mne_constituent"> Part of a multinational group</label>
       <div class="field"><label>Group consolidated revenue (EUR)</label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="any"></div>
     </fieldset>
+    </details>
     <div class="form-actions"><button class="btn btn-dark" type="submit">Compare</button></div>
     <div class="error" id="form-error"></div>
   </form>
@@ -48,7 +57,8 @@
       <tr><td>Personal income tax</td>{% for c, p in profiles.jurisdictions.items() %}<td><span class="status-dot {{ p.personal_income_tax.review_status }}"></span>{{ p.personal_income_tax.note }}</td>{% endfor %}</tr>
       <tr><td>CIT filing deadline</td>{% for c, p in profiles.jurisdictions.items() %}<td>{{ p.cit_filing_deadline }}</td>{% endfor %}</tr>
     </tbody></table></div>
-    <div class="cta-row"><button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button><a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=gcc_compare" target="_blank" rel="noopener">Ask Oblique to model your structure</a></div>
+    <div class="cta-row"><button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button><a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=gcc_compare" target="_blank" rel="noopener">Ask Oblique to model your structure</a>
+      {% if site.whatsapp %}<a class="btn btn-wa wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp") }}</a>{% endif %}</div>
   </section>
 </div>
 {% endblock %}
@@ -66,9 +76,11 @@
       <td>${x.vat_implemented? (x.vat_rate*100).toFixed(0)+'%':'None'}</td><td class="small muted">${x.cit_scope}${x.flags.length? '<br><em>'+x.flags.map(f=>f.title).join('; ')+'</em>':''}</td></tr>`).join('');
     document.getElementById('caveat').textContent = j.caveat;
     window._gccLast = { calculator: 'gcc_compare', inputs: ser() };
+    if (user && !tracked) { tracked = true; window.track('calc_run', { calculator: 'gcc_compare' }); }
   }
   document.getElementById('btn-pdf').addEventListener('click', () => window.requestWorkingPaper({ calculator: 'gcc_compare', inputs: ser(), downloadName: 'oblique-gcc-comparison' }));
-  let t; form.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(run,300)}); form.addEventListener('submit',e=>{e.preventDefault();run()}); run();
+  let t, user = false, tracked = false; form.addEventListener('input',(e)=>{ if (e.isTrusted || e.detail === 'preset') user = true; clearTimeout(t);t=setTimeout(run,300)});
+  form.addEventListener('submit',e=>{e.preventDefault(); user = true; run().then(() => { if (window.innerWidth < 960) document.getElementById('cmp').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }); run();
 })();
 </script>
 {% endblock %}

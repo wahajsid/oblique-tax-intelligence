@@ -80,3 +80,7 @@ Method: a headless-browser crawl of all 85 pages on desktop and a 390 px phone, 
 - India rules are verified against practitioner sources, not the Finance Act text.
 - The API has no keys or limits and is unpromoted.
 - Pakistan is listed but disabled.
+
+## Update, later on 9 November 2026
+
+Done from the lists above: forms now lead with two or three inputs under a "Refine" section; one-tap examples; phones scroll to the result; the cookieless counter; WhatsApp beside every booking link; the proof strip under the hero; a named lead beside the confidence panel; and the deep-link map for Framer in docs/FRAMER_LINKS.md. Twenty-five further browser checks pass.

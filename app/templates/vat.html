@@ -6,11 +6,16 @@
   <span class="eyebrow">{{ t(rules.name) }} · {{ t("VAT") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
   <h1>{{ t('UAE VAT calculator') if jur == 'AE' else t('KSA VAT calculator') }}</h1>
   <p>Standard rate {{ (rules.rules.vat.standard_rate.parameters.standard_rate * 100) | int }}%. Add it, strip it, or run the period return. <a href="/vat?j=AE">{{ t("UAE") }}</a> · <a href="/vat?j=SA">{{ t("Saudi Arabia") }}</a></p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
     <input type="hidden" name="jurisdiction" value="{{ jur }}">
+    <div class="presets" role="group" aria-label="Examples"><span class="presets-label">{{ t("Try an example") }}</span>
+      <button type="button" class="chip" data-preset="add" data-values='{"mode": "add_vat", "amount": 100000}'>{{ t("Add VAT to 100,000") }}</button>
+      <button type="button" class="chip" data-preset="extract" data-values='{"mode": "extract_vat", "amount": 105000}'>{{ t("Take VAT out of a gross price") }}</button>
+      <button type="button" class="chip" data-preset="return" data-values='{"mode": "return", "standard_rated_sales": 2000000, "zero_rated_sales": 300000, "standard_rated_purchases": 1200000, "reverse_charge_imports": 100000}'>{{ t("Quarterly return") }}</button>
+    </div>
     <fieldset>
       <legend>{{ t("What do you need?") }}</legend>
       <div class="field"><label>{{ t("Mode") }}</label>
@@ -46,7 +51,7 @@
 <script>
 const modeSel = document.getElementById('mode');
 const sync = () => { const r = modeSel.value === 'return'; document.getElementById('ret').hidden = !r; document.getElementById('simple').hidden = r; };
-modeSel.addEventListener('change', sync); sync();
+modeSel.addEventListener('change', sync); document.getElementById('f').addEventListener('reset', () => setTimeout(sync, 0)); sync();
 initCalc({
   form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/vat',
   tiles: (o, c) => o.net_vat_payable !== undefined ? [

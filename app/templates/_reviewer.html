@@ -1,0 +1,11 @@
+{# Named reviewer beside the confidence panel. Rendered only when app/team.json has a name. #}
+{% if site.reviewer and site.reviewer.name %}
+<div class="reviewer">
+  {% if site.reviewer.photo %}<img src="/static/img/team/{{ site.reviewer.photo }}?v={{ site.asset_v }}" alt="{{ site.reviewer.name }}" width="56" height="56" loading="lazy">{% else %}<span class="reviewer-initials" aria-hidden="true">{{ site.reviewer.initials }}</span>{% endif %}
+  <div>
+    <span class="reviewer-label">{{ t("The tax team is led by") }}</span>
+    <b>{{ site.reviewer.name }}</b><span class="reviewer-role"> · {{ t(site.reviewer.role) }}</span>
+    <p>{{ t(site.reviewer.credential) }}{% if site.reviewer.profile_url %} <a href="{{ site.reviewer.profile_url }}" target="_blank" rel="noopener">{{ t("About the team →") }}</a>{% endif %}</p>
+  </div>
+</div>
+{% endif %}

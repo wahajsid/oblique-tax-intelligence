@@ -6,7 +6,7 @@
   <span class="eyebrow">{{ t("Free diagnostic") }}</span>
   <h1>{{ t("Where is your tax exposure?") }}</h1>
   <p>{{ t("Ten questions. One ordered list of what to do next, deadlines first. Nothing to sign up for.") }}</p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
 </div>
 <div class="wrap diag-layout">
   <form class="panel diag-form" id="f" autocomplete="off">
@@ -28,6 +28,7 @@
     <div class="cta-row">
       <button class="btn btn-dark" id="btn-pdf" type="button">{{ t("PDF action list") }}</button>
       <a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools" target="_blank" rel="noopener">{{ t("Talk to Oblique") }}</a>
+      {% if site.whatsapp %}<a class="btn btn-wa wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp") }}</a>{% endif %}
     </div>
     <p class="small muted" id="disclaimer"></p>
   </section>

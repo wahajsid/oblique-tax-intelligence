@@ -29,6 +29,13 @@
   </div>
 </section>
 
+{% if site.proof %}<section class="proof" aria-label="{{ t("Track record") }}">
+  <div class="wrap proof-row">
+    {% for pr in site.proof %}<div class="proof-item"><b>{{ t(pr.figure) }}</b><span>{{ t(pr.label) }}</span></div>{% endfor %}
+    <a class="proof-link" href="{{ site.company_url }}about-us" target="_blank" rel="noopener">{{ t("Who we are →") }}</a>
+  </div>
+</section>{% endif %}
+
 <section class="section paths">
   <div class="wrap">
     <div class="section-head"><div><span class="eyebrow">{{ t("Start here") }}</span><h2>{{ t("What are you deciding?") }}</h2></div></div>
@@ -91,9 +98,8 @@
   <div class="wrap" style="text-align:center;max-width:760px">
     <span class="eyebrow">{{ t("When it matters") }}</span>
     <h2>{{ t("An estimate gets you oriented. We get you an answer.") }}</h2>
-    <p class="muted">{{ t("150+ audits cleared in the UAE and KSA. Zero penalties.") }}</p>
     <p class="small muted">{{ t("Rules change.") }} <a href="/changes">{{ t("See what changed and get told when it does →") }}</a></p>
-    <a class="btn btn-primary" href="{{ site.company_url }}" target="_blank" rel="noopener">{{ t("Work With Oblique") }}</a>
+    <div class="hero-actions" style="justify-content:center"><a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=home" target="_blank" rel="noopener">{{ t("Book a free 30-minute call") }}</a>{% if site.whatsapp %}<a class="btn btn-wa wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</div>
   </div>
 </section>
 {% endblock %}

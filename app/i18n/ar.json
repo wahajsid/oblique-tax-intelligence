@@ -222,7 +222,25 @@
     "See what changed and get told when it does →": "اطّلع على ما تغيّر واطلب إشعاراً عند التغيير ←",
     "What changed": "ما الذي تغيّر",
     "Six country guides →": "أدلة ست دول ←",
-    "PDF action list": "قائمة الإجراءات PDF"
+    "PDF action list": "قائمة الإجراءات PDF",
+    "Try an example": "جرّب مثالاً",
+    "Refine": "تفصيل أكثر",
+    "or": "أو",
+    "WhatsApp us": "راسلنا على واتساب",
+    "WhatsApp": "واتساب",
+    "The tax team is led by": "يقود فريق الضرائب",
+    "About the team →": "عن الفريق ←",
+    "Founder, Oblique Consult": "المؤسس، أوبليك كونسلت",
+    "18+ years in corporate finance and tax advisory. Previously KPMG, Etihad Airways, Al Hilal Bank and Emirates.": "أكثر من 18 عاماً في تمويل الشركات والاستشارات الضريبية. عمل سابقاً في كي بي إم جي والاتحاد للطيران ومصرف الهلال وطيران الإمارات.",
+    "Track record": "سجل الإنجاز",
+    "150+": "+150",
+    "Zero": "صفر",
+    "50+": "+50",
+    "tax audits cleared in the UAE and KSA": "تدقيقاً ضريبياً أُنجز في الإمارات والسعودية",
+    "penalties on those audits": "غرامات على تلك التدقيقات",
+    "clients, AED 2 billion combined revenue": "عميلاً بإيرادات مجمّعة 2 مليار درهم",
+    "Who we are →": "من نحن ←",
+    "No cookies, no tracking of people.": "بلا ملفات تعريف ارتباط وبلا تتبّع للأشخاص."
   },
   "lead": {
     "Working paper": "ورقة العمل",
@@ -293,7 +311,12 @@
     "Qualifying Free Zone Person": "شخص منطقة حرة مؤهل",
     "Post-tax profit": "الربح بعد الضريبة",
     "Losses carried forward": "الخسائر المرحّلة",
-    "DMTT top-up (screen)": "الضريبة التكميلية الدنيا (فرز)"
+    "DMTT top-up (screen)": "الضريبة التكميلية الدنيا (فرز)",
+    "Mainland services": "خدمات في البر الرئيسي",
+    "Small business": "منشأة صغيرة",
+    "Free Zone trader": "تاجر في منطقة حرة",
+    "Losses brought forward": "خسائر مرحّلة",
+    "period, adjustments, losses, Free Zone, group": "الفترة، التسويات، الخسائر، المنطقة الحرة، المجموعة"
   },
   "uae_ct_engine": {
     "Add: non-deductible expenses": "يُضاف: مصروفات غير قابلة للخصم",
@@ -384,7 +407,10 @@
     "Exempt supply": "توريد معفى",
     "Partial exemption applies": "ينطبق الإعفاء الجزئي",
     "VAT registration is mandatory": "التسجيل في ضريبة القيمة المضافة إلزامي",
-    "Place of supply is domestic unless reverse charge imports are entered.": "مكان التوريد محلي ما لم تُدخل واردات بالاحتساب العكسي."
+    "Place of supply is domestic unless reverse charge imports are entered.": "مكان التوريد محلي ما لم تُدخل واردات بالاحتساب العكسي.",
+    "Add VAT to 100,000": "أضف الضريبة إلى 100,000",
+    "Take VAT out of a gross price": "استخرج الضريبة من سعر شامل",
+    "Quarterly return": "إقرار ربع سنوي"
   },
   "zakat_page": {
     "KSA Zakat & Income Tax calculator": "حاسبة الزكاة وضريبة الدخل في السعودية",
@@ -495,7 +521,14 @@
     "The liabilities placement, minimum and maximum base rules are implemented from the text of the Implementing Regulations for Zakat Collection 1445H. The Oblique tax team has not yet signed off the implementation against worked cases, so the figure stays a screen.": "طُبّقت قواعد توزيع الالتزامات والحد الأدنى والأعلى للوعاء من نص اللائحة التنفيذية لجباية الزكاة 1445هـ. لم يعتمد فريق الضرائب في أوبليك التطبيق بعد مقابل حالات محسوبة، لذا يبقى الرقم فرزاً أولياً.",
     "The zakat base rules in Articles 25, 27 and 28 are implemented but await technical sign-off by the Oblique tax team.": "طُبّقت قواعد الوعاء الزكوي في المواد 25 و27 و28 لكنها بانتظار الاعتماد الفني من فريق الضرائب في أوبليك.",
     "Liabilities are placed under Articles 23(2), 25 and 29, and the base is tested against Article 27 (minimum) and Article 28 (maximum).": "تُوزَّع الالتزامات وفق المواد 23(2) و25 و29، ويُختبر الوعاء مقابل المادة 27 (الحد الأدنى) والمادة 28 (الحد الأعلى).",
-    "'Other deductible assets' are treated as non-current; deductible current assets have their own field.": "تُعامل «الأصول الأخرى القابلة للحسم» كأصول غير متداولة؛ وللأصول المتداولة القابلة للحسم حقل خاص."
+    "'Other deductible assets' are treated as non-current; deductible current assets have their own field.": "تُعامل «الأصول الأخرى القابلة للحسم» كأصول غير متداولة؛ وللأصول المتداولة القابلة للحسم حقل خاص.",
+    "Trading company, Saudi-owned": "شركة تجارية بملكية سعودية",
+    "Joint venture, 60% Saudi": "مشروع مشترك، 60% سعودي",
+    "Asset-heavy, thin profit": "أصول كثيفة وربح ضعيف",
+    "The three figures that drive it (SAR)": "الأرقام الثلاثة المحرّكة (ريال)",
+    "ownership, reserves, liabilities, other assets, Articles 25 to 28": "الملكية، الاحتياطيات، الالتزامات، الأصول الأخرى، المواد 25 إلى 28",
+    "Other sources of funds, year-end (SAR)": "مصادر أموال أخرى، نهاية السنة (ريال)",
+    "Other deductions: non-zakatable assets (SAR)": "حسومات أخرى: أصول غير زكوية (ريال)"
   },
   "wht_page": {
     "KSA Withholding Tax calculator": "حاسبة ضريبة الاستقطاع في السعودية",
@@ -528,7 +561,10 @@
     "Rate table review status": "حالة مراجعة جدول النسب",
     "Payee is a non-resident without a permanent establishment in KSA.": "المستفيد غير مقيم وليست له منشأة دائمة في السعودية.",
     "Treaty relief, where entered, assumes the payee is the beneficial owner and treaty formalities are met.": "يفترض تخفيف الاتفاقية، حيث أُدخل، أن المستفيد هو المالك المستفيد وأن إجراءات الاتفاقية مستوفاة.",
-    "@": "@"
+    "@": "@",
+    "Royalties, fees and a dividend": "إتاوات وأتعاب وتوزيع أرباح",
+    "Royalty at a 7.5% treaty rate": "إتاوة بنسبة اتفاقية 7.5%",
+    "Consultant paid net of tax": "استشاري يُدفع له صافياً من الضريبة"
   },
   "diagnostic": {
     "Free diagnostic": "تشخيص مجاني",

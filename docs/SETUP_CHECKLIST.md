@@ -46,7 +46,26 @@ create index on public.leads (email);
 
 3. Project settings → API: copy the project URL and the **service_role** key (never the anon key; never put it in the front end).
 4. Railway variables: `SUPABASE_URL=https://<project>.supabase.co`, `SUPABASE_SERVICE_KEY=<service_role>`. Optional `SUPABASE_TABLE` if you name it differently.
-5. Supabase → Table editor → leads: you now have a working lead list with `status`, `owner`, `notes` columns to run follow-up from. Add team members as project viewers.
+5. **Usage counter.** In the same SQL editor, add the table the cookieless counter writes to (event name, page, calculator, source, language, time; no IP and no identifier):
+
+```sql
+create table public.events (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  name text not null, path text, calculator text, source text, lang text, detail text
+);
+alter table public.events enable row level security;   -- service role only
+create index on public.events (at desc);
+create index on public.events (name, at desc);
+
+-- Daily view for a quick look
+create view public.events_daily as
+  select date_trunc('day', at)::date as day, name, coalesce(nullif(calculator, ''), path) as page, source, count(*) as n
+  from public.events group by 1, 2, 3, 4;
+```
+
+   No variable is needed beyond `SUPABASE_URL` and `SUPABASE_SERVICE_KEY`. Optional: set `STATS_TOKEN` to a long random string and open `/api/v1/stats?token=<it>` for counts since the last deploy.
+6. Supabase → Table editor → leads: you now have a working lead list with `status`, `owner`, `notes` columns to run follow-up from. Add team members as project viewers.
 
 Later, if you want a CRM: keep Supabase as the record and add `HUBSPOT_PORTAL_ID` + `HUBSPOT_FORM_GUID`, or a Zapier/Make `LEAD_WEBHOOK_URL`. Every configured destination receives every enquiry.
 
@@ -73,6 +92,9 @@ Then on the Framer site add "Tax tools" to the main nav and footer pointing at t
 - [ ] India: read the Finance Act 2026 and section 156 of the Income-tax Act 2025 once; then flip the India rules to `verified`.
 - [ ] Legal: disclaimer, privacy page, two consent texts (contact, updates). Name the person who handles access and deletion requests.
 - [ ] Services: partner review of `app/services.py` (scope, deliverables, exclusions, the free-call promise).
+- [ ] Reviewer card: edit `app/team.json` (name, role, credential) and add a square photo to `app/static/img/team/`, then set `photo` to its file name. With no photo the initials show. Empty the name to hide the card.
+- [ ] WhatsApp: the button uses +971 50 687 3135. Override with `WHATSAPP_NUMBER` in Railway; set it empty to hide.
+- [ ] Framer: add the links in docs/FRAMER_LINKS.md.
 - [ ] Calendly: confirm `https://calendly.com/alina-obliqueconsult/30min` is the booking link you want on every page, or change `booking_url` in `app/main.py`.
 
 ## 6. Keys and third-party APIs you may want later (none required today)

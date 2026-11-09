@@ -1,0 +1,15 @@
+{
+  "_note": "Shown beside the confidence panel and on the services page. Leave name empty to hide. Put the photo in app/static/img/team/ and set photo to its file name; with no photo the initials are shown.",
+  "reviewer": {
+    "name": "Wahaj Siddiqui",
+    "role": "Founder, Oblique Consult",
+    "credential": "18+ years in corporate finance and tax advisory. Previously KPMG, Etihad Airways, Al Hilal Bank and Emirates.",
+    "photo": "",
+    "profile_url": "https://www.obliqueconsult.com/about-us"
+  },
+  "proof": [
+    {"figure": "150+", "label": "tax audits cleared in the UAE and KSA"},
+    {"figure": "Zero", "label": "penalties on those audits"},
+    {"figure": "50+", "label": "clients, AED 2 billion combined revenue"}
+  ]
+}

@@ -6,10 +6,15 @@
   <span class="eyebrow">{{ t("Kingdom of Saudi Arabia") }} · {{ t("Withholding Tax") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
   <h1>{{ t("KSA Withholding Tax calculator") }}</h1>
   <p>{{ t("Payments leaving Saudi Arabia, line by line. Treaty rates and gross-up included. For VAT, use the") }} <a href="/vat?j=SA">{{ t("KSA VAT calculator") }}</a>.</p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
+    <div class="presets" role="group" aria-label="Examples"><span class="presets-label">{{ t("Try an example") }}</span>
+      <button type="button" class="chip" data-preset="mixed" data-wht='[["royalties",100000,null,false],["management_fees",250000,null,false],["dividends",1000000,null,false]]'>{{ t("Royalties, fees and a dividend") }}</button>
+      <button type="button" class="chip" data-preset="treaty" data-wht='[["royalties",400000,7.5,false]]'>{{ t("Royalty at a 7.5% treaty rate") }}</button>
+      <button type="button" class="chip" data-preset="grossup" data-wht='[["technical_consulting",300000,null,true]]'>{{ t("Consultant paid net of tax") }}</button>
+    </div>
     <fieldset><legend>{{ t("Payments to non-residents (SAR)") }}</legend>
       <div id="rows"></div>
       <button type="button" class="btn btn-ghost btn-sm" id="add">{{ t("+ Add payment") }}</button>
@@ -41,6 +46,13 @@ const sharedPayments = (() => { try { const h = location.hash.slice(1) || locati
 if (sharedPayments && sharedPayments.length) { sharedPayments.forEach(p => { addRow(p.category, p.amount); const r = rows.lastElementChild; if (p.treaty_rate !== null && p.treaty_rate !== undefined) r.querySelector('[data-k=treaty_rate]').value = (p.treaty_rate * 100); r.querySelector('[data-k=grossed_up]').checked = !!p.grossed_up; }); }
 else { addRow('royalties', 100000); addRow('management_fees', 250000); addRow('dividends', 1000000); }
 const readPayments = () => [...rows.querySelectorAll('.wht-row')].map(r => { const g = k => r.querySelector(`[data-k=${k}]`); const tr = g('treaty_rate').value; return { category: g('category').value, amount: Number(g('amount').value || 0), treaty_rate: tr === '' ? null : Number(tr) / 100, grossed_up: g('grossed_up').checked }; });
+document.querySelector('.presets').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-wht]'); if (!b) return;
+  rows.innerHTML = '';
+  JSON.parse(b.dataset.wht).forEach(([cat, amount, treaty, gross]) => { addRow(cat, amount); const r = rows.lastElementChild; if (treaty !== null) r.querySelector('[data-k=treaty_rate]').value = treaty; r.querySelector('[data-k=grossed_up]').checked = !!gross; });
+  document.querySelectorAll('.presets button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  document.getElementById('f').dispatchEvent(new CustomEvent('input', { bubbles: true, detail: 'preset' })); window.track('preset_used', { detail: b.dataset.preset });
+});
 initCalc({
   form: 'f', contactUrl: '{{ site.contact_url }}', endpoint: '/api/v1/ksa/withholding-tax',
   toShared: (q) => q.set('payments', JSON.stringify(readPayments())),

@@ -33,6 +33,20 @@ BASE = Path(__file__).resolve().parent
 INDEXABLE = os.environ.get("SITE_INDEXABLE", "false").lower() in ("1", "true", "yes")
 # Public origin used for canonical and social-preview URLs, e.g. https://tax.obliqueconsult.com (no trailing slash).
 SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
+import json as _json
+import re as _re
+# WhatsApp Business number in international format, digits only. Override with WHATSAPP_NUMBER; set it empty to hide the button.
+WHATSAPP = _re.sub(r"\D", "", os.environ.get("WHATSAPP_NUMBER", "971506873135"))
+try:
+    TEAM = _json.loads((Path(__file__).resolve().parent / "team.json").read_text(encoding="utf-8"))
+except Exception:  # noqa: BLE001
+    TEAM = {}
+if not (TEAM.get("reviewer") or {}).get("name"):
+    TEAM["reviewer"] = {}
+elif TEAM["reviewer"].get("photo") and not (Path(__file__).resolve().parent / "static" / "img" / "team" / TEAM["reviewer"]["photo"]).exists():
+    TEAM["reviewer"]["photo"] = ""
+if TEAM.get("reviewer"):
+    TEAM["reviewer"]["initials"] = "".join(w[0] for w in TEAM["reviewer"]["name"].split()[:2]).upper()
 ASSET_V = format(int(max(p.stat().st_mtime for p in (Path(__file__).resolve().parent / "static").rglob("*") if p.is_file())), "x")
 MAX_BODY = 64 * 1024
 
@@ -111,7 +125,8 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
         "game_url": "https://play.obliqueconsult.com", "game_utm": "?utm_source=tax-tools",
-        "booking_url": "https://calendly.com/alina-obliqueconsult/30min", "asset_v": ASSET_V, "turnstile_site_key": TURNSTILE_SITE_KEY,
+        "booking_url": "https://calendly.com/alina-obliqueconsult/30min", "asset_v": ASSET_V,
+        "whatsapp": WHATSAPP, "reviewer": TEAM.get("reviewer") or {}, "proof": TEAM.get("proof") or [], "turnstile_site_key": TURNSTILE_SITE_KEY,
         "version": __version__, "indexable": INDEXABLE,
         "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
                            "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}

@@ -3,11 +3,14 @@ rule metadata, an outcome (ILLUSTRATIVE_ESTIMATE or REVIEW_REQUIRED) and the
 desktop-estimate disclaimer. Nothing is persisted."""
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Request, Response
+import hmac
+import os
+
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any
 
-from app import leads, pdf
+from app import events, leads, pdf
 
 from app.engine import diagnostic, gcc_compare, ksa_wht, ksa_zakat, personal_tax, relocation, uae_ct, vat
 from app.engine.core import load_rules
@@ -179,6 +182,26 @@ def working_paper(body: PdfRequest) -> Response:
         raise HTTPException(status_code=422, detail=f"Could not recompute the working paper: {type(exc).__name__}") from exc
     return Response(content=data, media_type="application/pdf",
                     headers={"Content-Disposition": f'attachment; filename="{_pdf_filename(body.calculator)}"', "Cache-Control": "no-store"})
+
+
+@router.post("/event", status_code=202)
+def track_event(body: events.EventInput, request: Request, background: BackgroundTasks) -> dict:
+    """Cookieless usage counter: event name, page and calculator only. No IP, no identifier, no inputs."""
+    if request.headers.get("dnt") == "1" or request.headers.get("sec-gpc") == "1":
+        return {"status": "not counted"}
+    ip = request.client.host if request.client else "0.0.0.0"
+    if events.throttled(leads.ip_hash(ip)):
+        return {"status": "not counted"}
+    background.add_task(events.store, events.record(body))
+    return {"status": "counted"}
+
+
+@router.get("/stats", include_in_schema=False)
+def stats(token: str = "") -> dict:
+    expected = os.environ.get("STATS_TOKEN", "")
+    if not expected or not hmac.compare_digest(token, expected):
+        raise HTTPException(status_code=404, detail="Not found")
+    return events.summary()
 
 
 @router.post("/subscribe")

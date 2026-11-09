@@ -8,7 +8,7 @@
   <span class="eyebrow">Move to the UAE · {{ c.flag }} {{ c.name }} → 🇦🇪 UAE · {{ c.tax_year }}</span>
   <h1>Moving from {{ c.name }} to the UAE: what changes in your take-home pay</h1>
   <p>Your tax at home today against 0% in the UAE. Your costs, your exchange rate, and the residence questions to settle before the saving is real.</p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
   <div class="origin-grid" aria-label="Choose origin country">
     {% for code, o in origins.items() %}<a href="/move/{{ code|lower }}-to-uae" {% if code == selected %}aria-current="true"{% endif %}>{{ o.flag }} {{ o.name }}</a>{% endfor %}
   </div>
@@ -16,6 +16,11 @@
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
     <input type="hidden" name="origin" value="{{ selected }}">
+    <div class="presets" role="group" aria-label="Examples"><span class="presets-label">Try an example</span>
+      <button type="button" class="chip" data-preset="same" data-values='{}'>Same income, no extra cost</button>
+      <button type="button" class="chip" data-preset="family" data-values='{"additional_annual_costs_aed": 180000, "one_off_costs_aed": 60000}'>Family move</button>
+      <button type="button" class="chip" data-preset="ties" data-values='{"retained_connections": "yes", "residency_reviewed": "no"}'>Keeping ties at home</button>
+    </div>
     <fieldset>
       <legend>Your current position ({{ c.currency }})</legend>
       <div class="field"><label>Annual gross income</label><input type="number" name="gross_income" value="{{ {'GB':75000,'HK':600000,'SG':120000,'IN':2400000,'US':150000,'AU':120000,'DE':80000,'ZA':900000}.get(selected, 100000) }}" min="0" step="any" required></div>
@@ -25,8 +30,12 @@
       {% if selected == 'DE' %}<label class="check"><input type="checkbox" name="childless" checked> No children (care insurance surcharge applies)</label>{% endif %}
     </fieldset>
     <fieldset>
-      <legend>Your UAE scenario (AED)</legend>
-      <div class="field"><label>UAE package offered <span class="hint" title="Leave blank to assume the same income converted at the indicative rate">?</span></label><input type="number" name="uae_salary_aed" value="" data-nullable="1" min="0" step="any" placeholder="blank = same income converted"></div>
+      <legend>Your UAE offer (AED)</legend>
+      <div class="field"><label>UAE package offered <span class="hint" title="Leave blank to assume the same income, converted at the rate shown under Refine">?</span></label><input type="number" name="uae_salary_aed" value="" data-nullable="1" min="0" step="any" placeholder="blank = same income converted"></div>
+    </fieldset>
+    <details class="refine" id="refine"><summary><span>Refine</span> <span class="refine-sub">living costs, relocation, years, exchange rate, residence</span></summary>
+    <fieldset>
+      <legend>Costs, horizon and exchange rate (AED)</legend>
       <div class="two">
         <div class="field"><label>Extra annual living costs in UAE</label><input type="number" name="additional_annual_costs_aed" value="0" min="0" step="any"></div>
         <div class="field"><label>One-off relocation costs</label><input type="number" name="one_off_costs_aed" value="0" min="0" step="any"></div>
@@ -41,6 +50,7 @@
       <div class="field"><label>Has your tax residence position been professionally reviewed?</label><select name="residency_reviewed"><option value="unknown">Not yet</option><option value="yes">Yes</option><option value="no">No</option></select></div>
       <div class="field"><label>Will income, property, business or family ties remain in {{ c.name }}?</label><select name="retained_connections"><option value="unknown">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>
     </fieldset>
+    </details>
     <div class="form-actions"><button class="btn btn-dark" type="submit">Compare</button><span class="small muted">Updates as you type</span></div>
     <div class="error" id="form-error"></div>
   </form>
@@ -58,6 +68,7 @@
       <button class="btn btn-dark" id="btn-pdf" type="button">PDF working paper</button>
       <button class="btn btn-ghost" id="btn-link" type="button">Copy link</button>
       <a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=move_to_uae" target="_blank" rel="noopener">Plan it with Oblique</a>
+      {% if site.whatsapp %}<a class="btn btn-wa wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp") }}</a>{% endif %}
     </div>
     <p class="small muted" id="disclaimer"></p>
   </section>

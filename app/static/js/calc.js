@@ -1,3 +1,12 @@
+/* ---- Cookieless usage counter: event name, page and calculator only. No identifier, no inputs. See /privacy. ---- */
+window.track = function (name, extra, leaving) {
+  try {
+    if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+    const body = JSON.stringify(Object.assign({ name: name, path: location.pathname, calculator: (window._lastCalc && window._lastCalc.calculator) || '',
+      source: (sessionStorage.getItem('utm_source') || '').slice(0, 80), lang: document.documentElement.lang === 'ar' ? 'ar' : 'en' }, extra || {}));
+    fetch('/api/v1/event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: !!leaving, credentials: 'omit' }).then(function (r) { return r.text(); }).catch(function () {});
+  } catch (e) {}
+};
 /* ---- Translation helper: tr() looks up window.I18N (English source -> target), with {} templates ---- */
 (function () {
   const cat = window.I18N || {}; const lang = window.LANG || 'en';
@@ -160,6 +169,7 @@
       if (!r.ok) { const msg = typeof json.detail === 'string' ? json.detail : (json.detail || []).map(d => `${d.field || d.loc?.slice(-1)[0] || ''}: ${d.message || d.msg}`).join('; '); err.textContent = msg; markStale(msg); return; }
       clearStale();
       window._lastCalc = { calculator: json.calculator, inputs: body, downloadName: cfg.downloadName };
+      if (cfg._user && !cfg._tracked && window.track) { cfg._tracked = true; window.track('calc_run', { calculator: json.calculator || '' }); }
       (cfg.render || render)(json, cfg);
     } catch (e) { err.textContent = tr('Could not reach the calculation service. Nothing was saved.'); markStale(tr('Could not reach the calculation service. Nothing was saved.')); }
     finally { form.removeAttribute('aria-busy'); }
@@ -169,12 +179,13 @@
     const form = document.getElementById(cfg.form);
     associateLabels(form);
     prefillFromURL(form, cfg);
-    form.addEventListener('submit', (e) => { e.preventDefault(); cfg._explicit = true; run(cfg); });
-    let t; form.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => run(cfg), 350); });
+    if (window.openChangedSections) window.openChangedSections(form);
+    form.addEventListener('submit', (e) => { e.preventDefault(); cfg._explicit = true; cfg._user = true; run(cfg); });
+    let t; form.addEventListener('input', (e) => { if (e.isTrusted || e.detail === 'preset') cfg._user = true; clearTimeout(t); t = setTimeout(() => run(cfg), 350); });
     document.getElementById('btn-copy')?.addEventListener('click', (e) => { navigator.clipboard.writeText(document.getElementById('results').dataset.json || ''); e.target.textContent = tr('Copied'); setTimeout(() => e.target.textContent = tr('Copy JSON'), 1500); });
     document.getElementById('btn-print')?.addEventListener('click', () => window.print());
     document.getElementById('btn-link')?.addEventListener('click', (e) => {
-      const url = deepLink(form, cfg); navigator.clipboard.writeText(url); history.replaceState(null, '', url);
+      const url = deepLink(form, cfg); navigator.clipboard.writeText(url); history.replaceState(null, '', url); if (window.track) window.track('link_copied');
       e.target.textContent = tr('Link copied'); setTimeout(() => e.target.textContent = tr('Copy link'), 1500);
     });
     document.getElementById('btn-download')?.addEventListener('click', () => {
@@ -229,7 +240,7 @@
   }
   function openModal() {
     const m = $('lead-modal'); if (!m) return;
-    lastFocus = document.activeElement; m.hidden = false; document.body.style.overflow = 'hidden';
+    lastFocus = document.activeElement; m.hidden = false; document.body.style.overflow = 'hidden'; if (window.track) window.track(pending.interest === 'expert_review' ? 'enquiry_opened' : 'pdf_requested', { detail: pending.service || '' });
     $('consent-contact-text').textContent = tr(config.consent_text.contact);
     $('consent-marketing-text').textContent = tr(config.consent_text.marketing);
     $('lead-privacy').textContent = `${config.controller}. ${config.retention} Your inputs go with the enquiry so the adviser has context. Details on the privacy page.`;
@@ -255,7 +266,8 @@
     pending = ctx;
     const c = await loadConfig();
     if (!c.enabled) {  // no destination configured: PDFs are simply free; service enquiries go to the contact page
-      if (ctx.interest === 'expert_review' || !ctx.inputs || !Object.keys(ctx.inputs).length) { location.href = bookingLink(ctx); return; }
+      if (ctx.interest === 'expert_review' || !ctx.inputs || !Object.keys(ctx.inputs).length) { if (window.track) window.track('call_clicked', { detail: ctx.service || '' }, true); location.href = bookingLink(ctx); return; }
+      if (window.track) window.track('pdf_requested');
       try { await fetchPdf(ctx, null); } catch (e) { alert(e.message); }
       return;
     }
@@ -284,7 +296,7 @@
         const j = await r.json();
         if (!r.ok) { err.textContent = typeof j.detail === 'string' ? j.detail : (j.detail || []).map(d => `${d.field}: ${d.message}`).join('; '); return; }
         if (j.pdf_token) await fetchPdf(pending, j.pdf_token);
-        form.hidden = true; const ok = $('lead-success'); ok.hidden = false;
+        form.hidden = true; const ok = $('lead-success'); ok.hidden = false; if (window.track) window.track('enquiry_sent', { detail: pending.service || '' });
         ok.innerHTML = `${esc(j.message || 'Thank you.')}${j.pdf_token ? ' ' + tr('Your PDF is downloading.') : ''}<br><a href="${esc(j.booking_url || '#')}" target="_blank" rel="noopener">${tr('Prefer to pick a time now? Book a free 30-minute call →')}</a>`;
         setTimeout(closeModal, 9000);
       } catch (ex) { err.textContent = ex.message || 'Something went wrong. Nothing was saved.'; }
@@ -350,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Any button with data-service opens the enquiry dialog for that service.
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-service]'); if (!b) return;
-    const last = window._lastCalc || {};
+    const last = window._lastCalc || {}; if (window.track) window.track('service_clicked', { detail: b.dataset.service || '' });
     window.requestWorkingPaper({ calculator: last.calculator || 'tax_exposure_diagnostic', inputs: last.inputs || {}, interest: 'expert_review',
       service: b.dataset.service, serviceTitle: b.dataset.title, audience: b.dataset.audience, downloadName: last.downloadName });
   });
@@ -392,5 +404,49 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => set(menu.hidden));
     menu.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+  });
+})();
+
+/* ---- Example chips, Refine sections, WhatsApp context, outbound click counts ---- */
+(function () {
+  const changed = (el) => el.type === 'checkbox' ? el.checked !== el.defaultChecked
+    : el.tagName === 'SELECT' ? el.selectedIndex !== Math.max(0, [...el.options].findIndex(o => o.defaultSelected)) : el.value !== el.defaultValue;
+  window.openChangedSections = function (form) {
+    form.querySelectorAll('details').forEach(d => { if ([...d.querySelectorAll('input, select')].some(el => el.name && el.type !== 'hidden' && changed(el))) d.open = true; });
+  };
+  document.addEventListener('DOMContentLoaded', () => {
+    // utm_source must be stored before the first event, so read it here too.
+    try { const u = new URLSearchParams(location.search).get('utm_source'); if (u) sessionStorage.setItem('utm_source', u.slice(0, 80)); } catch (e) {}
+    window.track('page_view');
+    // #free-zone and similar anchors inside a collapsed section: open the way to them.
+    if (location.hash && !location.hash.includes('=')) { try { const t = document.querySelector(location.hash); if (t) { let n = t; while (n) { if (n.tagName === 'DETAILS') n.open = true; n = n.parentElement; } t.scrollIntoView({ block: 'start' }); } } catch (e) {} }
+    document.querySelectorAll('.presets').forEach(box => {
+      const form = box.closest('form'); if (!form) return;
+      box.addEventListener('click', (e) => {
+        const b = e.target.closest('button[data-values]'); if (!b) return;
+        let values = {}; try { values = JSON.parse(b.dataset.values); } catch (err) { return; }
+        form.reset();
+        for (const k in values) { const el = form.elements[k]; if (!el) continue; if (el.type === 'checkbox') el.checked = !!values[k]; else el.value = values[k]; el.dispatchEvent(new Event('change', { bubbles: true })); }
+        form.querySelectorAll('details').forEach(d => { d.open = false; });
+        window.openChangedSections(form);
+        box.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+        form.dispatchEvent(new CustomEvent('input', { bubbles: true, detail: 'preset' }));
+        window.track('preset_used', { detail: b.dataset.preset || '' });
+      });
+    });
+    // Deep link to an example: /uae/corporate-tax?example=freezone (used from articles on the main site).
+    try { const ex = new URLSearchParams(location.search).get('example'); if (ex && !location.hash.includes('=')) { const chip = document.querySelector('.presets button[data-preset="' + ex.replace(/[^a-z0-9_-]/gi, '') + '"]'); if (chip) chip.click(); } } catch (e) {}
+    document.querySelectorAll('details.refine').forEach(d => d.addEventListener('toggle', () => { if (d.open && !d.dataset.counted) { d.dataset.counted = '1'; window.track('refine_opened'); } }));
+    // WhatsApp links carry the page title so the first message has context. No figures are included.
+    const h1 = document.querySelector('main h1'); const num = document.body.dataset.whatsapp;
+    if (num && h1) { const msg = 'Hello Oblique Consult. I am on "' + h1.innerText.trim() + '" on your tax tools site and would like to talk through my situation.';
+      document.querySelectorAll('a.wa-link').forEach(a => { a.href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(msg); }); }
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href]'); if (!a) return; const h = a.getAttribute('href');
+      const leaving = a.target !== '_blank';
+      if (h.includes('wa.me/')) window.track('whatsapp_clicked', null, leaving);
+      else if (h.includes('calendly.com')) window.track('call_clicked', null, leaving);
+      else if (h.includes('play.obliqueconsult.com')) window.track('game_clicked', null, leaving);
+    });
   });
 })();

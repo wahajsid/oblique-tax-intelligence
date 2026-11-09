@@ -103,3 +103,45 @@ def test_turnstile_gate(monkeypatch, tmp_path):
     assert calls and calls[0][0].endswith("/siteverify") and calls[0][1]["response"] == "tok"
     monkeypatch.delenv("TURNSTILE_SITE_KEY"); monkeypatch.delenv("TURNSTILE_SECRET")
     assert c.post("/api/v1/subscribe", json=body).status_code == 200                     # gate off: no token needed
+
+
+def test_event_counter_records_no_identifier(monkeypatch):
+    from app import events
+    events.reset()
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    c = TestClient(app)
+    r = c.post("/api/v1/event", json={"name": "calc_run", "path": "/uae/corporate-tax?x=1#accounting_profit=999", "calculator": "uae_corporate_tax", "source": "website"})
+    assert r.status_code == 202 and r.json() == {"status": "counted"}
+    row = events.record(events.EventInput(name="page_view", path="/move/gb-to-uae#gross_income=75000"))
+    assert set(row) == {"at", "name", "path", "calculator", "source", "lang", "detail"}      # nothing else is kept
+    assert row["path"] == "/move/gb-to-uae"                                                 # shared inputs in the fragment never stored
+    assert c.post("/api/v1/event", json={"name": "page_view", "path": "/"}, headers={"DNT": "1"}).json() == {"status": "not counted"}
+    assert c.post("/api/v1/event", json={"name": "page_view", "path": "/"}, headers={"Sec-GPC": "1"}).json() == {"status": "not counted"}
+    assert c.post("/api/v1/event", json={"name": "made_up"}).status_code == 422
+    assert c.post("/api/v1/event", json={"name": "page_view", "email": "a@b.co"}).status_code == 422   # extra fields refused
+    assert c.get("/api/v1/stats").status_code == 404
+    monkeypatch.setenv("STATS_TOKEN", "s3cret")
+    assert c.get("/api/v1/stats?token=wrong").status_code == 404
+    s = c.get("/api/v1/stats?token=s3cret").json()
+    assert s["totals"]["calc_run"] == 1 and s["totals"]["page_view"] == 1
+
+
+def test_event_counter_writes_to_supabase(monkeypatch):
+    from app import events
+    monkeypatch.setenv("SUPABASE_URL", "https://abc.supabase.co"); monkeypatch.setenv("SUPABASE_SERVICE_KEY", "k")
+    calls = []
+    monkeypatch.setattr(events.httpx, "post", lambda url, json=None, headers=None, timeout=None: calls.append((url, json)))
+    events.store(events.record(events.EventInput(name="whatsapp_clicked", path="/vat", calculator="vat")))
+    assert calls[0][0] == "https://abc.supabase.co/rest/v1/events" and calls[0][1]["name"] == "whatsapp_clicked" and "ip" not in str(calls[0][1])
+
+
+def test_whatsapp_reviewer_proof_and_presets_render():
+    c = TestClient(app)
+    home = c.get("/").text
+    assert "wa.me/971506873135" in home and "150+" in home and 'class="proof"' in home
+    ct = c.get("/uae/corporate-tax").text
+    assert 'class="presets"' in ct and 'details class="refine"' in ct and "Wahaj Siddiqui" in ct and "wa.me/971506873135" in ct
+    assert ct.index('name="revenue"') < ct.index('details class="refine"') < ct.index('name="period_end"')    # only profit and revenue lead
+    zk = c.get("/ksa/zakat-income-tax").text
+    assert zk.index('name="net_fixed_assets"') < zk.index('details class="refine"') < zk.index('name="saudi_gcc_ownership_pct"')
+    assert "we count page views" in c.get("/privacy").text

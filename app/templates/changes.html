@@ -56,7 +56,7 @@
     const body = { email: f.email.value, topics, consent_updates: f.consent_updates.checked, page_url: location.href, source: sessionStorage.getItem('utm_source') || '', website: f.website.value, turnstile_token: (window.turnstileToken && window.turnstileToken('sub-turnstile')) || '' };
     if (!topics.length) { err.textContent = tr('Pick at least one ruleset.'); return; }
     const r = await fetch('/api/v1/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (r.ok) { f.hidden = true; document.getElementById('sub-ok').hidden = false; return; }
+    if (r.ok) { f.hidden = true; document.getElementById('sub-ok').hidden = false; if (window.track) window.track('subscribed'); return; }
     let d = {}; try { d = await r.json(); } catch (e2) {}
     err.textContent = typeof d.detail === 'string' ? tr(d.detail) : (Array.isArray(d.detail) ? d.detail.map(x => x.msg.replace(/^Value error, /, '')).join(' ') : tr('Something went wrong. Please try again.'));
   });

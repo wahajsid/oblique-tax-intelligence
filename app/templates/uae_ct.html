@@ -6,16 +6,23 @@
   <span class="eyebrow">{{ t("United Arab Emirates") }} · {{ t("Corporate Tax") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>
   <h1>{{ t("UAE Corporate Tax calculator") }}</h1>
   <p>{{ t("Profit times 9% is where most people stop. This goes on: the reconciliation, the reliefs, Free Zone status, and the questions still open.") }}</p>
-  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a></p>
+  <p class="call-line">{{ t("Not sure what to enter?") }} <a href="{{ site.booking_url }}" target="_blank" rel="noopener">{{ t("Book 30 minutes with us, free →") }}</a>{% if site.whatsapp %} <span class="or">{{ t("or") }}</span> <a class="wa-link" href="https://wa.me/{{ site.whatsapp }}?text={{ "Hello Oblique Consult. I am using your tax tools and would like to talk through my situation." | urlencode }}" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 8.3l1 1.8-.7.7c.4 1 1.7 2.3 2.7 2.7l.7-.7 1.8 1-.9 1.3c-3 0-6-3-6-6z" fill="currentColor"/></svg> {{ t("WhatsApp us") }}</a>{% endif %}</p>
 </div>
 <div class="wrap calc">
   <form class="panel" id="f" autocomplete="off">
+    <div class="presets" role="group" aria-label="Examples"><span class="presets-label">{{ t("Try an example") }}</span>
+      <button type="button" class="chip" data-preset="mainland" data-values='{"accounting_profit": 1500000, "revenue": 12000000}'>{{ t("Mainland services") }}</button>
+      <button type="button" class="chip" data-preset="small" data-values='{"accounting_profit": 400000, "revenue": 2400000, "elect_small_business_relief": true, "prior_periods_within_threshold": "yes"}'>{{ t("Small business") }}</button>
+      <button type="button" class="chip" data-preset="freezone" data-values='{"accounting_profit": 2000000, "revenue": 20000000, "is_free_zone_person": true, "elect_qfzp": true, "qualifying_income": 1800000, "non_qualifying_revenue": 600000}'>{{ t("Free Zone trader") }}</button>
+      <button type="button" class="chip" data-preset="losses" data-values='{"accounting_profit": 5000000, "revenue": 60000000, "brought_forward_losses": 6000000}'>{{ t("Losses brought forward") }}</button>
+    </div>
     <fieldset>
       <legend>{{ t("Core figures (AED)") }}</legend>
       <div class="field"><label>{{ t("Accounting profit before tax") }} <span class="hint" title="Net profit per IFRS financial statements before any Corporate Tax charge">?</span></label><input type="number" name="accounting_profit" value="1500000" step="any"></div>
       <div class="field"><label>{{ t("Revenue for the period") }} <span class="hint" title="Used for Small Business Relief (AED 3m) and the QFZP de minimis test">?</span></label><input type="number" name="revenue" value="12000000" step="any" min="0"></div>
-      <div class="field"><label>{{ t("Tax period end") }}</label><input type="date" name="period_end" value="2026-12-31"></div>
     </fieldset>
+    <details class="refine" id="refine"><summary><span>{{ t("Refine") }}</span> <span class="refine-sub">{{ t("period, adjustments, losses, Free Zone, group") }}</span></summary>
+    <div class="field"><label>{{ t("Tax period end") }}</label><input type="date" name="period_end" value="2026-12-31"></div>
     <fieldset>
       <legend>{{ t("Reconciling items") }}</legend>
       <div class="two">
@@ -46,6 +53,7 @@
       </div>
       <label class="check"><input type="checkbox" name="is_mne_constituent"> {{ t("Part of a multinational group") }}</label>
       <div class="field"><label>{{ t("Group consolidated revenue (EUR)") }} <span class="hint" title="DMTT applies from EUR 750m">?</span></label><input type="number" name="mne_group_revenue_eur" value="0" min="0" step="any"></div>
+    </details>
     </details>
     {% include "_scope_gate.html" %}
     <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Calculate") }}</button><span class="small muted">{{ t("Updates as you type") }}</span></div>
