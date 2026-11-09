@@ -34,7 +34,22 @@
     "English": "English",
     "العربية": "العربية",
     "Switch to light mode": "التبديل إلى الوضع الفاتح",
-    "Switch to dark mode": "التبديل إلى الوضع الداكن"
+    "Switch to dark mode": "التبديل إلى الوضع الداكن",
+    "UAE and Saudi tax calculators, working shown": "حاسبات الضرائب الإماراتية والسعودية مع بيان طريقة الحساب",
+    "Free UAE and Saudi tax calculators with the working shown: Corporate Tax, VAT, zakat, withholding and a move-to-UAE comparison. By Oblique Consult.": "حاسبات مجانية للضرائب الإماراتية والسعودية مع بيان طريقة الحساب: ضريبة الشركات، القيمة المضافة، الزكاة، الاستقطاع ومقارنة الانتقال إلى الإمارات. من أوبليك كونسلت.",
+    "UAE Corporate Tax Calculator 2026": "حاسبة ضريبة الشركات الإماراتية 2026",
+    "UAE Corporate Tax from accounting profit to tax due: 0% and 9% bands, Small Business Relief, Free Zone test, losses and interest cap. Free, working shown.": "ضريبة الشركات الإماراتية من الربح المحاسبي إلى الضريبة المستحقة: شريحتا 0% و9%، إعفاء الأعمال الصغيرة، اختبار المنطقة الحرة، الخسائر وسقف الفوائد. مجاناً مع بيان طريقة الحساب.",
+    "UAE VAT Calculator": "حاسبة ضريبة القيمة المضافة الإماراتية",
+    "KSA VAT Calculator": "حاسبة ضريبة القيمة المضافة السعودية",
+    "KSA Zakat & Income Tax Calculator": "حاسبة الزكاة وضريبة الدخل السعودية",
+    "KSA Withholding Tax Calculator": "حاسبة ضريبة الاستقطاع السعودية",
+    "Free GCC tax exposure diagnostic": "تشخيص مجاني للتعرّض الضريبي في الخليج",
+    "Ten yes or no questions become an ordered action list for UAE and Saudi tax, deadlines first. Free, no contact details needed.": "عشرة أسئلة بنعم أو لا تتحول إلى قائمة إجراءات مرتبة للضرائب الإماراتية والسعودية، المواعيد النهائية أولاً. مجاناً ودون بيانات اتصال.",
+    "What changed in the tax rules": "ما الذي تغيّر في القواعد الضريبية",
+    "Menu": "القائمة",
+    "Explore": "استكشف",
+    "Book a free 30-minute call": "احجز مكالمة مجانية لمدة 30 دقيقة",
+    "Worked journeys": "رحلات عملية"
   },
   "home": {
     "Oblique Tax Intelligence": "الذكاء الضريبي من أوبليك",

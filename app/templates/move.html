@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% set c = origins[selected] %}
-{% block title %}Moving from {{ c.name }} to the UAE: tax comparison calculator{% endblock %}
+{% block title %}{{ c.name }} to UAE: what the move saves{% endblock %}
 {% block description %}Compare your {{ c.name }} income tax and contributions with the UAE's 0% personal income tax. Annual, first-year and five-year difference with relocation costs and the residence questions to settle first.{% endblock %}
 {% block head %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Move to the UAE tax comparison: {{ c.name }}","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"{{ site.company }}","url":"{{ site.company_url }}"}}</script>{% endblock %}
 {% block content %}

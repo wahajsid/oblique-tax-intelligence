@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}What changed in the tax rules{% endblock %}
+{% block title %}{{ t("What changed in the tax rules") }}{% endblock %}
 {% block description %}Every change to the UAE, Saudi, GCC and personal tax rules behind these calculators, dated and sourced. Ask to be told when the next one lands.{% endblock %}
 {% block content %}
 <div class="wrap page-head">
@@ -34,7 +34,7 @@
         <label><input type="checkbox" name="topics" value="Personal"> {{ t("Personal tax") }}</label>
       </fieldset>
       <label class="consent"><input type="checkbox" name="consent_updates" required> <span>{{ t("Oblique Consult may email me when these rules change. Unsubscribe in every email.") }}</span></label>
-      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-input">
       <div class="turnstile-slot" id="sub-turnstile"></div>
       <div class="form-actions"><button class="btn btn-dark" type="submit">{{ t("Tell me") }}</button></div>
       <p class="error" id="sub-error" role="alert"></p>

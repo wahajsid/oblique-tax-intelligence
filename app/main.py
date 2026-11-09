@@ -1,7 +1,7 @@
 """Oblique Tax Intelligence web application.
 
 Run locally:  uvicorn app.main:app --reload
-API docs:     /docs (Swagger) and /redoc
+API docs:     /api (page) and /openapi.json (schema)
 
 Privacy and security posture (ported from the V4 review):
 - No cookies, no storage, no analytics, no third-party scripts or fonts (fonts are self-hosted).
@@ -17,6 +17,7 @@ from pathlib import Path
 
 from fastapi import Response, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -30,6 +31,9 @@ from app.engine.core import load_rules
 
 BASE = Path(__file__).resolve().parent
 INDEXABLE = os.environ.get("SITE_INDEXABLE", "false").lower() in ("1", "true", "yes")
+# Public origin used for canonical and social-preview URLs, e.g. https://tax.obliqueconsult.com (no trailing slash).
+SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
+ASSET_V = format(int(max(p.stat().st_mtime for p in (Path(__file__).resolve().parent / "static").rglob("*") if p.is_file())), "x")
 MAX_BODY = 64 * 1024
 
 app = FastAPI(
@@ -38,7 +42,9 @@ app = FastAPI(
     description=("Deterministic GCC business-tax and relocation calculations with a full working-paper trace. "
                  "Desktop estimates only; not tax advice. Nothing is persisted."),
     contact={"name": "Oblique Consult", "url": "https://www.obliqueconsult.com/"},
+    docs_url=None, redoc_url=None,   # the CDN-hosted viewers are blocked by our own CSP; /api and /openapi.json document the API
 )
+app.add_middleware(GZipMiddleware, minimum_size=800)
 app.include_router(api_router)
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 templates = Jinja2Templates(directory=BASE / "templates")
@@ -85,6 +91,11 @@ async def safety(request: Request, call_next):
     })
     if request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
+    elif request.url.path.startswith("/static/"):
+        # Assets are referenced with ?v=<build>, so they can be cached for a long time.
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable" if request.url.query.startswith("v=") else "public, max-age=3600"
+    if request.headers.get("x-forwarded-proto", request.url.scheme) == "https":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     if not INDEXABLE:
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
@@ -100,7 +111,7 @@ async def invalid_request(request: Request, exc: RequestValidationError):
 SITE = {"name": "Oblique Tax Intelligence", "company": "Oblique Consult", "tagline": "Tax clarity. In seconds.",
         "company_url": "https://www.obliqueconsult.com/", "contact_url": "https://www.obliqueconsult.com/contact-us",
         "game_url": "https://play.obliqueconsult.com", "game_utm": "?utm_source=tax-tools",
-        "booking_url": "https://calendly.com/alina-obliqueconsult/30min", "turnstile_site_key": TURNSTILE_SITE_KEY,
+        "booking_url": "https://calendly.com/alina-obliqueconsult/30min", "asset_v": ASSET_V, "turnstile_site_key": TURNSTILE_SITE_KEY,
         "version": __version__, "indexable": INDEXABLE,
         "rules_versions": {"AE": load_rules("ae")["ruleset_version"], "SA": load_rules("sa")["ruleset_version"],
                            "GCC": gcc_compare.profiles()["ruleset_version"], "Personal": personal_tax.rules()["ruleset_version"]}}
@@ -130,10 +141,14 @@ def ctx(request: Request, **kw) -> dict:
     path = request.scope["path"]
     qs = request.scope.get("query_string", b"").decode()
     page_path = path + ("?" + qs if qs else "")
+    origin = SITE_URL or f"{request.headers.get('x-forwarded-proto', request.url.scheme)}://{request.url.netloc}"
+    # Canonical: language prefix + path; the only query string that makes a distinct page is the KSA VAT calculator.
+    canon_q = "?j=SA" if (path == "/vat" and request.query_params.get("j", "").upper() == "SA") else ""
+    canonical = origin + ("/ar" if lang == "ar" else "") + ("" if (path == "/" and lang == "ar") else path) + canon_q
     return {"request": request, "site": SITE, "modules": MODULES, "lang": lang, "dir": i18n.LANGS[lang]["dir"],
             "L": "/ar" if lang == "ar" else "", "t": (lambda s: i18n.t(s, lang)),
             "has_ar": path in i18n.AR_PATHS, "alt_url": (page_path if lang == "ar" else "/ar" + ("" if path == "/" else page_path)),
-            "i18n_json": i18n.client_catalog(lang), "ar_paths": sorted(i18n.AR_PATHS), **kw}
+            "i18n_json": i18n.client_catalog(lang), "ar_paths": sorted(i18n.AR_PATHS), "canonical": canonical, "origin": origin, **kw}
 
 
 def page(request: Request, name: str, status_code: int = 200, **kw):
@@ -298,7 +313,7 @@ def disclaimer(request: Request):
 @app.get("/robots.txt", response_class=PlainTextResponse)
 def robots():
     if INDEXABLE:
-        return "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n"
+        return f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n"
     return "User-agent: *\nDisallow: /\n"
 
 
@@ -318,7 +333,7 @@ def changes(request: Request):
 
 @app.get("/sitemap.xml", response_class=Response, include_in_schema=False)
 def sitemap(request: Request):
-    base = str(request.base_url).rstrip("/")
+    base = SITE_URL or str(request.base_url).rstrip("/")
     codes = list(gcc_compare.profiles()["jurisdictions"])
     origins = personal_tax.enabled_countries()
     urls = ["/", "/uae/corporate-tax", "/vat", "/ksa/zakat-income-tax", "/ksa/withholding-tax", "/gcc/compare", "/move", "/diagnose",

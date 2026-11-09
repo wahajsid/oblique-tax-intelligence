@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ 'UAE' if jur == 'AE' else 'KSA' }} VAT Calculator{% endblock %}
+{% block title %}{{ t('UAE VAT Calculator') if jur == 'AE' else t('KSA VAT Calculator') }}{% endblock %}
 {% block description %}{{ 'UAE 5%' if jur == 'AE' else 'Saudi Arabia 15%' }} VAT calculator: add or extract VAT, prepare a period return with reverse charge and partial exemption, and check registration thresholds.{% endblock %}
 {% block content %}
 <div class="wrap page-head">

@@ -5,6 +5,8 @@
 "test_gcc_compare_endpoint",
 "test_pages_render",
 "test_sitemap_lists_pairs",
+"test_head_tags_for_search_and_sharing",
+"test_static_caching_compression_and_docs_removed",
 "test_uae_ct_standard_bands",
 "test_uae_ct_below_threshold_is_zero",
 "test_uae_ct_reconciling_items",

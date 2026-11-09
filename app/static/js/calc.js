@@ -383,3 +383,14 @@ document.addEventListener('DOMContentLoaded', () => {
   els.forEach(e => io.observe(e));
   requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('ready')));
 })();
+
+/* ---- Mobile menu ---- */
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('nav-toggle'), menu = document.getElementById('mobile-menu'); if (!btn || !menu) return;
+    const set = (open) => { menu.hidden = !open; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); };
+    btn.addEventListener('click', () => set(menu.hidden));
+    menu.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+  });
+})();

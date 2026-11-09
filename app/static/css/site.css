@@ -261,7 +261,7 @@ form[aria-busy=true]{opacity:.7;pointer-events:none}
 .modal-close{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:1.6rem;cursor:pointer;line-height:1}
 .modal textarea{padding:9px 11px;border:1px solid var(--field-border);border-radius:var(--radius-sm);font:inherit;font-size:.95rem;background:var(--field-bg);color:var(--ink);width:100%;resize:vertical}
 .modal input[type=text],.modal input[type=email],.modal input[type=tel]{padding:9px 11px;border:1px solid var(--field-border);border-radius:var(--radius-sm);font:inherit;font-size:.95rem;background:var(--field-bg);color:var(--ink);width:100%}
-.hp{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+.hp,.hp-input{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .check.consent{align-items:flex-start;font-size:.86rem;color:var(--ink-2);margin:8px 0}
 .check.consent input{margin-top:3px;flex:0 0 16px}
 .lead-success{background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--ink);padding:12px 14px;border-radius:10px}
@@ -463,3 +463,18 @@ html[lang=ar] .hero::before{background:repeating-linear-gradient(79deg,transpare
 .final-cta{position:relative;overflow:hidden}
 
 .turnstile-slot:empty{display:none}.turnstile-slot{margin:8px 0}
+
+/* ---- Mobile menu ---- */
+.nav-toggle{display:none;background:none;border:1px solid var(--nav-line);color:var(--nav-ink);border-radius:999px;width:38px;height:38px;place-items:center;cursor:pointer;margin-left:4px}
+[dir=rtl] .nav-toggle{margin-left:0;margin-right:4px}
+.mobile-menu{background:var(--nav-bg);border-top:1px solid var(--nav-line);box-shadow:var(--shadow);max-height:calc(100vh - 64px);overflow:auto}
+.topbar .mobile-menu .wrap{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;height:auto;padding-top:10px;padding-bottom:18px}
+.mobile-menu a{color:var(--nav-ink);padding:12px 4px;border-bottom:1px solid var(--nav-line);font-size:1.02rem}
+.mobile-menu a.btn{justify-content:center;border:0;margin-top:16px;padding:13px 18px;color:var(--accent-ink)}
+.mobile-menu .mm-head{font-family:var(--font-label);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#6b7183;margin:14px 4px 2px}
+.mobile-menu .mm-site{border:0;text-align:center;color:#6b7183;font-size:.9rem}
+@media(max-width:900px){
+  .nav-toggle{display:inline-grid}
+  .nav .dropdown,.nav .nav-link,.nav>.btn{display:none!important}
+}
+@media(min-width:901px){.mobile-menu{display:none!important}}

@@ -54,6 +54,7 @@ Nothing is collected until at least one destination is set. Set the variables on
 | `APP_SECRET` | Stable key for PDF tokens and IP hashing (set one; otherwise a random key per restart) |
 | `LEAD_RATE_LIMIT_PER_HOUR` | Default 5 enquiries per IP per hour |
 | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` | Cloudflare Turnstile on the enquiry and notification forms (off when unset; the CSP and privacy page adjust) |
+| `SITE_URL` | Public origin, e.g. `https://tax.obliqueconsult.com`; used for canonical links, the sitemap and social preview tags (falls back to the request host) |
 | `FX_FEED` | `on` (default): ECB euro reference rates via the AED peg, cached six hours, dated table as fallback. `off`: dated table only |
 
 What is recorded and why is on `/privacy`; consent texts and version live in `app/leads.py` (bump `CONSENT_VERSION` when the wording changes).

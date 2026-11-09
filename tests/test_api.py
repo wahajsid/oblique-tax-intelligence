@@ -42,3 +42,23 @@ def test_pages_render():
 def test_sitemap_lists_pairs():
     body = client.get("/sitemap.xml").text
     assert "/compare/AE-vs-SA" in body and "/guides/KW" in body
+
+
+def test_head_tags_for_search_and_sharing(monkeypatch):
+    html = client.get("/uae/corporate-tax").text
+    assert '<link rel="canonical" href="http://testserver/uae/corporate-tax">' in html
+    assert 'property="og:title"' in html and 'property="og:image" content="http://testserver/static/img/og.png"' in html and 'name="twitter:card"' in html
+    assert '<link rel="canonical" href="http://testserver/vat?j=SA">' in client.get("/vat?j=SA").text
+    assert '<link rel="canonical" href="http://testserver/diagnose">' in client.get("/diagnose?profile=personal").text
+    ar = client.get("/ar/uae/corporate-tax").text
+    assert '<link rel="canonical" href="http://testserver/ar/uae/corporate-tax">' in ar and "<title>حاسبة ضريبة الشركات الإماراتية 2026 |" in ar
+    assert '<link rel="canonical" href="http://testserver/ar">' in client.get("/ar").text
+
+
+def test_static_caching_compression_and_docs_removed():
+    r = client.get("/static/css/site.css?v=abc")
+    assert "immutable" in r.headers["cache-control"]
+    assert client.get("/", headers={"Accept-Encoding": "gzip"}).headers.get("content-encoding") == "gzip"
+    assert client.get("/docs").status_code == 404 and client.get("/redoc").status_code == 404 and client.get("/openapi.json").status_code == 200
+    assert client.get("/", headers={"X-Forwarded-Proto": "https"}).headers.get("strict-transport-security")
+    assert client.get("/static/img/og.png").status_code == 200

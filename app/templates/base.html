@@ -3,13 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}{{ site.name }}{% endblock %} | {{ site.company }}</title>
-<meta name="description" content="{% block description %}GCC business tax calculators and a move-to-UAE comparison with a full working-paper trace: UAE Corporate Tax, VAT, KSA Zakat, withholding tax and cross-border comparison by Oblique Consult.{% endblock %}">
+{% set page_title %}{% block title %}{{ site.name }}{% endblock %}{% endset %}{% set page_desc %}{% block description %}{{ t("Free UAE and Saudi tax calculators with the working shown: Corporate Tax, VAT, zakat, withholding and a move-to-UAE comparison. By Oblique Consult.") }}{% endblock %}{% endset %}
+<title>{{ page_title }} | {{ site.company }}</title>
+<meta name="description" content="{{ page_desc }}">
+<link rel="canonical" href="{{ canonical }}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:title" content="{{ page_title }}"><meta property="og:description" content="{{ page_desc }}">
+<meta property="og:url" content="{{ canonical }}"><meta property="og:image" content="{{ origin }}/static/img/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="{{ 'ar_AE' if lang == 'ar' else 'en_GB' }}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{{ page_title }}"><meta name="twitter:description" content="{{ page_desc }}"><meta name="twitter:image" content="{{ origin }}/static/img/og.png">
+<meta name="theme-color" content="#0b0d12">
 {% if not site.indexable %}<meta name="robots" content="noindex,nofollow">{% endif %}
-{% if has_ar %}<link rel="alternate" hreflang="en" href="{{ request.url.scheme }}://{{ request.url.netloc }}{{ request.scope.path }}"><link rel="alternate" hreflang="ar" href="{{ request.url.scheme }}://{{ request.url.netloc }}/ar{{ "" if request.scope.path == "/" else request.scope.path }}">{% endif %}
+{% if has_ar %}<link rel="alternate" hreflang="en" href="{{ origin }}{{ request.scope.path }}"><link rel="alternate" hreflang="ar" href="{{ origin }}/ar{{ "" if request.scope.path == "/" else request.scope.path }}">{% endif %}
 <script>(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})();</script>
-<link rel="stylesheet" href="/static/css/fonts.css">
-<link rel="stylesheet" href="/static/css/site.css">
+<link rel="stylesheet" href="/static/css/fonts.css?v={{ site.asset_v }}">
+<link rel="stylesheet" href="/static/css/site.css?v={{ site.asset_v }}">
 <link rel="icon" href="/static/img/favicon.png" type="image/png">
 {% block head %}{% endblock %}
 </head>
@@ -36,7 +44,21 @@
       <a class="btn btn-primary btn-sm" href="{{ site.company_url }}" target="_blank" rel="noopener">{{ t("Work With Oblique") }}</a>
       {% if has_ar %}<a class="lang-switch" href="{{ alt_url }}" lang="{{ 'en' if lang == 'ar' else 'ar' }}" hreflang="{{ 'en' if lang == 'ar' else 'ar' }}">{{ 'English' if lang == 'ar' else 'العربية' }}</a>{% endif %}
       <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" title="Light / dark">☾</button>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="{{ t("Menu") }}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></button>
     </nav>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <div class="wrap">
+      <span class="mm-head">{{ t("Calculators") }}</span>
+      {% for m in modules if m.priority == 'P0' %}<a href="/{{ m.slug }}">{{ t(m.title) }}</a>{% endfor %}
+      <span class="mm-head">{{ t("Explore") }}</span>
+      <a href="/guides">{{ t("Guides") }}</a>
+      <a href="/journeys">{{ t("Worked journeys") }}</a>
+      <a href="/changes">{{ t("What changed") }}</a>
+      <a href="{{ site.game_url }}/{{ site.game_utm }}">{{ t("Tax Game") }}</a>
+      <a class="btn btn-primary" href="{{ site.booking_url }}?utm_source=tax-tools&utm_medium=menu" target="_blank" rel="noopener">{{ t("Book a free 30-minute call") }}</a>
+      <a class="mm-site" href="{{ site.company_url }}" target="_blank" rel="noopener">obliqueconsult.com →</a>
+    </div>
   </div>
 </header>
 <noscript><p class="noscript">{{ t("The calculators need JavaScript. The guides and methodology work without it.") }}</p></noscript>
@@ -77,7 +99,7 @@
 </footer>
 {% include "_lead_form.html" %}
 <script>window.LANG={{ lang|tojson }};window.I18N={{ i18n_json|tojson }};window.AR_PATHS={{ ar_paths|tojson }};</script>
-<script src="/static/js/calc.js"></script>
+<script src="/static/js/calc.js?v={{ site.asset_v }}"></script>
 {% block scripts %}{% endblock %}
 {% if site.turnstile_site_key %}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>{% endif %}
 </body>

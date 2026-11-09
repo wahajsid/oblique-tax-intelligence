@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ p.name }} Corporate Tax, VAT & Zakat Guide 2026{% endblock %}
+{% block title %}{{ t(p.name) }}: {{ t("business tax guide") }} 2026{% endblock %}
 {% block description %}{{ p.name }} business tax guide: corporate income tax {{ (p.corporate_tax.headline_rate*100)|round(0)|int }}%, VAT {{ ((p.vat.rate*100)|round(0)|int ~ '%') if p.vat.implemented else 'not implemented' }}, withholding tax, domestic minimum top-up tax and transfer pricing, with sources.{% endblock %}
 {% block head %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"{{ p.name }} business tax guide 2026","author":{"@type":"Organization","name":"{{ site.company }}"},"dateModified":"{{ profiles.last_reviewed }}"}</script>{% endblock %}
 {% block content %}

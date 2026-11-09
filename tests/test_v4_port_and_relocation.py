@@ -84,7 +84,7 @@ def test_no_third_party_assets_in_pages():
     for path in ["/", "/move", "/uae/corporate-tax"]:
         html = client.get(path).text
         assert "fonts.googleapis" not in html and "fontshare" not in html and "googletagmanager" not in html
-        assert 'href="/static/css/fonts.css"' in html
+        assert 'href="/static/css/fonts.css?v=' in html
 
 
 def test_noindex_by_default():

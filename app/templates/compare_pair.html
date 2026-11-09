@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{{ pa.name }} vs {{ pb.name }}: Corporate Tax, VAT and Withholding Compared{% endblock %}
+{% block title %}{{ pa.name }} vs {{ pb.name }}: business tax compared{% endblock %}
+{% block description %}{{ pa.name }} against {{ pb.name }} for the same business: corporate tax, zakat, VAT, withholding and minimum top-up tax side by side, each figure sourced.{% endblock %}
 {% block content %}
 <div class="wrap page-head"><span class="eyebrow">Comparison</span><h1>{{ pa.flag }} {{ pa.name }} vs {{ pb.flag }} {{ pb.name }}</h1><p>Side-by-side regime comparison with an indicative calculation for a USD 1m profit, 100% foreign-owned operation. Adjust the scenario in the <a href="/gcc/compare">comparison engine</a>.</p></div>
 <section class="wrap narrow prose" style="padding-bottom:50px">

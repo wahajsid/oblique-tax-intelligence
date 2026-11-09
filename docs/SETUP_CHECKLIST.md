@@ -9,6 +9,7 @@ Pick a mailbox route and set the variables in Railway → service → Variables.
 | Variable | Value | Notes |
 |---|---|---|
 | `APP_SECRET` | 32+ random characters | Signs PDF tokens. Generate with `openssl rand -hex 32`. |
+| `SITE_URL` | `https://tax.obliqueconsult.com` | Public origin for canonical links, the sitemap and social previews. No trailing slash. |
 | `LEAD_EMAIL_TO` | `info@obliqueconsult.com, wahaj@obliqueconsult.com` | Comma-separated. |
 | **Microsoft 365 route** | | Sends from a real @obliqueconsult.com mailbox via Graph. |
 | `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` | From Entra app registration | Application permission `Mail.Send`, admin-consented; restrict with an ApplicationAccessPolicy to the sender mailbox. |
@@ -57,7 +58,7 @@ Later, if you want a CRM: keep Supabase as the record and add `HUBSPOT_PORTAL_ID
 | `play.obliqueconsult.com` CNAME | the game's host |
 | Resend/M365 SPF, DKIM, DMARC | as issued; one SPF record only, merge includes |
 
-Then in Railway set `SITE_URL=https://tax.obliqueconsult.com` if canonical URLs are added later, and on the Framer site add "Tax tools" to the main nav and footer pointing at the subdomain (see docs/DEPLOY.md for placement).
+Then on the Framer site add "Tax tools" to the main nav and footer pointing at the subdomain (see docs/DEPLOY.md for placement).
 
 ## 4. Search and indexing (after tax sign-off only)
 

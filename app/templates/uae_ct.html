@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}UAE Corporate Tax Calculator 2026{% endblock %}
-{% block description %}Calculate UAE Corporate Tax with a full reconciliation from accounting profit to taxable income: 0%/9% bands, Small Business Relief, Qualifying Free Zone Person test, loss relief, interest cap and DMTT screen.{% endblock %}
+{% block title %}{{ t("UAE Corporate Tax Calculator 2026") }}{% endblock %}
+{% block description %}{{ t("UAE Corporate Tax from accounting profit to tax due: 0% and 9% bands, Small Business Relief, Free Zone test, losses and interest cap. Free, working shown.") }}{% endblock %}
 {% block content %}
 <div class="wrap page-head">
   <span class="eyebrow">{{ t("United Arab Emirates") }} · {{ t("Corporate Tax") }} · {{ t("Tax rules") }} {{ rules.ruleset_version }} · {{ t("Reviewed") }} {{ rules.last_reviewed }} · {{ t("Oblique Consult tax team") }}</span>

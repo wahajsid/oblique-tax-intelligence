@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ p.title }}{% endblock %}
+{% block description %}{{ p.lead }}{% endblock %}
 {% block content %}
 <div class="wrap page-head"><span class="eyebrow">Start here</span><h1>{{ p.title }}</h1><p>{{ p.lead }}</p></div>
 <section class="wrap section" style="padding-top:8px">

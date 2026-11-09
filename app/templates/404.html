@@ -1,2 +1,9 @@
-{% extends "base.html" %}{% block title %}Not found{% endblock %}
-{% block content %}<section class="wrap narrow"><h1>Page not found</h1><p><a href="/">Back to calculators</a></p></section>{% endblock %}
+{% extends "base.html" %}{% block title %}Page not found{% endblock %}
+{% block content %}<section class="wrap narrow page-head"><span class="eyebrow">404</span><h1>That page is not here.</h1>
+<p>The link may be old. These are the places most people are looking for.</p>
+<div class="grid" style="margin-top:20px">
+  <div class="card"><h3><a href="/uae/corporate-tax">UAE Corporate Tax</a></h3><a href="/uae/corporate-tax">Open →</a></div>
+  <div class="card"><h3><a href="/move">Move to the UAE</a></h3><a href="/move">Open →</a></div>
+  <div class="card"><h3><a href="/diagnose">Tax exposure diagnostic</a></h3><a href="/diagnose">Start →</a></div>
+</div>
+<p style="margin-top:20px"><a href="/">All calculators →</a></p></section>{% endblock %}
